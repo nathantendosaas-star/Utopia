@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 const archiveImages = [
-  "/product-1.jpg",
-  "/product-2.jpg",
-  "/product-3.jpg",
-  "/product-4.jpg",
+  "/shirt-1.jpg",
+  "/shirt-2.jpg",
+  "/shirt-3.jpg",
+  "/shirt-4.jpg",
 ];
 
 export function ArchiveSwipeCTA({ onIndexChange }: { onIndexChange?: (index: number) => void }) {

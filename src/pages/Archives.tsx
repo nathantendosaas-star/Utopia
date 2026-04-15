@@ -3,12 +3,12 @@ import { motion } from 'motion/react';
 import { Layout } from '../components/Layout';
 
 const archives = [
-  { id: 1, year: "2025", title: "Study in Form", images: ["/product-1.jpg", "/product-2.jpg", "/product-3.jpg"], description: "Early explorations in structural minimalism." },
-  { id: 2, year: "2025", title: "Analog Dreams", images: ["/product-4.jpg", "/hero-img.jpg", "/product-1.jpg"], description: "A return to tactile fabrics and raw edges." },
-  { id: 3, year: "2025", title: "Raw Essence", images: ["/product-2.jpg", "/product-4.jpg", "/hero-img.jpg"], description: "Stripping away the unnecessary." },
-  { id: 4, year: "2025", title: "The Omission", images: ["/product-3.jpg", "/product-1.jpg", "/product-2.jpg"], description: "What is left out is as important as what remains." },
-  { id: 5, year: "2025", title: "Sculptural", images: ["/hero-img.jpg", "/product-3.jpg", "/product-4.jpg"], description: "Garments treated as wearable architecture." },
-  { id: 6, year: "2025", title: "Void Space", images: ["/product-1.jpg", "/hero-img.jpg", "/product-2.jpg"], description: "Embracing negative space in design." },
+  { id: 1, year: "2025", title: "Study in Form", images: ["/shirt-1.jpg", "/shirt-2.jpg", "/shirt-3.jpg"], description: "Early explorations in structural minimalism." },
+  { id: 2, year: "2025", title: "Analog Dreams", images: ["/shirt-4.jpg", "/hero-img.jpg", "/shirt-1.jpg"], description: "A return to tactile fabrics and raw edges." },
+  { id: 3, year: "2025", title: "Raw Essence", images: ["/shirt-2.jpg", "/shirt-4.jpg", "/hero-img.jpg"], description: "Stripping away the unnecessary." },
+  { id: 4, year: "2025", title: "The Omission", images: ["/shirt-3.jpg", "/shirt-1.jpg", "/shirt-2.jpg"], description: "What is left out is as important as what remains." },
+  { id: 5, year: "2025", title: "Sculptural", images: ["/hero-img.jpg", "/shirt-3.jpg", "/shirt-4.jpg"], description: "Garments treated as wearable architecture." },
+  { id: 6, year: "2025", title: "Void Space", images: ["/shirt-1.jpg", "/hero-img.jpg", "/shirt-2.jpg"], description: "Embracing negative space in design." },
 ];
 
 export function Archives() {
