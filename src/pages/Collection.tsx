@@ -84,10 +84,27 @@ export function Collection() {
       </div>
 
       <div className="max-w-[1280px] mx-auto px-[clamp(1.25rem,5vw,4rem)]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-[var(--space-4)] sm:gap-x-[var(--space-6)] lg:gap-x-[var(--space-8)] gap-y-[var(--space-10)] sm:gap-y-[var(--space-12)] lg:gap-y-[var(--space-16)]">
-          {products.map((item, index) => (
-            <CollectionItem key={item.id} item={item} index={index} />
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-y-[var(--space-20)] md:gap-y-0">
+          {products.map((item, index) => {
+            const isEven = index % 2 !== 0;
+            // Alternating patterns for a more editorial, less rigid feel
+            const layoutClasses = isEven 
+              ? (index % 4 === 1 
+                  ? 'md:col-span-5 md:col-start-7 md:mt-[var(--space-48)] lg:mt-[var(--space-64)]' 
+                  : 'md:col-span-4 md:col-start-8 md:mt-[var(--space-24)] lg:mt-[var(--space-32)]')
+              : (index % 4 === 0 
+                  ? 'md:col-span-5 md:col-start-2' 
+                  : 'md:col-span-6 md:col-start-1 md:mt-[var(--space-12)]');
+
+            return (
+              <div 
+                key={item.id} 
+                className={`flex flex-col ${layoutClasses}`}
+              >
+                <CollectionItem item={item} index={index} />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
