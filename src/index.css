@@ -105,7 +105,7 @@
 
 /* Nav Atmosphere — Floating & Minimal */
 .nav-header {
-  background-color: rgba(247, 243, 238, 0.7);
+  background-color: rgba(247, 243, 238, 1);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--color-border-subtle);
@@ -117,7 +117,7 @@
 }
 
 [data-theme="dark"] .nav-header {
-  background-color: rgba(13, 12, 11, 0.7);
+  background-color: rgba(13, 12, 11, 1);
 }
 
 .nav-logo {
