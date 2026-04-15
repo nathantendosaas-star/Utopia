@@ -102,15 +102,15 @@ export function Home() {
               </div>
             </motion.div>
 
-            <div className="lg:col-span-5 lg:pl-16 relative z-20">
-              <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-[var(--color-accent-primary)] mb-10 block">The Blueprint</span>
-              <h2 className="text-[clamp(3.5rem,6vw,7rem)] font-display leading-[0.85] mb-12 uppercase tracking-tighter text-[var(--color-text-primary)]">
-                Raw<br/><span className="italic font-light opacity-40">Construction.</span>
+            <div className="lg:col-span-6 lg:pl-16 relative z-20">
+              <span className="font-mono text-[10px] uppercase tracking-[0.5em] text-[var(--color-accent-primary)] mb-8 block font-bold">The Blueprint</span>
+              <h2 className="text-[clamp(3rem,5.5vw,6rem)] font-display leading-[0.9] mb-12 uppercase tracking-tighter text-[var(--color-text-primary)]">
+                Raw<br/><span className="italic font-light opacity-50">Construction.</span>
               </h2>
-              <p className="text-[18px] text-[var(--color-text-secondary)] font-light leading-relaxed mb-16 max-w-md">
+              <p className="text-[18px] text-[var(--color-text-secondary)] font-body font-light leading-relaxed mb-16 max-w-md antialiased">
                 Stripped back to the essentials. Function over everything. Deconstructing the uniform for the modern void.
               </p>
-              <Link to="/about" className="btn-ghost">Behind the Brand</Link>
+              <Link to="/about" className="btn-ghost text-[10px] tracking-[0.3em]">Behind the Brand</Link>
             </div>
 
           </div>
