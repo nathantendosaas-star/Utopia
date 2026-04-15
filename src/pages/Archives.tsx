@@ -3,25 +3,25 @@ import { motion } from 'motion/react';
 import { Layout } from '../components/Layout';
 
 const archives = [
-  { id: 1, year: "2025", title: "Study in Form", images: ["/shirt-1.jpg", "/shirt-2.jpg", "/shirt-3.jpg"], description: "Early explorations in structural minimalism." },
-  { id: 2, year: "2025", title: "Analog Dreams", images: ["/shirt-4.jpg", "/hero-img.jpg", "/shirt-1.jpg"], description: "A return to tactile fabrics and raw edges." },
-  { id: 3, year: "2025", title: "Raw Essence", images: ["/shirt-2.jpg", "/shirt-4.jpg", "/hero-img.jpg"], description: "Stripping away the unnecessary." },
-  { id: 4, year: "2025", title: "The Omission", images: ["/shirt-3.jpg", "/shirt-1.jpg", "/shirt-2.jpg"], description: "What is left out is as important as what remains." },
-  { id: 5, year: "2025", title: "Sculptural", images: ["/hero-img.jpg", "/shirt-3.jpg", "/shirt-4.jpg"], description: "Garments treated as wearable architecture." },
-  { id: 6, year: "2025", title: "Void Space", images: ["/shirt-1.jpg", "/hero-img.jpg", "/shirt-2.jpg"], description: "Embracing negative space in design." },
+  { id: 1, year: "2025", title: "Core Utility", images: ["/shirt-1.jpg", "/shirt-2.jpg", "/shirt-3.jpg"], description: "Initial systems for the concrete environment." },
+  { id: 2, year: "2025", title: "Grain & Steel", images: ["/shirt-4.jpg", "/hero-img.jpg", "/shirt-1.jpg"], description: "A study in raw textures and industrial edges." },
+  { id: 3, year: "2025", title: "Deconstructed", images: ["/shirt-2.jpg", "/shirt-4.jpg", "/hero-img.jpg"], description: "Stripping back to the structural essentials." },
+  { id: 4, year: "2025", title: "Negative Space", images: ["/shirt-3.jpg", "/shirt-1.jpg", "/shirt-2.jpg"], description: "The importance of what's left behind." },
+  { id: 5, year: "2025", title: "Industrial", images: ["/hero-img.jpg", "/shirt-3.jpg", "/shirt-4.jpg"], description: "Wearable architecture for the urban void." },
+  { id: 6, year: "2025", title: "The Void", images: ["/shirt-1.jpg", "/hero-img.jpg", "/shirt-2.jpg"], description: "Final explorations in deconstructed silence." },
 ];
 
 export function Archives() {
   return (
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
       <div className="mb-20">
-        <span className="font-mono text-xs uppercase tracking-widest text-zinc-500 block mb-4">The Repository</span>
+        <span className="font-mono text-xs uppercase tracking-widest text-zinc-500 block mb-4">The Log</span>
         <h1 className="text-6xl md:text-8xl font-display uppercase tracking-tighter leading-none mb-8">
-          Historical<br/>
+          The<br/>
           <span className="text-zinc-600">Archives</span>
         </h1>
         <p className="max-w-xl text-zinc-400 font-body leading-relaxed">
-          A chronological exploration of the Utopia UG design language. Each chapter represents a pivotal shift in our aesthetic evolution.
+          Deconstructed history. A chronological record of the Utopia uniform, from early Tokyo utility to New York street precision.
         </p>
       </div>
 

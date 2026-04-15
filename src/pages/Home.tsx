@@ -61,12 +61,12 @@ export function Home() {
             </div>
             
             <p className="text-[20px] text-[var(--color-text-secondary)] font-light leading-relaxed mb-12 max-w-2xl">
-              A study in the harmony of raw industrial texture and human movement.
+              Raw utility meets Tokyo precision. Engineered for the New York concrete.
             </p>
 
             <div className="flex flex-wrap gap-12 items-center justify-center">
               <Link to="/shop" className="btn-primary">
-                COLLECTION
+                UNIFORMS
               </Link>
               <Link to="/archives" className="group flex items-center gap-3 btn-ghost">
                 RECONSTRUCTED <ArrowUpRight size={14} className="group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
@@ -103,14 +103,14 @@ export function Home() {
             </motion.div>
 
             <div className="lg:col-span-5 lg:pl-16 relative z-20">
-              <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-[var(--color-accent-primary)] mb-10 block">The Narrative</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-[var(--color-accent-primary)] mb-10 block">The Blueprint</span>
               <h2 className="text-[clamp(3.5rem,6vw,7rem)] font-display leading-[0.85] mb-12 uppercase tracking-tighter text-[var(--color-text-primary)]">
-                The Art of<br/><span className="italic font-light opacity-40">Omission.</span>
+                Raw<br/><span className="italic font-light opacity-40">Construction.</span>
               </h2>
               <p className="text-[18px] text-[var(--color-text-secondary)] font-light leading-relaxed mb-16 max-w-md">
-                We believe that what is left behind is just as important as what is presented. Stripping the garment to its architectural soul.
+                Stripped back to the essentials. Function over everything. Deconstructing the uniform for the modern void.
               </p>
-              <Link to="/about" className="btn-ghost">Read Culture Notes</Link>
+              <Link to="/about" className="btn-ghost">Behind the Brand</Link>
             </div>
 
           </div>
@@ -125,10 +125,10 @@ export function Home() {
         <div className="max-w-[1280px] mx-auto px-[clamp(1.25rem,5vw,4rem)]">
           <div className="flex flex-col md:flex-row justify-between items-baseline mb-32 gap-12">
             <div>
-              <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-[var(--color-text-muted)] mb-8 block">Selected Pieces</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-[var(--color-text-muted)] mb-8 block">Current Drop</span>
               <h2 className="text-[clamp(3.5rem,7vw,8rem)] font-display text-[var(--color-text-primary)] tracking-tighter leading-none uppercase">
-                Historical<br/>
-                <span className="italic font-light opacity-30">Silhouettes</span>
+                The<br/>
+                <span className="italic font-light opacity-30">Archive</span>
               </h2>
             </div>
             <Link to="/shop" className="btn-ghost">Explore Archive</Link>
@@ -183,7 +183,7 @@ export function Home() {
             Own the <span className="italic font-light opacity-30">Void.</span>
           </h2>
           <Link to="/shop" className="btn-primary scale-110">
-            ENTER THE STORE
+            SHOP THE DROP
           </Link>
         </motion.div>
       </section>

@@ -27,13 +27,13 @@ export function About() {
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-[var(--space-8)] border-b border-[var(--color-border-subtle)] pb-[var(--space-8)]">
           <div>
-            <p className="hero-label">CULTURE NOTES</p>
-            <h1 className="hero-headline about-headline mb-0" data-text="The Vision.">
-              The<br /><em>Vision.</em>
+            <p className="hero-label">BEHIND THE BRAND</p>
+            <h1 className="hero-headline about-headline mb-0" data-text="The Blueprint.">
+              The<br /><em>Blueprint.</em>
             </h1>
           </div>
           <p className="font-mono text-[var(--text-micro)] text-[var(--color-text-secondary)] uppercase tracking-[var(--tracking-widest)] max-w-[200px] md:text-right">
-            A state of mind stitched into fabric.
+            Engineered for the modern void.
           </p>
         </div>
       </div>
@@ -69,14 +69,14 @@ export function About() {
               <div className="relative pb-[var(--space-6)] mb-[var(--space-6)] border-b border-[var(--color-border-subtle)]">
                 <span className="absolute -top-8 -left-6 text-[8rem] font-display text-[var(--color-accent-primary)] opacity-10 leading-none select-none">"</span>
                 <p className="relative z-10 text-[var(--text-heading-md)] md:text-[var(--text-heading-lg)] font-display text-[var(--color-text-primary)] leading-[var(--leading-snug)] italic">
-                  Utopia began as a dream of a place that never existed—until we decided to wear it into reality. It’s not a city or a country, but a state of mind. Here, the skies are always open, the streets are paved with possibility, and every soul is free. We’re not selling clothes—we’re stitching fragments of that dream into fabric, so whoever wears it carries a piece of Utopia with them.
+                  Utopia isn't a destination. It's the grit of the street and the precision of the studio. We don't just make clothes; we build uniforms for those who navigate the void between the concrete and the clouds.
                 </p>
               </div>
               <p>
-                Our motto, <span className="font-mono text-[var(--text-micro)] text-[var(--color-text-primary)] tracking-[var(--tracking-widest)] uppercase">"NO WASTED POTENTIAL"</span>, is a call to action. It's about taking the finest materials and turning them into something timeless and authentic.
+                Our ethos, <span className="font-mono text-[var(--text-micro)] text-[var(--color-text-primary)] tracking-[var(--tracking-widest)] uppercase">"NO WASTED POTENTIAL"</span>, is the standard. Every cut, every stitch, every drop is a refusal to settle for the mediocre. 
               </p>
               <p>
-                We draw inspiration from the archives—the elegance of classic tailoring, the subtle textures of premium blends, the tactile feel of true craftsmanship. In a world of fast fashion, we choose enduring style.
+                Sourcing from the archives of Tokyo utility and New York energy, we bridge the gap. In a world of noise, we choose raw, deconstructed silence.
               </p>
             </div>
 
