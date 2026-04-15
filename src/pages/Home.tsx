@@ -14,11 +14,7 @@ export function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = document.querySelector('.hero-headline');
-    if (el) {
-      el.classList.add('vhs-glitch');
-      setTimeout(() => el.classList.remove('vhs-glitch'), 420);
-    }
+    // Hero entry animation logic could go here
   }, []);
 
   return (
@@ -28,54 +24,53 @@ export function Home() {
           Clean, expansive whitespace matching the highlights of your analog photos.
       */}
       <section className="relative min-h-screen w-full flex flex-col justify-center items-center py-20 px-[clamp(1.25rem,5vw,6rem)] bg-yin">
-        <div className="relative z-20 w-full max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+        <div className="relative z-20 w-full max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
+            className="lg:col-span-12"
+          >
+            <div className="relative aspect-video w-full overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border border-[var(--color-border-subtle)]">
+              <picture>
+                <source media="(max-width: 768px)" srcSet="/hero-desktop.png" />
+                <img 
+                  src="/hero-desktop.png" 
+                  alt="Utopia UG" 
+                  className="w-full h-full object-cover transition-all duration-[3s] scale-100 hover:scale-105"
+                />
+              </picture>
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-primary)]/10 to-transparent pointer-events-none" />
+              <div className="absolute bottom-6 left-6 font-mono text-[8px] uppercase tracking-[0.5em] text-white/40">CAM-01 / REF-UG</div>
+            </div>
+          </motion.div>
+
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
-            className="lg:col-span-5 order-2 lg:order-1"
+            transition={{ duration: 1.2, delay: 0.6, ease: [0.25, 1, 0.5, 1] }}
+            className="lg:col-span-12 flex flex-col items-center text-center mt-12"
           >
-            <div className="flex items-center gap-6 mb-12">
+            <div className="flex items-center gap-6 mb-8">
               <span className="h-[1px] w-12 bg-[var(--color-accent-primary)]" />
               <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-[var(--color-accent-primary)] font-bold">
                 Chapter 001 / Analog
               </span>
+              <span className="h-[1px] w-12 bg-[var(--color-accent-primary)]" />
             </div>
             
-            <h1 className="hero-headline text-[var(--color-text-primary)] mb-12 leading-[0.85] text-[clamp(4.5rem,10vw,12rem)] font-display uppercase tracking-tighter" data-text="No Wasted Potential.">
-              No Wasted<br />
-              <span className="italic font-light opacity-80">Potential.</span>
-            </h1>
-
-            <p className="text-[20px] text-[var(--color-text-secondary)] font-light leading-relaxed mb-16 max-w-sm">
+            <p className="text-[20px] text-[var(--color-text-secondary)] font-light leading-relaxed mb-12 max-w-2xl">
               A study in the harmony of raw industrial texture and human movement.
             </p>
 
-            <div className="flex flex-wrap gap-12 items-center">
+            <div className="flex flex-wrap gap-12 items-center justify-center">
               <Link to="/shop" className="btn-primary">
                 COLLECTION
               </Link>
               <Link to="/archives" className="group flex items-center gap-3 btn-ghost">
                 RECONSTRUCTED <ArrowUpRight size={14} className="group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
               </Link>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1] }}
-            className="lg:col-span-7 order-1 lg:order-2"
-          >
-            <div className="relative aspect-[3/2] w-full overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border border-[var(--color-border-subtle)]">
-              <img 
-                src="/hero-img.jpg" 
-                alt="Utopia UG" 
-                className="w-full h-full object-cover transition-all duration-[3s] scale-100 hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-primary)]/10 to-transparent pointer-events-none" />
-              <div className="absolute bottom-6 left-6 font-mono text-[8px] uppercase tracking-[0.5em] text-white/40">CAM-01 / REF-UG</div>
             </div>
           </motion.div>
         </div>
