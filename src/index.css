@@ -105,14 +105,19 @@
 
 /* Nav Atmosphere — Floating & Minimal */
 .nav-header {
-  background-color: rgba(var(--color-bg-primary), 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(247, 243, 238, 0.2);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--color-border-subtle);
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 1.5rem 0;
+  padding: 1rem 0;
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .nav-header {
+  background-color: rgba(13, 12, 11, 0.2);
 }
 
 .nav-logo {
