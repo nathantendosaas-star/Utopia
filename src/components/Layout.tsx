@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import Lenis from 'lenis';
 import { Menu, X, Search, ShoppingBag, Heart, User, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../context/StoreContext';
@@ -37,29 +36,6 @@ export function Layout() {
       document.documentElement.removeAttribute('data-theme');
     }
   }, [isDarkMode]);
-
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
-    });
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    return () => {
-      lenis.destroy();
-    };
-  }, []);
 
   // Scroll to top on route change
   useEffect(() => {

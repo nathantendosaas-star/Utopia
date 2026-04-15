@@ -7,10 +7,21 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function MotionProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    // Force scroll to top on initial load/refresh
+    window.scrollTo(0, 0);
+
     const lenis = new Lenis({
-      lerp: 0.1,
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
       smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
     });
+
+    // Reset scroll on refresh
+    lenis.scrollTo(0, { immediate: true });
 
     function raf(time: number) {
       lenis.raf(time);
