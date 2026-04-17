@@ -61,9 +61,8 @@ export function Home() {
             </div>
             
             <p className="text-[20px] text-[var(--color-text-secondary)] font-light leading-relaxed mb-12 max-w-2xl">
-              Raw utility meets Tokyo precision. Engineered for the New York concrete.
+              Raw utility meets Kampala spirit. Engineered for the Ugandan streets.
             </p>
-
             <div className="flex flex-wrap gap-12 items-center justify-center">
               <Link to="/shop" className="btn-primary">
                 UNIFORMS
