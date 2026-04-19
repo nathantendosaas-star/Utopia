@@ -58,7 +58,7 @@ export function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
-          className="flex flex-col gap-8 items-center w-full"
+          className="flex flex-col gap-8 items-center w-full mb-32"
         >
           <Link to="/shop" className="btn-bracket text-lg">
             GET ON THE LIST
@@ -70,6 +70,52 @@ export function Home() {
             EXPLORE LOOKBOOK
           </Link>
         </motion.div>
+
+        {/* Featured Editorial Images */}
+        <div className="w-full grid grid-cols-1 md:grid-cols-12 gap-8 px-4 mb-48">
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, delay: 0.2 }}
+            className="md:col-span-7 aspect-[4/5] overflow-hidden bg-zinc-900 border border-white/5"
+          >
+            <img 
+              src="/hero-desktop.png" 
+              className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-700 hover:scale-105 transition-transform duration-[2s]"
+              alt="Editorial 01"
+            />
+          </motion.div>
+          
+          <div className="md:col-span-5 flex flex-col gap-8">
+            <motion.div 
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2, delay: 0.4 }}
+              className="aspect-square overflow-hidden bg-zinc-900 border border-white/5"
+            >
+              <img 
+                src="/hero-img.jpg" 
+                className="w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-700"
+                alt="Editorial 02"
+              />
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2, delay: 0.6 }}
+              className="flex-1 flex flex-col justify-center items-start text-left p-8 border border-white/5 bg-white/[0.02]"
+            >
+              <p className="text-technical text-[8px] text-white/20 mb-4 tracking-[0.5em]">SYSTEM NOTES // 2026</p>
+              <h4 className="font-display text-2xl text-white mb-4 uppercase tracking-tight">Analog Utility</h4>
+              <p className="font-mono text-[10px] text-white/40 leading-relaxed uppercase">
+                Stripped back to the essentials. Function over everything. Deconstructing the uniform for the modern void.
+              </p>
+            </motion.div>
+          </div>
+        </div>
 
         {/* Footer Info */}
         <motion.div
