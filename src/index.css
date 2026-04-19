@@ -78,24 +78,12 @@
     --color-bg-secondary:      #050505;
     --color-bg-tertiary:       #0A0A0A;
     --color-surface-elevated:  #0F0F0F;
-    --color-accent-primary:    #00FF41; /* Matrix Green as alternative if requested, but using Electric Orange for now */
-  }
-
-  /* Override dark theme for high contrast street feel */
-  [data-theme="dark"] {
-    --color-accent-primary:    #FF3E00; 
-  }
-    /* "EDITORIAL NOIR" — SAMPLED FROM MERCEDES NIGHT SHOTS */
-    --color-bg-primary:        #000000; /* Pure Black */
-    --color-bg-secondary:      #050505; 
-    --color-bg-tertiary:       #0A0A0A;
-    --color-surface-elevated:  #0F0F0F;
-    --color-text-primary:      #FFFFFF; /* Pure White */
+    --color-text-primary:      #FFFFFF;
     --color-text-secondary:    #888888;
     --color-text-muted:        #444444;
-    --color-accent-primary:    #FFFFFF; /* White for High Contrast */
-    --color-accent-hover:      #E0E0E0;
-    --color-accent-muted:      #222222;
+    --color-accent-primary:    #FF3E00; 
+    --color-accent-hover:      #FF5E26;
+    --color-accent-muted:      #331200;
     --color-border-subtle:     #1A1A1A;
     --color-border-strong:     #333333;
   }
@@ -167,7 +155,7 @@
 
 /* Nav Atmosphere — Floating & Minimal */
 .nav-header {
-  background-color: rgba(247, 243, 238, 1);
+  background-color: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--color-border-subtle);
@@ -176,10 +164,6 @@
   z-index: 100;
   padding: 1rem 0;
   transition: background-color 0.3s ease;
-}
-
-[data-theme="dark"] .nav-header {
-  background-color: rgba(13, 12, 11, 1);
 }
 
 .nav-logo {
@@ -221,22 +205,22 @@ img.film-image, .product-img {
   display: inline-flex;
   align-items: center;
   gap: 1rem;
-  background-color: var(--color-text-primary);
-  color: var(--color-bg-primary);
+  background-color: var(--color-accent-primary);
+  color: #FFFFFF;
   font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   padding: 20px 40px;
-  border: 1px solid var(--color-text-primary);
+  border: 1px solid var(--color-accent-primary);
   cursor: pointer;
   transition: all 0.4s var(--ease-film);
 }
 
 .btn-primary:hover {
-  background-color: var(--color-accent-primary);
-  border-color: var(--color-accent-primary);
-  color: #FFFFFF;
+  background-color: #FFFFFF;
+  border-color: #FFFFFF;
+  color: #000000;
   transform: translateY(-2px);
 }
 
@@ -268,5 +252,5 @@ img.film-image, .product-img {
   opacity: 0.3;
   pointer-events: none;
 }
-.vhs-glitch::before { color: #A62419; transform: translate(-1.5px, 0); }
-.vhs-glitch::after { color: #4D453A; transform: translate(1.5px, 0); }
+.vhs-glitch::before { color: #FF3E00; transform: translate(-1.5px, 0); }
+.vhs-glitch::after { color: #00FF41; transform: translate(1.5px, 0); }
