@@ -52,12 +52,12 @@ export function Home() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.5, delay: 0.4 }}
-            className="w-32 h-32 md:w-48 md:h-48 border border-white/10 flex items-center justify-center bg-white/[0.02] backdrop-blur-sm"
+            className="w-32 h-32 md:w-48 md:h-48 border border-white/10 flex items-center justify-center bg-white/[0.02] backdrop-blur-sm overflow-hidden"
           >
              <img 
-               src="/Gemini_Generated_Image_404e2c404e2c404e.png" 
+               src="/hero-desktop.png" 
                alt="Utopia Logo" 
-               className="w-2/3 h-auto opacity-80"
+               className="w-full h-full object-cover opacity-80"
              />
           </motion.div>
         </div>
