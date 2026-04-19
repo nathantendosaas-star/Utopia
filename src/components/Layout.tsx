@@ -49,60 +49,64 @@ export function Layout() {
       <div className="film-frame" aria-hidden="true" />
       
       {/* Premium Minimal Header */}
-      <header className="w-full nav-header transition-colors duration-[var(--duration-mode)] ease-in-out">
-        <div className="max-w-[1280px] mx-auto px-[clamp(1.25rem,5vw,4rem)] py-4">
-          <div className="flex justify-between items-center">
-            {/* Left: Nav Links */}
-            <div className="hidden lg:flex items-center gap-8">
-              <Link to="/shop" className="nav-link hover:text-[var(--color-accent-primary)] transition-colors">The Archive</Link>
-              <Link to="/archives" className="nav-link hover:text-[var(--color-accent-primary)] transition-colors">Selected Pieces</Link>
-              <Link to="/about" className="nav-link hover:text-[var(--color-accent-primary)] transition-colors">Culture Notes</Link>
+      <header className={`w-full transition-colors duration-[var(--duration-mode)] ease-in-out z-[100] ${location.pathname === '/' ? 'fixed top-0 bg-transparent border-none' : 'nav-header'}`}>
+        <div className="max-w-[1440px] mx-auto px-[clamp(1.25rem,5vw,6rem)] py-6">
+          <div className="flex justify-between items-center relative">
+            {/* Left: Menu/Nav */}
+            <div className="flex-1 flex items-center">
+              <button 
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="group flex items-center gap-4 hover:text-[var(--color-accent-primary)] transition-colors"
+              >
+                <div className="flex flex-col gap-1.5 w-6">
+                  <span className={`h-[1px] w-full bg-current transition-transform ${isMenuOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
+                  <span className={`h-[1px] w-full bg-current transition-opacity ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`} />
+                  <span className={`h-[1px] w-full bg-current transition-transform ${isMenuOpen ? '-rotate-45 -translate-y-[7px]' : ''}`} />
+                </div>
+                <span className="text-technical hidden sm:block">MENU</span>
+              </button>
             </div>
             
-            {/* Center: Logo */}
-            <div className="flex-1 text-center">
-              <Link to="/" className="nav-logo hover:opacity-80 transition-opacity">
-                UTOPIA
-              </Link>
+            {/* Center: Info/Logo */}
+            <div className="flex-[2] text-center">
+              {location.pathname === '/' ? (
+                <div className="flex flex-col items-center gap-1">
+                  <div className="text-technical text-[8px] opacity-40 flex items-center gap-4">
+                    <span>0.3476° N, 32.5825° E</span>
+                    <span className="h-2 w-[1px] bg-white/20" />
+                    <span>KAMPALA</span>
+                  </div>
+                  <Link to="/" className="nav-logo text-2xl tracking-[0.6em] hover:opacity-80 transition-opacity">
+                    UTOPIA
+                  </Link>
+                </div>
+              ) : (
+                <Link to="/" className="nav-logo hover:opacity-80 transition-opacity">
+                  UTOPIA
+                </Link>
+              )}
             </div>
 
-            {/* Right: Icons & Menu */}
-            <div className="flex justify-end items-center gap-6 text-[var(--color-text-secondary)]">
+            {/* Right: Cart & Actions */}
+            <div className="flex-1 flex justify-end items-center gap-8">
               <button 
                 onClick={() => setIsDarkMode(!isDarkMode)}
-                className="hover:text-[var(--color-accent-primary)] transition-colors duration-[var(--duration-fast)]"
-                aria-label="Toggle theme"
+                className="hidden sm:block hover:text-[var(--color-accent-primary)] transition-colors"
               >
-                {isDarkMode ? <Sun size={20} strokeWidth={1.5} /> : <Moon size={20} strokeWidth={1.5} />}
+                {isDarkMode ? <Sun size={18} strokeWidth={1} /> : <Moon size={18} strokeWidth={1} />}
               </button>
               <button 
                 onClick={() => setSearchOpen(true)}
-                className="hover:text-[var(--color-accent-primary)] transition-colors duration-[var(--duration-fast)]"
+                className="hidden sm:block hover:text-[var(--color-accent-primary)] transition-colors"
               >
-                <Search size={20} strokeWidth={1.5} />
+                <Search size={18} strokeWidth={1} />
               </button>
               <button 
                 onClick={() => setCartOpen(true)}
-                className="hover:text-[var(--color-accent-primary)] transition-colors duration-[var(--duration-fast)] relative"
+                className="flex items-center gap-3 hover:text-[var(--color-accent-primary)] transition-colors group"
               >
-                <ShoppingBag size={20} strokeWidth={1.5} />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-[var(--color-accent-primary)] text-[#F5F0E8] text-[9px] w-3.5 h-3.5 rounded-[1px] flex items-center justify-center font-mono tracking-tighter">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
-              <button 
-                onClick={() => setUserOpen(true)}
-                className="hover:text-[var(--color-accent-primary)] transition-colors duration-[var(--duration-fast)]"
-              >
-                <User size={20} strokeWidth={1.5} />
-              </button>
-              <button 
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden hover:text-[var(--color-accent-primary)] transition-colors duration-[var(--duration-fast)]"
-              >
-                {isMenuOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
+                <span className="text-technical hidden sm:block">CART [{cartCount}]</span>
+                <ShoppingBag size={18} strokeWidth={1} className="sm:hidden" />
               </button>
             </div>
           </div>
@@ -134,7 +138,17 @@ export function Layout() {
       </header>
 
       <main className="relative z-10">
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <CartDrawer />

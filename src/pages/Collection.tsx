@@ -1,111 +1,104 @@
-import React, { useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import React, { useEffect, useState } from 'react';
+import { motion } from 'motion/react';
 import { useStore } from '../context/StoreContext';
-import { products, Product } from '../data/products';
+import { Product } from '../data/products';
+import { fetchProducts } from '../lib/api';
 
 const CollectionItem: React.FC<{ item: Product, index: number }> = ({ item, index }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
   const { setQuickViewProduct } = useStore();
 
   return (
     <motion.div 
-      ref={ref}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="group cursor-pointer flex flex-col gap-[var(--space-4)]"
+      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.25, 1, 0.5, 1] }}
+      className="group cursor-pointer flex flex-col gap-6"
       onClick={() => setQuickViewProduct(item)}
     >
-      <div className="relative aspect-[3/4] overflow-hidden border border-[var(--color-border-subtle)] bg-[#160E06]">
-        {/* Dark overlay for film feel */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-[#140A04]/40 to-transparent mix-blend-multiply pointer-events-none z-10 transition-opacity duration-500 group-hover:opacity-0" />
-        <div className="hero-scanlines z-10 opacity-50 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none" />
+      <div className="relative aspect-square overflow-hidden bg-[#0A0A0A] border border-white/5 transition-colors duration-500 group-hover:border-white/20">
+        <div className="absolute inset-0 bg-gradient-to-tr from-black/60 to-transparent mix-blend-multiply pointer-events-none z-10 transition-opacity duration-500 group-hover:opacity-40" />
         
-        <motion.div style={{ y: imageY }} className="w-full h-full">
-          <img 
-            src={item.image} 
-            alt={item.name}
-            className="w-full h-full object-cover film-image scale-110 group-hover:scale-105 transition-transform duration-[1.2s] ease-[0.25,0.46,0.45,0.94]"
-            referrerPolicy="no-referrer"
-          />
-        </motion.div>
+        <img 
+          src={item.image} 
+          alt={item.name}
+          className="w-full h-full object-contain p-8 film-image group-hover:scale-110 transition-transform duration-[1.5s] ease-[0.25,1,0.5,1]"
+          referrerPolicy="no-referrer"
+        />
         
-        <div className="absolute bottom-0 left-0 w-full h-[40px] bg-[var(--color-bg-primary)]/80 backdrop-blur-[4px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-[var(--duration-base)] z-20">
-          <span className="font-mono text-[11px] uppercase text-[var(--color-text-primary)] tracking-[var(--tracking-widest)]">Quick View</span>
+        <div className="absolute bottom-6 left-6 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+           <span className="text-technical text-[9px] bg-white text-black px-2 py-1">VIEW PIECE</span>
         </div>
       </div>
       
-      <div className="flex justify-between items-start">
-        <h3 className="font-display text-[var(--text-heading-sm)] text-[var(--color-text-primary)] leading-none group-hover:text-[var(--color-accent-primary)] transition-colors duration-300">
+      <div className="flex flex-col gap-1 text-center">
+        <h3 className="text-technical text-xs tracking-[0.2em] text-white/60 group-hover:text-white transition-colors">
           {item.name}
         </h3>
-        <span className="font-mono text-[var(--text-micro)] tracking-[var(--tracking-widest)] text-[var(--color-text-secondary)]">
-          ${item.price}
-        </span>
+        <p className="text-technical text-sm font-bold tracking-[0.3em]">
+          ${item.price}.00
+        </p>
       </div>
     </motion.div>
   );
 }
 
 export function Collection() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | 'All'>('All');
+  const { isLoading, setLoading } = useStore();
+
   useEffect(() => {
-    const el = document.querySelector('.collection-headline');
-    if (el) {
-      el.classList.add('vhs-glitch');
-      setTimeout(() => el.classList.remove('vhs-glitch'), 420);
-    }
-  }, []);
+    setLoading(true);
+    fetchProducts().then(data => {
+      setProducts(data);
+      setLoading(false);
+    });
+  }, [setLoading]);
+
+  const categories = ['All', ...Array.from(new Set(products.map(p => p.category || 'Uncategorized')))];
+  const filteredProducts = selectedCategory === 'All' 
+    ? products 
+    : products.filter(p => (p.category || 'Uncategorized') === selectedCategory);
 
   return (
-    <div className="min-h-screen w-full bg-[var(--color-bg-primary)] transition-colors duration-[var(--duration-mode)] ease-in-out pb-[clamp(4rem,8vw,8rem)]">
-      {/* Header Section */}
-      <div className="pt-[clamp(6rem,12vw,10rem)] pb-[clamp(4rem,8vw,6rem)] px-[clamp(1.25rem,5vw,4rem)] max-w-[1280px] mx-auto relative">
-        <div className="hero-monogram opacity-50 top-0 left-0">
-          <span className="mono-ug">UG</span>
-        </div>
-        
-        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-[var(--space-8)] border-b border-[var(--color-border-subtle)] pb-[var(--space-8)]">
+    <div className="min-h-screen w-full bg-black transition-colors duration-[var(--duration-mode)] ease-in-out pb-[clamp(4rem,8vw,8rem)]">
+      <div className="pt-[clamp(8rem,14vw,12rem)] pb-12 px-[clamp(1.25rem,5vw,6rem)] max-w-[1440px] mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 border-b border-white/5 pb-12">
           <div>
-            <p className="hero-label">SHOP THE ARCHIVE</p>
-            <h1 className="hero-headline collection-headline mb-0" data-text="Collection.">
-              Collection.
+            <p className="text-technical text-[10px] text-white/40 mb-4 tracking-[0.5em]">DEPARTMENT // {selectedCategory.toUpperCase()}</p>
+            <h1 className="text-[clamp(3rem,8vw,6rem)] font-display text-white tracking-tighter leading-none uppercase">
+              The Archive<span className="opacity-20 italic">.</span>
             </h1>
           </div>
-          <p className="font-mono text-[var(--text-micro)] text-[var(--color-text-secondary)] uppercase tracking-[var(--tracking-widest)] max-w-[200px] md:text-right">
-            DISPLAYING {products.length} ITEMS<br/>NO WASTED POTENTIAL
-          </p>
+          <div className="flex flex-wrap gap-8">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`text-technical text-[10px] tracking-[0.3em] transition-all ${selectedCategory === cat ? 'text-white border-b border-white pb-1' : 'text-white/40 hover:text-white'}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-[clamp(1.25rem,5vw,4rem)]">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-y-[var(--space-20)] md:gap-y-0">
-          {products.map((item, index) => {
-            const isEven = index % 2 !== 0;
-            // Alternating patterns for a more editorial, less rigid feel
-            const layoutClasses = isEven 
-              ? (index % 4 === 1 
-                  ? 'md:col-span-5 md:col-start-7 md:mt-[var(--space-48)] lg:mt-[var(--space-64)]' 
-                  : 'md:col-span-4 md:col-start-8 md:mt-[var(--space-24)] lg:mt-[var(--space-32)]')
-              : (index % 4 === 0 
-                  ? 'md:col-span-5 md:col-start-2' 
-                  : 'md:col-span-6 md:col-start-1 md:mt-[var(--space-12)]');
-
-            return (
-              <div 
-                key={item.id} 
-                className={`flex flex-col ${layoutClasses}`}
-              >
-                <CollectionItem item={item} index={index} />
-              </div>
-            );
-          })}
-        </div>
+      <div className="max-w-[1440px] mx-auto px-[clamp(1.25rem,5vw,6rem)]">
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+             {[...Array(8)].map((_, i) => (
+                <div key={i} className="aspect-square bg-white/5 animate-pulse border border-white/5" />
+             ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-24">
+            {filteredProducts.map((item, index) => (
+              <CollectionItem key={item.id} item={item} index={index} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

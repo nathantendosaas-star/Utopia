@@ -40,6 +40,9 @@ interface StoreContextType {
   setUserOpen: (isOpen: boolean) => void;
   quickViewProduct: Product | null;
   setQuickViewProduct: (product: Product | null) => void;
+  
+  isLoading: boolean;
+  setLoading: (isLoading: boolean) => void;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -51,6 +54,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [isSearchOpen, setSearchOpen] = useState(false);
   const [isUserOpen, setUserOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isCartOpen || isSearchOpen || isUserOpen || quickViewProduct) {
@@ -130,7 +134,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       isCartOpen, setCartOpen,
       isSearchOpen, setSearchOpen,
       isUserOpen, setUserOpen,
-      quickViewProduct, setQuickViewProduct
+      quickViewProduct, setQuickViewProduct,
+      isLoading, setLoading
     }}>
       {children}
     </StoreContext.Provider>
