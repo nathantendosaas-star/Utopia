@@ -28,10 +28,22 @@ export function Home() {
                <span className="h-[2px] w-12 bg-[var(--color-accent-primary)]" />
                <span className="text-technical text-[10px] text-[var(--color-accent-primary)] font-bold tracking-[0.6em]">EST. 199X / KLA</span>
              </div>
-             <h1 className="text-[clamp(4rem,12vw,10rem)] font-display uppercase tracking-tighter leading-[0.8] text-white mb-12">
-               SEE YOU SOON<br/><span className="text-[var(--color-accent-primary)]">WORLD!</span>
-             </h1>
-             <p className="font-mono text-sm text-white/60 leading-relaxed uppercase tracking-widest max-w-2xl">
+             <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
+               <h1 className="text-[clamp(4rem,12vw,10rem)] font-display uppercase tracking-tighter leading-[0.8] text-white">
+                 UTOPIA UG
+               </h1>
+               <div className="w-48 md:w-64 aspect-video overflow-hidden rounded-sm border border-white/10 mb-2 relative group">
+                 <div className="absolute inset-0 bg-[var(--color-accent-primary)]/10 mix-blend-overlay z-10" />
+                 <video 
+                   src="/hero-video.mp4" 
+                   autoPlay 
+                   loop 
+                   muted 
+                   playsInline 
+                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                 />
+               </div>
+             </div>             <p className="font-mono text-sm text-white/60 leading-relaxed uppercase tracking-widest max-w-2xl">
                 Raw utility meets Kampala spirit. Engineered for the Ugandan streets. A movement in analog minimalism and structural form.
              </p>
           </motion.div>
