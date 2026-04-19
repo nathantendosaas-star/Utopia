@@ -67,6 +67,10 @@
     --duration-base:           400ms;
     --duration-slow:           1200ms;
     --ease-film:               cubic-bezier(0.25, 1, 0.5, 1); /* Awwwards Smooth */
+    
+    /* Layout System */
+    --container-max:           1440px;
+    --section-spacing:         clamp(8rem, 15vw, 12rem);
   }
 
   [data-theme="dark"] {
