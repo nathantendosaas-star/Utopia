@@ -33,7 +33,7 @@ export function Home() {
                  <span className="block mb-4">UTOPIA</span>
                  <span>UG</span>
                </h1>
-               <div className="w-full md:w-[650px] lg:w-[900px] aspect-video overflow-hidden rounded-sm border border-white/10 mb-2 relative group">
+               <div className="w-full md:w-[975px] lg:w-[1350px] aspect-video overflow-hidden rounded-sm border border-white/10 mb-2 relative group">
                  <div className="absolute inset-0 bg-[var(--color-accent-primary)]/10 mix-blend-overlay z-10" />
                  <video 
                    src="/hero-video.mp4" 
