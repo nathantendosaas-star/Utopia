@@ -30,7 +30,8 @@ export function Home() {
              </div>
              <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
                <h1 className="text-[clamp(4rem,12vw,10rem)] font-display uppercase tracking-tighter tracking-wide leading-[0.8] text-white">
-                 UTOPIA UG
+                 <span className="block mb-4">UTOPIA</span>
+                 <span>UG</span>
                </h1>
                <div className="w-full md:w-[500px] lg:w-[700px] aspect-video overflow-hidden rounded-sm border border-white/10 mb-2 relative group">
                  <div className="absolute inset-0 bg-[var(--color-accent-primary)]/10 mix-blend-overlay z-10" />
