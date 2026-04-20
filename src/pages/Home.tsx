@@ -22,7 +22,7 @@ export function Home() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1.2, ease: "circOut" }}
-            className="max-w-4xl"
+            className="w-full"
           >
              <div className="flex items-center gap-4 mb-8">
                <span className="h-[2px] w-12 bg-[var(--color-accent-primary)]" />
@@ -33,7 +33,7 @@ export function Home() {
                  <span className="block mb-4">UTOPIA</span>
                  <span>UG</span>
                </h1>
-               <div className="w-full md:w-[975px] lg:w-[1350px] aspect-video overflow-hidden rounded-sm border border-white/10 mb-2 relative group">
+               <div className="w-full aspect-video overflow-hidden rounded-sm border border-white/10 mb-2 relative group">
                  <div className="absolute inset-0 bg-[var(--color-accent-primary)]/10 mix-blend-overlay z-10" />
                  <video 
                    src="/hero-video.mp4" 
