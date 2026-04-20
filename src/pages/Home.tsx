@@ -5,15 +5,17 @@ import { Link } from 'react-router-dom';
 export function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  }, []);
-
   return (
-    <div ref={containerRef} className="relative min-h-screen w-full bg-black overflow-hidden selection:bg-white selection:text-black">
+    <div ref={containerRef} className="relative min-h-screen w-full bg-[var(--color-bg-primary)] overflow-hidden selection:bg-[var(--color-text-primary)] selection:text-[var(--color-bg-primary)] transition-colors duration-[var(--duration-base)]">
       {/* Texture Layer */}
       <div className="fixed inset-0 opacity-[0.15] pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] z-50" />
       
+      {/* Light Leak / Atmosphere Layer */}
+      <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden">
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-[var(--color-accent-primary)]/10 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] rounded-full bg-white/5 blur-[80px]" />
+      </div>
+
       <div className="relative z-20 w-full max-w-[var(--container-max)] mx-auto px-[var(--gutter)] pt-[clamp(10rem,20vh,15rem)]">
         
         {/* Header Section */}
@@ -29,12 +31,12 @@ export function Home() {
                <span className="text-technical text-[10px] text-[var(--color-accent-primary)] font-bold tracking-[1em]">EST. 199X / KLA</span>
              </div>
              <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
-               <h1 className="text-[clamp(4rem,12vw,10rem)] font-display uppercase tracking-tighter tracking-wide leading-[0.8] text-white">
+               <h1 className="text-[clamp(4rem,12vw,10rem)] font-display uppercase tracking-tighter tracking-wide leading-[0.8] text-[var(--color-text-primary)]">
                  <span className="block mb-4">UTOPIA</span>
                  <span>UG</span>
                </h1>
-               <div className="w-full aspect-video overflow-hidden rounded-sm border border-white/10 mb-2 relative group">
-                 <div className="absolute inset-0 bg-[var(--color-accent-primary)]/10 mix-blend-overlay z-10" />
+               <div className="w-full aspect-video overflow-hidden rounded-sm border border-[var(--color-border-strong)]/20 mb-2 relative group">
+                 <div className="absolute inset-0 bg-[var(--color-accent-primary)]/5 mix-blend-overlay z-10" />
                  <video 
                    src="/hero-video.mp4" 
                    autoPlay 
@@ -44,7 +46,7 @@ export function Home() {
                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                  />
                </div>
-             </div>             <p className="font-mono text-sm text-white/60 leading-relaxed uppercase tracking-widest max-w-2xl">
+             </div>             <p className="font-mono text-sm text-[var(--color-text-secondary)] leading-relaxed uppercase tracking-widest max-w-2xl">
                 Raw utility meets Kampala spirit. Engineered for the Ugandan streets. A movement in analog minimalism and structural form.
              </p>
           </motion.div>
@@ -55,7 +57,7 @@ export function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.8 }}
-          className="flex flex-wrap gap-x-16 gap-y-8 items-center border-t border-white/5 pt-12 mb-48"
+          className="flex flex-wrap gap-x-16 gap-y-8 items-center border-t border-[var(--color-border-subtle)] pt-12 mb-48"
         >
           <Link to="/shop" className="btn-bracket text-lg hover:translate-x-2 transition-transform">
             GET ON THE LIST
@@ -69,7 +71,7 @@ export function Home() {
         </motion.div>
 
         {/* Minimal Information Footer */}
-        <div className="border-t border-white/5 py-12 flex flex-col md:flex-row justify-between items-end gap-8 opacity-30">
+        <div className="border-t border-[var(--color-border-subtle)] py-12 flex flex-col md:flex-row justify-between items-end gap-8 opacity-30">
           <div className="text-technical text-[7px] space-y-1">
             <p>DESIGNED IN KAMPALA</p>
             <p>GLOBAL DISTRIBUTION // SYSTEM 0.1</p>
@@ -82,7 +84,7 @@ export function Home() {
       </div>
 
       {/* Decorative Scanner Line */}
-      <div className="fixed top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent animate-scan z-50 pointer-events-none" />
+      <div className="fixed top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--color-text-primary)]/10 to-transparent animate-scan z-50 pointer-events-none" />
     </div>
   );
 }
