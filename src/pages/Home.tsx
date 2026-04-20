@@ -43,7 +43,7 @@ export function Home() {
                    loop 
                    muted 
                    playsInline 
-                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                   className="w-full h-full object-cover transition-all duration-700"
                  />
                </div>
              </div>             <p className="font-mono text-sm text-[var(--color-text-secondary)] leading-relaxed uppercase tracking-widest max-w-2xl">
