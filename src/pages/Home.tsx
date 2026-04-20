@@ -32,7 +32,7 @@ export function Home() {
                <h1 className="text-[clamp(4rem,12vw,10rem)] font-display uppercase tracking-tighter leading-[0.8] text-white">
                  UTOPIA UG
                </h1>
-               <div className="w-48 md:w-64 aspect-video overflow-hidden rounded-sm border border-white/10 mb-2 relative group">
+               <div className="w-full md:w-80 lg:w-[500px] aspect-video overflow-hidden rounded-sm border border-white/10 mb-2 relative group">
                  <div className="absolute inset-0 bg-[var(--color-accent-primary)]/10 mix-blend-overlay z-10" />
                  <video 
                    src="/hero-video.mp4" 
