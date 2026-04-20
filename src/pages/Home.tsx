@@ -26,7 +26,7 @@ export function Home() {
           >
              <div className="flex items-center gap-4 mb-8">
                <span className="h-[2px] w-12 bg-[var(--color-accent-primary)]" />
-               <span className="text-technical text-[10px] text-[var(--color-accent-primary)] font-bold tracking-[0.6em]">EST. 199X / KLA</span>
+               <span className="text-technical text-[10px] text-[var(--color-accent-primary)] font-bold tracking-[1em]">EST. 199X / KLA</span>
              </div>
              <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
                <h1 className="text-[clamp(4rem,12vw,10rem)] font-display uppercase tracking-tighter leading-[0.8] text-white">
