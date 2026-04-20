@@ -29,7 +29,7 @@ export function Home() {
                <span className="text-technical text-[10px] text-[var(--color-accent-primary)] font-bold tracking-[1em]">EST. 199X / KLA</span>
              </div>
              <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
-               <h1 className="text-[clamp(4rem,12vw,10rem)] font-display uppercase tracking-tighter leading-[0.8] text-white">
+               <h1 className="text-[clamp(4rem,12vw,10rem)] font-display uppercase tracking-tighter tracking-widest leading-[0.8] text-white">
                  UTOPIA UG
                </h1>
                <div className="w-full md:w-[450px] lg:w-[600px] aspect-video overflow-hidden rounded-sm border border-white/10 mb-2 relative group">
