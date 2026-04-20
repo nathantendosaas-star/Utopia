@@ -9,19 +9,19 @@
 
 @layer base {
   :root {
-    /* VIBRANT STREETWEAR PALETTE */
-    --color-bg-primary:        #0A0A0A; 
-    --color-bg-secondary:      #121212; 
-    --color-bg-tertiary:       #1A1A1A;
-    --color-surface-elevated:  #1F1F1F;
-    --color-text-primary:      #FFFFFF; 
-    --color-text-secondary:    #A0A0A0;
-    --color-text-muted:        #666666;
+    /* NEW LIGHT MODE — PAPER AESTHETIC */
+    --color-bg-primary:        #F5F5F3; 
+    --color-bg-secondary:      #EBEBE9; 
+    --color-bg-tertiary:       #E0E0DE;
+    --color-surface-elevated:  #FFFFFF;
+    --color-text-primary:      #1A1A1A; 
+    --color-text-secondary:    #555555;
+    --color-text-muted:        #888888;
     --color-accent-primary:    #FF3E00; /* Electric Orange */
-    --color-accent-hover:      #FF5E26;
-    --color-accent-muted:      #331200;
-    --color-border-subtle:     #222222;
-    --color-border-strong:     #444444;
+    --color-accent-hover:      #E03600;
+    --color-accent-muted:      #FFD4C2;
+    --color-border-subtle:     #E0E0DE;
+    --color-border-strong:     #CCCCCC;
     --color-overlay-film:      rgba(255, 62, 0, 0.05);
 
     /* TYPOGRAPHY */
@@ -74,19 +74,21 @@
   }
 
   [data-theme="dark"] {
-    --color-bg-primary:        #000000;
-    --color-bg-secondary:      #050505;
-    --color-bg-tertiary:       #0A0A0A;
-    --color-surface-elevated:  #0F0F0F;
-    --color-text-primary:      #FFFFFF;
-    --color-text-secondary:    #888888;
-    --color-text-muted:        #444444;
-    --color-accent-primary:    #FF3E00; 
+    /* NEW DARK MODE — REFINED PREVIOUS LOOK */
+    --color-bg-primary:        #0A0A0A; 
+    --color-bg-secondary:      #121212; 
+    --color-bg-tertiary:       #1A1A1A;
+    --color-surface-elevated:  #1F1F1F;
+    --color-text-primary:      #FFFFFF; 
+    --color-text-secondary:    #A0A0A0;
+    --color-text-muted:        #666666;
+    --color-accent-primary:    #FF3E00; /* Electric Orange */
     --color-accent-hover:      #FF5E26;
     --color-accent-muted:      #331200;
-    --color-border-subtle:     #1A1A1A;
-    --color-border-strong:     #333333;
+    --color-border-subtle:     #222222;
+    --color-border-strong:     #444444;
   }
+
 
   body {
     background-color: var(--color-bg-primary);
@@ -155,7 +157,8 @@
 
 /* Nav Atmosphere — Floating & Minimal */
 .nav-header {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--color-bg-primary);
+  opacity: 0.95;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--color-border-subtle);

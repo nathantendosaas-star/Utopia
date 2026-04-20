@@ -13,7 +13,7 @@ export function Home() {
       {/* Light Leak / Atmosphere Layer */}
       <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden">
         <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-[var(--color-accent-primary)]/10 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] rounded-full bg-white/5 blur-[80px]" />
+        <div className="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] rounded-full bg-[var(--color-text-primary)]/5 blur-[80px]" />
       </div>
 
       <div className="relative z-20 w-full max-w-[var(--container-max)] mx-auto px-[var(--gutter)] pt-[clamp(10rem,20vh,15rem)]">

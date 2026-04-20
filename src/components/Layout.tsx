@@ -11,7 +11,7 @@ import { QuickViewModal } from './QuickViewModal';
 export function Layout() {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const { cartCount, setCartOpen, setSearchOpen, setUserOpen } = useStore();
 
   useEffect(() => {
