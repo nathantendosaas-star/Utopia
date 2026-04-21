@@ -1,9 +1,20 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
+import { useStore } from '../context/StoreContext';
+import { products } from '../data/products';
 
 export function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { addToCart } = useStore();
+
+  const featuredItems = [
+    { id: '1', name: 'MH Shrunken Zip Hoodie', price: 40000, color: 'Vintage Navy', image: '/shirt-1.jpg' },
+    { id: '2', name: 'GH Shrunken Zip Hoodie', price: 40000, color: 'Jet Black', image: '/shirt-2.jpg' },
+    { id: '3', name: 'GH Knitted Long Sleeve Top', price: 40000, color: 'Jet Black', variants: '2 Colours', image: '/shirt-3.jpg' },
+    { id: '4', name: 'GH Knitted Long Sleeve Top', price: 40000, color: 'Espresso', variants: '2 Colours', image: '/shirt-4.jpg' },
+    { id: '5', name: 'GH Shrunken Sweatshirt', price: 40000, color: 'Jet Black', image: '/shirt-2.jpg' },
+  ];
 
   return (
     <div ref={containerRef} className="relative w-full transition-colors duration-[var(--duration-base)]">
@@ -56,23 +67,33 @@ export function Home() {
         </div>
       </section>
 
-      {/* 2. Featured Grid Section - As shown in the second screenshot */}
+      {/* 2. Featured Grid Section */}
       <section className="bg-white py-20 px-6 lg:px-10">
         <div className="max-w-[1800px] mx-auto flex flex-col items-center">
           
           {/* Horizontal Product Scroller/Grid */}
           <div className="w-full grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
-            {[
-              { id: '1', name: 'MH Shrunken Zip Hoodie', price: 40000, color: 'Vintage Navy', image: '/shirt-1.jpg' },
-              { id: '2', name: 'GH Shrunken Zip Hoodie', price: 40000, color: 'Jet Black', image: '/shirt-2.jpg' },
-              { id: '3', name: 'GH Knitted Long Sleeve Top', price: 40000, color: 'Jet Black', variants: '2 Colours', image: '/shirt-3.jpg' },
-              { id: '4', name: 'GH Knitted Long Sleeve Top', price: 40000, color: 'Espresso', variants: '2 Colours', image: '/shirt-4.jpg' },
-              { id: '5', name: 'GH Shrunken Sweatshirt', price: 40000, color: 'Jet Black', image: '/shirt-2.jpg' },
-            ].map((item) => (
-              <div key={item.id} className="flex flex-col gap-3 group cursor-pointer">
+            {featuredItems.map((item) => (
+              <div key={item.id} className="flex flex-col gap-3 group cursor-pointer relative">
                 <div className="aspect-[3/4] overflow-hidden bg-gray-50 relative">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute bottom-4 right-4 bg-white/80 p-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  
+                  {/* Quick Add Overlay */}
+                  <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-white/90 backdrop-blur-sm">
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const product = products.find(p => p.id === item.id);
+                        if (product) addToCart(product);
+                      }}
+                      className="w-full bg-black text-white py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors"
+                    >
+                      Quick Add +
+                    </button>
+                  </div>
+
+                  <div className="absolute top-4 right-4 bg-white/80 p-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                   </div>
                 </div>
@@ -89,7 +110,7 @@ export function Home() {
           </div>
 
           <Link to="/shop" className="bg-black text-white py-4 px-12 text-[12px] font-bold uppercase tracking-[0.2em] hover:opacity-80 transition-opacity">
-            Shop Heaton
+            Shop Utopia
           </Link>
         </div>
       </section>
@@ -107,5 +128,3 @@ export function Home() {
     </div>
   );
 }
-
-
