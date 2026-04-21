@@ -6,85 +6,106 @@ export function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div ref={containerRef} className="relative min-h-screen w-full bg-[var(--color-bg-primary)] overflow-hidden selection:bg-[var(--color-text-primary)] selection:text-[var(--color-bg-primary)] transition-colors duration-[var(--duration-base)]">
-      {/* Texture Layer */}
-      <div className="fixed inset-0 opacity-[0.15] pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] z-50" />
+    <div ref={containerRef} className="relative w-full transition-colors duration-[var(--duration-base)]">
       
-      {/* Light Leak / Atmosphere Layer */}
-      <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-[var(--color-accent-primary)]/10 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] rounded-full bg-[var(--color-text-primary)]/5 blur-[80px]" />
-      </div>
+      {/* 1. Hero Section - Full Height Atmospheric Image */}
+      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+        {/* Atmospheric Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/hero-img.jpg" 
+            alt="Heaton SS26" 
+            className="w-full h-full object-cover brightness-[0.85]"
+          />
+          <div className="absolute inset-0 bg-black/10" />
+        </div>
 
-      <div className="relative z-20 w-full max-w-[var(--container-max)] mx-auto px-[var(--gutter)] pt-[clamp(10rem,20vh,15rem)]">
-        
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-32">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.2, ease: "circOut" }}
-            className="w-full"
+        {/* Hero Content - Centered */}
+        <div className="relative z-10 flex flex-col items-center text-center text-white px-6">
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-[14px] font-bold uppercase tracking-[0.2em] mb-4"
           >
-             <div className="flex items-center gap-4 mb-8">
-               <span className="h-[2px] w-12 bg-[var(--color-accent-primary)]" />
-               <span className="text-technical text-[10px] text-[var(--color-accent-primary)] font-bold tracking-[1em]">EST. 199X / KLA</span>
-             </div>
-             <div className="flex flex-col lg:flex-row items-start lg:items-end gap-8 mb-12">
-               <h1 className="text-[clamp(4rem,12vw,10rem)] font-display uppercase tracking-tighter tracking-wide leading-[0.8] text-[var(--color-text-primary)]">
-                 <span className="block mb-4">UTOPIA</span>
-                 <span>UG</span>
-               </h1>
-               <div className="w-full aspect-video overflow-hidden rounded-sm border border-[var(--color-border-strong)]/20 mb-2 relative group">
-                 <div className="absolute inset-0 bg-[var(--color-accent-primary)]/5 mix-blend-overlay z-10" />
-                 <video 
-                   src="/hero-video.mp4" 
-                   autoPlay 
-                   loop 
-                   muted 
-                   playsInline 
-                   className="w-full h-full object-cover transition-all duration-700"
-                 />
-               </div>
-             </div>             <p className="font-mono text-sm text-[var(--color-text-secondary)] leading-relaxed uppercase tracking-widest max-w-2xl">
-                Raw utility meets Kampala spirit. Engineered for the Ugandan streets. A movement in analog minimalism and structural form.
-             </p>
+            Now Live
+          </motion.p>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-[clamp(2.5rem,8vw,5.5rem)] font-bold uppercase leading-none mb-10 tracking-tight"
+          >
+            <Link to="/shop" className="hover:opacity-70 transition-opacity">
+              UTOPIA UG
+            </Link>
+          </motion.h1>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="flex gap-4 sm:gap-6"
+          >
+            <Link to="/shop" className="min-w-[160px] bg-transparent border border-white text-white py-4 px-10 text-[12px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300">
+              Explore Collection
+            </Link>
+            <Link to="/about" className="min-w-[160px] bg-transparent border border-white text-white py-4 px-10 text-[12px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300">
+              Our Story
+            </Link>
           </motion.div>
         </div>
+      </section>
 
-        {/* Action Links — Minimal Bracketed */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.8 }}
-          className="flex flex-wrap gap-x-16 gap-y-8 items-center border-t border-[var(--color-border-subtle)] pt-12 mb-48"
-        >
-          <Link to="/shop" className="btn-bracket text-lg hover:translate-x-2 transition-transform">
-            GET ON THE LIST
-          </Link>
-          <Link to="/archives" className="btn-bracket text-lg hover:translate-x-2 transition-transform">
-            F&F ACCESS
-          </Link>
-          <Link to="/about" className="btn-bracket text-lg hover:translate-x-2 transition-transform">
-            EXPLORE LOOKBOOK
-          </Link>
-        </motion.div>
+      {/* 2. Featured Grid Section - As shown in the second screenshot */}
+      <section className="bg-white py-20 px-6 lg:px-10">
+        <div className="max-w-[1800px] mx-auto flex flex-col items-center">
+          
+          {/* Horizontal Product Scroller/Grid */}
+          <div className="w-full grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+            {[
+              { id: '1', name: 'MH Shrunken Zip Hoodie', price: 40000, color: 'Vintage Navy', image: '/shirt-1.jpg' },
+              { id: '2', name: 'GH Shrunken Zip Hoodie', price: 40000, color: 'Jet Black', image: '/shirt-2.jpg' },
+              { id: '3', name: 'GH Knitted Long Sleeve Top', price: 40000, color: 'Jet Black', variants: '2 Colours', image: '/shirt-3.jpg' },
+              { id: '4', name: 'GH Knitted Long Sleeve Top', price: 40000, color: 'Espresso', variants: '2 Colours', image: '/shirt-4.jpg' },
+              { id: '5', name: 'GH Shrunken Sweatshirt', price: 40000, color: 'Jet Black', image: '/shirt-2.jpg' },
+            ].map((item) => (
+              <div key={item.id} className="flex flex-col gap-3 group cursor-pointer">
+                <div className="aspect-[3/4] overflow-hidden bg-gray-50 relative">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute bottom-4 right-4 bg-white/80 p-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1 pr-4">
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-[11px] font-bold uppercase leading-tight max-w-[140px]">{item.name}</h3>
+                  </div>
+                  <p className="text-[11px] text-gray-500 font-medium">
+                    {item.color}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
 
-        {/* Minimal Information Footer */}
-        <div className="border-t border-[var(--color-border-subtle)] py-12 flex flex-col md:flex-row justify-between items-end gap-8 opacity-30">
-          <div className="text-technical text-[7px] space-y-1">
-            <p>DESIGNED IN KAMPALA</p>
-            <p>GLOBAL DISTRIBUTION // SYSTEM 0.1</p>
-          </div>
-          <div className="text-technical text-[7px] text-right">
-            <p>© 199X UTOPIA UG</p>
-            <p>ALL RIGHTS RESERVED</p>
-          </div>
+          <Link to="/shop" className="bg-black text-white py-4 px-12 text-[12px] font-bold uppercase tracking-[0.2em] hover:opacity-80 transition-opacity">
+            Shop Heaton
+          </Link>
         </div>
-      </div>
+      </section>
 
-      {/* Decorative Scanner Line */}
-      <div className="fixed top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--color-text-primary)]/10 to-transparent animate-scan z-50 pointer-events-none" />
+      {/* 3. Editorial Section */}
+      <section className="relative h-[80vh] w-full overflow-hidden">
+        <img 
+          src="/hero-desktop.png" 
+          alt="Technical Apparel" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+      </section>
+
     </div>
   );
 }
+
+

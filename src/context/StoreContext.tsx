@@ -38,8 +38,13 @@ interface StoreContextType {
   setSearchOpen: (isOpen: boolean) => void;
   isUserOpen: boolean;
   setUserOpen: (isOpen: boolean) => void;
+  isNavOpen: boolean;
+  setNavOpen: (isOpen: boolean) => void;
   quickViewProduct: Product | null;
   setQuickViewProduct: (product: Product | null) => void;
+  
+  currency: 'UGX' | 'USD' | 'GBP';
+  setCurrency: (currency: 'UGX' | 'USD' | 'GBP') => void;
   
   isLoading: boolean;
   setLoading: (isLoading: boolean) => void;
@@ -53,11 +58,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [isCartOpen, setCartOpen] = useState(false);
   const [isSearchOpen, setSearchOpen] = useState(false);
   const [isUserOpen, setUserOpen] = useState(false);
+  const [isNavOpen, setNavOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [currency, setCurrency] = useState<'UGX' | 'USD' | 'GBP'>('UGX');
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isCartOpen || isSearchOpen || isUserOpen || quickViewProduct) {
+    if (isCartOpen || isSearchOpen || isUserOpen || isNavOpen || quickViewProduct) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -65,7 +72,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isCartOpen, isSearchOpen, isUserOpen, quickViewProduct]);
+  }, [isCartOpen, isSearchOpen, isUserOpen, isNavOpen, quickViewProduct]);
 
   const addToCart = (product: Product) => {
     setCart(prev => {
@@ -134,7 +141,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       isCartOpen, setCartOpen,
       isSearchOpen, setSearchOpen,
       isUserOpen, setUserOpen,
+      isNavOpen, setNavOpen,
       quickViewProduct, setQuickViewProduct,
+      currency, setCurrency,
       isLoading, setLoading
     }}>
       {children}

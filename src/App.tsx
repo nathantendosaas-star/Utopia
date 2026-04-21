@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Collection } from './pages/Collection';
+import { ProductDetail } from './pages/ProductDetail';
 import { About } from './pages/About';
 import { Archives } from './pages/Archives';
 import { Contact } from './pages/Contact';
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="shop" element={<Collection />} />
+            <Route path="product/:id" element={<ProductDetail />} />
             <Route path="about" element={<About />} />
             <Route path="archives" element={<Archives />} />
             <Route path="contact" element={<Contact />} />

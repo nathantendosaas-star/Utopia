@@ -4,11 +4,6 @@ import { Layout } from '../components/Layout';
 
 const archives = [
   { id: 1, year: "2025", title: "Core Utility", images: ["/shirt-1.jpg", "/shirt-2.jpg", "/shirt-3.jpg"], description: "Initial systems for the concrete environment." },
-  { id: 2, year: "2025", title: "Grain & Steel", images: ["/shirt-4.jpg", "/hero-img.jpg", "/shirt-1.jpg"], description: "A study in raw textures and industrial edges." },
-  { id: 3, year: "2025", title: "Deconstructed", images: ["/shirt-2.jpg", "/shirt-4.jpg", "/hero-img.jpg"], description: "Stripping back to the structural essentials." },
-  { id: 4, year: "2025", title: "Negative Space", images: ["/shirt-3.jpg", "/shirt-1.jpg", "/shirt-2.jpg"], description: "The importance of what's left behind." },
-  { id: 5, year: "2025", title: "Industrial", images: ["/hero-img.jpg", "/shirt-3.jpg", "/shirt-4.jpg"], description: "Wearable architecture for the urban void." },
-  { id: 6, year: "2025", title: "The Void", images: ["/shirt-1.jpg", "/hero-img.jpg", "/shirt-2.jpg"], description: "Final explorations in deconstructed silence." },
 ];
 
 export function Archives() {
