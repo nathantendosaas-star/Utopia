@@ -16,7 +16,7 @@ export function Archives() {
           <span className="text-zinc-600">Archives</span>
         </h1>
         <p className="max-w-xl text-zinc-400 font-body leading-relaxed">
-          Deconstructed history. A chronological record of the Utopia uniform, from early Tokyo utility to New York street precision.
+          The evolution of the Utopia signature. A chronological record of our single-minded pursuit of the perfect shirt, crafted for the streets of Kampala.
         </p>
       </div>
 

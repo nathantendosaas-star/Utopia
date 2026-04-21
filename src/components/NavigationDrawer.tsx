@@ -8,12 +8,10 @@ export function NavigationDrawer() {
   const { isNavOpen, setNavOpen } = useStore();
 
   const links = [
-    { name: 'Shop All', path: '/shop' },
-    { name: '247', path: '/shop?cat=247' },
-    { name: 'New Arrivals', path: '/shop?new=true' },
-    { name: 'The Vault', path: '/archives' },
-    { name: 'Prestige', path: '/prestige' },
-    { name: 'About', path: '/about' },
+    { name: 'Shop The Piece', path: '/shop' },
+    { name: 'Archives', path: '/archives' },
+    { name: 'Our Story', path: '/about' },
+    { name: 'Contact', path: '/contact' },
   ];
 
   return (

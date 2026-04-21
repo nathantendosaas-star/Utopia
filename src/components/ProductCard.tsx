@@ -75,20 +75,27 @@ export function ProductCard({ product, index }: { product: Product, index: numbe
       </div>
 
       {/* Metadata */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5 px-1">
         <div className="flex justify-between items-start gap-4">
-          <h3 className="text-technical text-[11px] font-bold leading-tight group-hover:text-[var(--color-accent-primary)] transition-colors">
+          <h3 className="text-technical text-[10px] font-[800] leading-tight group-hover:opacity-60 transition-opacity">
             {product.name}
           </h3>
-          <p className="text-technical text-[11px] font-bold">
+          <p className="text-technical text-[10px] font-[800]">
             {formatPrice(product.price, currency)}
           </p>
         </div>
-        {product.colors && (
-          <p className="text-technical text-[9px] text-[var(--color-text-secondary)]">
-            {product.colors.length} COLOURS
-          </p>
-        )}
+        <div className="flex justify-between items-center">
+          {product.colors && (
+            <p className="text-technical text-[9px] text-[var(--color-text-muted)] font-medium">
+              {product.colors.length} {product.colors.length === 1 ? 'COLOUR' : 'COLOURS'}
+            </p>
+          )}
+          {product.category && (
+            <p className="text-technical text-[9px] text-[var(--color-text-muted)] font-medium">
+              {product.category}
+            </p>
+          )}
+        </div>
       </div>
     </motion.div>
   );

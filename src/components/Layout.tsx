@@ -59,66 +59,55 @@ export function Layout() {
           <div className="flex items-center justify-between">
             
             {/* Left Nav */}
-            <div className="flex items-center gap-6 flex-1">
+            <div className="flex items-center gap-8 flex-1">
               <button onClick={() => setNavOpen(true)} className="lg:hidden p-2 -ml-2">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
               </button>
-              <Link to="/shop" className="hidden lg:block text-[12px] font-bold uppercase tracking-wider hover:opacity-70 transition-opacity">
-                Shop
-              </Link>
-              <Link to="/shop?cat=247" className="hidden lg:block text-[12px] font-bold uppercase tracking-wider hover:opacity-70 transition-opacity flex items-center gap-1">
-                247 <Zap size={12} fill="currentColor" />
-              </Link>
+              <div className="hidden lg:flex items-center gap-8">
+                <Link to="/shop" className="text-nav hover:opacity-50 transition-opacity">
+                  Shop
+                </Link>
+                <Link to="/shop?cat=247" className="text-nav hover:opacity-50 transition-opacity flex items-center gap-1">
+                  247 <Zap size={11} fill="currentColor" />
+                </Link>
+                <Link to="/shop?cat=ss26" className="text-nav hover:opacity-50 transition-opacity">
+                  SS26
+                </Link>
+              </div>
             </div>
 
             {/* Center: Logo */}
-            <div className="flex justify-center">
-              <Link to="/" className="text-2xl font-black uppercase tracking-tighter">
+            <div className="flex justify-center flex-1">
+              <Link to="/" className="text-2xl font-[900] uppercase tracking-[-0.05em] leading-none">
                 UTOPIA UG
               </Link>
             </div>
 
             {/* Right Nav */}
-            <div className="flex items-center justify-end gap-6 flex-1">
-              <div className="hidden lg:flex items-center gap-6 mr-6">
-                <Link to="/retail" className="text-[12px] font-bold uppercase tracking-wider hover:opacity-70 transition-opacity">Retail</Link>
-                <Link to="/archives" className="text-[12px] font-bold uppercase tracking-wider hover:opacity-70 transition-opacity">The Vault</Link>
-                <Link to="/prestige" className="text-[12px] font-bold uppercase tracking-wider hover:opacity-70 transition-opacity">Prestige</Link>
-                <div className="relative group/currency">
-                  <button className="text-[12px] font-bold uppercase tracking-wider hover:opacity-70 transition-opacity flex items-center gap-1">
-                    {currency} <ChevronDown size={12} />
-                  </button>
-                  <div className="absolute right-0 top-full pt-2 opacity-0 group-hover/currency:opacity-100 transition-opacity pointer-events-none group-hover/currency:pointer-events-auto z-[200]">
-                    <div className="bg-white text-black border border-gray-100 p-2 flex flex-col gap-1 shadow-lg">
-                      {['UGX', 'USD', 'GBP'].map((c) => (
-                        <button 
-                          key={c}
-                          onClick={() => setCurrency(c as 'UGX' | 'USD' | 'GBP')}
-                          className={`text-[10px] font-bold uppercase px-3 py-1 hover:bg-gray-50 ${currency === c ? 'bg-gray-100' : ''}`}
-                        >
-                          {c}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+            <div className="flex items-center justify-end gap-8 flex-1">
+              <div className="hidden lg:flex items-center gap-8">
+                <Link to="/retail" className="text-nav hover:opacity-50 transition-opacity">Retail</Link>
+                <Link to="/archives" className="text-nav hover:opacity-50 transition-opacity">The Vault</Link>
+                <Link to="/prestige" className="text-nav hover:opacity-50 transition-opacity">Prestige</Link>
               </div>
               
-              <div className="flex items-center gap-5">
-                <button className="hover:opacity-70 transition-opacity">
-                  <Bookmark size={20} strokeWidth={1.5} />
+              <div className="flex items-center gap-6">
+                <button onClick={() => setSearchOpen(true)} className="hover:opacity-50 transition-opacity">
+                  <Search size={18} strokeWidth={2.5} />
                 </button>
-                <button onClick={() => setSearchOpen(true)} className="hover:opacity-70 transition-opacity">
-                  <Search size={20} strokeWidth={1.5} />
-                </button>
-                <button onClick={() => setUserOpen(true)} className="hover:opacity-70 transition-opacity">
-                  <User size={20} strokeWidth={1.5} />
+                <button onClick={() => setUserOpen(true)} className="hover:opacity-50 transition-opacity">
+                  <User size={18} strokeWidth={2.5} />
                 </button>
                 <button 
                   onClick={() => setCartOpen(true)}
-                  className="hover:opacity-70 transition-opacity flex items-center"
+                  className="hover:opacity-50 transition-opacity flex items-center relative"
                 >
-                  <ShoppingBag size={20} strokeWidth={1.5} />
+                  <ShoppingBag size={18} strokeWidth={2.5} />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-black text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
                 </button>
               </div>
             </div>

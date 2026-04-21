@@ -22,65 +22,64 @@ export function ProductDetail() {
   }, [id]);
 
   if (!product) return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <p className="text-technical text-[10px] animate-pulse">SEARCHING ARCHIVE...</p>
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <p className="text-technical text-[10px] animate-pulse text-black font-[800]">SEARCHING ARCHIVE...</p>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-primary)] pt-[clamp(6rem,12vw,10rem)]">
+    <div className="min-h-screen bg-white pt-[clamp(6rem,12vw,10rem)]">
       
       {/* Breadcrumbs */}
-      <div className="max-w-[1600px] mx-auto px-4 lg:px-16 mb-8 flex items-center gap-4 opacity-40">
-        <Link to="/shop" className="text-technical text-[9px] hover:text-white transition-colors">SHOP</Link>
+      <div className="max-w-[1800px] mx-auto px-6 lg:px-10 mb-8 flex items-center gap-4 opacity-40">
+        <Link to="/shop" className="text-technical text-[9px] hover:text-black transition-colors font-[800]">SHOP</Link>
         <ChevronRight size={10} />
-        <span className="text-technical text-[9px]">{product.category}</span>
+        <span className="text-technical text-[9px] font-[800]">{product.category}</span>
         <ChevronRight size={10} />
-        <span className="text-technical text-[9px]">{product.name}</span>
+        <span className="text-technical text-[9px] font-[800]">{product.name}</span>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-4 lg:px-16 pb-32">
+      <div className="max-w-[1800px] mx-auto px-6 lg:px-10 pb-32">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
           
           {/* 60% Left: Gallery */}
           <div className="flex-[1.5] flex flex-col gap-4">
-            <div className="aspect-[4/5] bg-[var(--color-bg-secondary)] border border-[var(--color-border-subtle)] overflow-hidden">
+            <div className="aspect-[4/5] bg-gray-50 border border-gray-100 overflow-hidden">
                <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
             </div>
             {product.secondaryImage && (
-              <div className="aspect-[4/5] bg-[var(--color-bg-secondary)] border border-[var(--color-border-subtle)] overflow-hidden">
+              <div className="aspect-[4/5] bg-gray-50 border border-gray-100 overflow-hidden">
                  <img src={product.secondaryImage} alt={`${product.name} back`} className="w-full h-full object-cover" />
               </div>
             )}
-            {/* Additional gallery images could be added here */}
           </div>
 
           {/* 40% Right: Sticky Info Rail */}
           <div className="flex-1 lg:sticky lg:top-[120px] h-fit flex flex-col gap-10">
             
             {/* Title & Price */}
-            <div className="flex flex-col gap-4 border-b border-[var(--color-border-subtle)] pb-8">
+            <div className="flex flex-col gap-4 border-b border-gray-100 pb-8">
               <div className="flex justify-between items-start gap-8">
-                <h1 className="text-[clamp(1.5rem,3vw,2.5rem)] font-display uppercase leading-none tracking-tight">
+                <h1 className="text-[clamp(1.5rem,3vw,2.5rem)] text-heading uppercase leading-[0.9] tracking-tight">
                   {product.name}
                 </h1>
-                <p className="text-xl font-mono tracking-wider">{formatPrice(product.price, currency)}</p>
+                <p className="text-xl font-[900] tracking-tight">{formatPrice(product.price, currency)}</p>
               </div>
-              <p className="text-technical text-[10px] text-[var(--color-text-secondary)] tracking-[0.2em]">
+              <p className="text-technical text-[10px] text-gray-400 tracking-[0.2em] font-[800]">
                 TAX INCLUDED // FREE SHIPPING OVER $200
               </p>
             </div>
 
             {/* Colors */}
             <div className="flex flex-col gap-4">
-              <p className="text-technical text-[10px] font-bold">COLOUR: <span className="text-[var(--color-text-secondary)] uppercase">{product.colors?.[0] || 'Original'}</span></p>
+              <p className="text-technical text-[10px] font-[800]">COLOUR: <span className="text-gray-400 uppercase font-medium">{product.colors?.[0] || 'Original'}</span></p>
               <div className="flex gap-3">
                 {product.colors?.map(color => (
                   <button 
                     key={color}
-                    className={`w-8 h-8 rounded-full border ${color === product.colors?.[0] ? 'border-[var(--color-accent-primary)] p-0.5' : 'border-transparent'}`}
+                    className={`w-8 h-8 rounded-full border ${color === product.colors?.[0] ? 'border-black p-0.5' : 'border-transparent'}`}
                   >
-                    <div className="w-full h-full rounded-full bg-white/10 border border-white/5" />
+                    <div className="w-full h-full rounded-full bg-gray-100 border border-black/5" />
                   </button>
                 ))}
               </div>
@@ -89,18 +88,18 @@ export function ProductDetail() {
             {/* Size Selector */}
             <div className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
-                <p className="text-technical text-[10px] font-bold">SELECT SIZE</p>
-                <button className="text-technical text-[9px] underline decoration-[var(--color-text-muted)] hover:decoration-white transition-colors">SIZE GUIDE</button>
+                <p className="text-technical text-[10px] font-[800]">SELECT SIZE</p>
+                <button className="text-technical text-[9px] underline decoration-gray-300 hover:decoration-black transition-colors font-[800]">SIZE GUIDE</button>
               </div>
               <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                 {(product.sizes || ['S', 'M', 'L', 'XL']).map(size => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`py-3 text-technical text-[11px] border transition-all
+                    className={`py-3 text-technical text-[11px] border transition-all font-[800]
                       ${selectedSize === size 
-                        ? 'border-white bg-white text-black font-bold' 
-                        : 'border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-white hover:text-white'
+                        ? 'border-black bg-black text-white' 
+                        : 'border-gray-100 text-gray-400 hover:border-black hover:text-black'
                       }
                     `}
                   >
@@ -112,9 +111,9 @@ export function ProductDetail() {
 
             {/* Model Stats */}
             {product.specs?.modelHeight && (
-              <div className="bg-[var(--color-bg-secondary)] border border-[var(--color-border-subtle)] p-6 flex flex-col gap-2">
-                <p className="text-technical text-[10px] text-[var(--color-text-secondary)]">MODEL MEASUREMENTS</p>
-                <p className="text-technical text-[11px] tracking-[0.2em]">
+              <div className="bg-gray-50 border border-gray-100 p-6 flex flex-col gap-2">
+                <p className="text-technical text-[10px] text-gray-400 font-[800] tracking-wider">MODEL MEASUREMENTS</p>
+                <p className="text-technical text-[11px] font-[800] tracking-[0.1em]">
                   HEIGHT: {product.specs.modelHeight} // WEARING SIZE: {product.specs.modelSize}
                 </p>
               </div>
@@ -124,28 +123,28 @@ export function ProductDetail() {
             <div className="flex flex-col gap-4">
               <button 
                 onClick={() => addToCart(product)}
-                className="w-full bg-white text-black py-6 text-technical text-[12px] font-bold tracking-[0.4em] hover:bg-[var(--color-accent-primary)] hover:text-white transition-all duration-500 transform active:scale-[0.98]"
+                className="btn-primary w-full py-6"
               >
                 ADD TO WARDROBE
               </button>
               
               {/* Prestige Points */}
-              <div className="flex items-center justify-center gap-3 text-[var(--color-accent-primary)] py-2 border border-[var(--color-accent-primary)]/20 bg-[var(--color-accent-primary)]/5">
+              <div className="flex items-center justify-center gap-3 text-black py-3 border border-gray-100 bg-gray-50">
                 <Star size={14} fill="currentColor" />
-                <span className="text-technical text-[9px] font-bold">EARN {Math.floor(product.price * 1.5)} PRESTIGE POINTS</span>
+                <span className="text-technical text-[9px] font-[800]">EARN {Math.floor(product.price * 1.5)} PRESTIGE POINTS</span>
               </div>
             </div>
 
             {/* Accordions */}
-            <div className="flex flex-col border-t border-[var(--color-border-subtle)] mt-8">
+            <div className="flex flex-col border-t border-gray-100 mt-8">
               
               {/* Product Details */}
-              <div className="border-b border-[var(--color-border-subtle)]">
+              <div className="border-b border-gray-100">
                 <button 
                   onClick={() => setOpenAccordion(openAccordion === 'details' ? null : 'details')}
                   className="w-full py-6 flex justify-between items-center group"
                 >
-                  <span className="text-technical text-[11px] group-hover:text-white transition-colors">PRODUCT DETAILS</span>
+                  <span className="text-technical text-[11px] font-[800] group-hover:opacity-50 transition-opacity">PRODUCT DETAILS</span>
                   <ChevronDown size={16} className={`transition-transform duration-500 ${openAccordion === 'details' ? 'rotate-180' : ''}`} />
                 </button>
                 <div 
@@ -154,25 +153,25 @@ export function ProductDetail() {
                   `}
                 >
                   <div className="flex flex-col gap-6">
-                    <p className="text-[var(--color-text-secondary)] leading-relaxed text-sm">
+                    <p className="text-gray-500 leading-relaxed text-sm font-medium">
                       {product.description || "The piece is engineered for maximum utility and style, featuring high-quality construction and attention to every detail."}
                     </p>
                     <div className="grid grid-cols-2 gap-y-4">
                        <div className="flex flex-col gap-1">
-                          <span className="text-technical text-[9px] text-[var(--color-text-muted)]">GSM</span>
-                          <span className="text-technical text-[10px]">{product.specs?.gsm || "220GSM"}</span>
+                          <span className="text-technical text-[9px] text-gray-400 font-medium">GSM</span>
+                          <span className="text-technical text-[10px] font-[800]">{product.specs?.gsm || "220GSM"}</span>
                        </div>
                        <div className="flex flex-col gap-1">
-                          <span className="text-technical text-[9px] text-[var(--color-text-muted)]">COMPOSITION</span>
-                          <span className="text-technical text-[10px]">{product.specs?.composition || "100% COTTON"}</span>
+                          <span className="text-technical text-[9px] text-gray-400 font-medium">COMPOSITION</span>
+                          <span className="text-technical text-[10px] font-[800]">{product.specs?.composition || "100% COTTON"}</span>
                        </div>
                        <div className="flex flex-col gap-1">
-                          <span className="text-technical text-[9px] text-[var(--color-text-muted)]">FIT</span>
-                          <span className="text-technical text-[10px]">{product.specs?.fit || "OVERSIZED"}</span>
+                          <span className="text-technical text-[9px] text-gray-400 font-medium">FIT</span>
+                          <span className="text-technical text-[10px] font-[800]">{product.specs?.fit || "OVERSIZED"}</span>
                        </div>
                        <div className="flex flex-col gap-1">
-                          <span className="text-technical text-[9px] text-[var(--color-text-muted)]">COUNTRY OF ORIGIN</span>
-                          <span className="text-technical text-[10px]">UGANDA</span>
+                          <span className="text-technical text-[9px] text-gray-400 font-medium">COUNTRY OF ORIGIN</span>
+                          <span className="text-technical text-[10px] font-[800]">UGANDA</span>
                        </div>
                     </div>
                   </div>
@@ -180,12 +179,12 @@ export function ProductDetail() {
               </div>
 
               {/* Shipping & Returns */}
-              <div className="border-b border-[var(--color-border-subtle)]">
+              <div className="border-b border-gray-100">
                 <button 
                   onClick={() => setOpenAccordion(openAccordion === 'shipping' ? null : 'shipping')}
                   className="w-full py-6 flex justify-between items-center group"
                 >
-                  <span className="text-technical text-[11px] group-hover:text-white transition-colors">SHIPPING & RETURNS</span>
+                  <span className="text-technical text-[11px] font-[800] group-hover:opacity-50 transition-opacity">SHIPPING & RETURNS</span>
                   <ChevronDown size={16} className={`transition-transform duration-500 ${openAccordion === 'shipping' ? 'rotate-180' : ''}`} />
                 </button>
                 <div 
@@ -195,17 +194,17 @@ export function ProductDetail() {
                 >
                   <ul className="flex flex-col gap-4">
                     <li className="flex gap-4 items-start">
-                      <Truck size={16} className="shrink-0 text-[var(--color-accent-primary)]" />
+                      <Truck size={16} className="shrink-0 text-black" />
                       <div>
-                        <p className="text-technical text-[10px] mb-1">FREE EXPRESS SHIPPING</p>
-                        <p className="text-[var(--color-text-secondary)] text-[12px]">ON ALL ORDERS OVER $200. DHL WORLDWIDE DELIVERY.</p>
+                        <p className="text-technical text-[10px] mb-1 font-[800]">FREE EXPRESS SHIPPING</p>
+                        <p className="text-gray-500 text-[12px] font-medium">ON ALL ORDERS OVER $200. DHL WORLDWIDE DELIVERY.</p>
                       </div>
                     </li>
                     <li className="flex gap-4 items-start">
-                      <ShieldCheck size={16} className="shrink-0 text-[var(--color-accent-primary)]" />
+                      <ShieldCheck size={16} className="shrink-0 text-black" />
                       <div>
-                        <p className="text-technical text-[10px] mb-1">14 DAY RETURNS</p>
-                        <p className="text-[var(--color-text-secondary)] text-[12px]">HASSLE-FREE RETURNS ON ALL UNWORN PIECES.</p>
+                        <p className="text-technical text-[10px] mb-1 font-[800]">14 DAY RETURNS</p>
+                        <p className="text-gray-500 text-[12px] font-medium">HASSLE-FREE RETURNS ON ALL UNWORN PIECES.</p>
                       </div>
                     </li>
                   </ul>

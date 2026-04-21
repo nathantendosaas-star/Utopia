@@ -4,15 +4,21 @@ import { Instagram, Twitter, Youtube } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-[#050505] text-white pt-24 pb-12 px-6 lg:px-10">
+    <footer className="bg-white text-black pt-24 pb-12 px-6 lg:px-10 border-t border-gray-100">
       <div className="max-w-[1800px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-12 mb-24">
           
-          {/* Logo */}
-          <div className="lg:col-span-1">
-            <Link to="/" className="text-3xl font-black uppercase tracking-tighter">
-              UTOPIA UG
-            </Link>
+          {/* Join Collective */}
+          <div className="lg:col-span-2 flex flex-col gap-8">
+            <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Join REPRESENT COLLECTIVE</h4>
+            <div className="flex flex-col gap-6">
+              <p className="text-technical text-[10px] text-gray-500 tracking-wider">EARN POINTS & REWARDS ON ALL PURCHASES</p>
+              <div className="flex flex-col gap-4">
+                <Link to="/signup" className="text-technical text-[11px] font-[900] border-b border-black inline-block self-start pb-1">
+                  SIGN UP
+                </Link>
+              </div>
+            </div>
           </div>
 
           {/* Links Columns */}
@@ -21,12 +27,12 @@ export function Footer() {
             { title: 'Company', links: ['About', 'Careers', 'Retail', 'Privacy', 'Cookies'] },
             { title: 'Social', links: ['Instagram', 'Twitter', 'YouTube', 'TikTok'] },
           ].map((col) => (
-            <div key={col.title} className="flex flex-col gap-6">
-              <h4 className="text-technical text-[10px] font-bold tracking-[0.2em] text-white/50">{col.title}</h4>
+            <div key={col.title} className="flex flex-col gap-8">
+              <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">{col.title}</h4>
               <ul className="flex flex-col gap-3">
                 {col.links.map((link) => (
                   <li key={link}>
-                    <Link to={`/${link.toLowerCase().replace(' ', '-')}`} className="text-[12px] font-medium text-white/70 hover:text-white transition-colors">
+                    <Link to={`/${link.toLowerCase().replace(' ', '-')}`} className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium">
                       {link}
                     </Link>
                   </li>
@@ -35,29 +41,41 @@ export function Footer() {
             </div>
           ))}
 
-          {/* Newsletter */}
-          <div className="flex flex-col gap-6">
-            <h4 className="text-technical text-[10px] font-bold tracking-[0.2em] text-white/50">Join the Collective</h4>
-            <div className="flex flex-col gap-3">
-              <input 
-                type="email" 
-                placeholder="EMAIL ADDRESS" 
-                className="bg-transparent border-b border-white/20 py-2 text-[12px] outline-none focus:border-white transition-colors"
-              />
-              <button className="text-technical text-[10px] font-bold tracking-[0.2em] hover:text-white/70 transition-colors text-left">
-                Sign Up
-              </button>
+          {/* Country / App */}
+          <div className="flex flex-col gap-8">
+            <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Country</h4>
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-2 cursor-pointer group">
+                <span className="text-technical text-[11px] font-[900]">UG / UGX</span>
+                <span className="text-[10px] group-hover:translate-x-1 transition-transform">→</span>
+              </div>
+              
+              <div className="flex flex-col gap-4 mt-4">
+                <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Download App</h4>
+                <div className="flex items-center gap-4">
+                  <span className="text-technical text-[10px] text-gray-400 font-bold border border-gray-200 px-3 py-1 cursor-pointer hover:border-black hover:text-black transition-all">iOS</span>
+                  <span className="text-technical text-[10px] text-gray-400 font-bold border border-gray-200 px-3 py-1 cursor-pointer hover:border-black hover:text-black transition-all">Android</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-white/40 uppercase tracking-[0.2em]">
-          <p>© 2026 UTOPIA UG CLOTHING LIMITED.</p>
-          <div className="flex gap-6">
-            <span>Terms & Conditions</span>
-            <span>Privacy Policy</span>
-            <span>Cookie Preferences</span>
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-8 pt-12 border-t border-gray-50">
+          <div className="flex flex-col gap-2 items-center lg:items-start">
+            <Link to="/" className="text-xl font-[900] uppercase tracking-[-0.05em] mb-4">
+              UTOPIA UG
+            </Link>
+            <p className="text-technical text-[9px] text-gray-400 font-bold">© UTOPIA CLOTHING LIMITED 2026</p>
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-6">
+            {['Terms & Conditions', 'Privacy Policy', 'Shipping Policy', 'Returns Policy', 'Cookie Preferences', 'Modern Slavery'].map((item) => (
+              <span key={item} className="text-technical text-[9px] text-gray-400 font-bold hover:text-black cursor-pointer transition-colors">
+                {item}
+              </span>
+            ))}
           </div>
         </div>
       </div>

@@ -18,59 +18,34 @@ export function Collection() {
     }, 800);
   }, [setLoading]);
 
-  const categories = ['All', 'Shirts', '247', 'Outerwear', 'Footwear'];
-  
-  const filteredProducts = selectedCategory === 'All' 
-    ? products 
-    : products.filter(p => (p.category || 'Uncategorized') === selectedCategory);
+  const filteredProducts = products;
 
   return (
     <div className="min-h-screen w-full bg-[var(--color-bg-primary)] pb-32 pt-[clamp(8rem,14vw,12rem)]">
       
       {/* Category Header */}
-      <div className="max-w-[1600px] mx-auto px-4 lg:px-16 mb-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 border-b border-[var(--color-border-subtle)] pb-12">
-          <div className="flex flex-col gap-4">
-             <div className="flex items-center gap-4">
-                <span className="h-[1px] w-12 bg-[var(--color-accent-primary)]" />
-                <span className="text-technical text-[10px] text-[var(--color-accent-primary)] font-bold tracking-[0.5em]">SYSTEM 0.1 // {selectedCategory.toUpperCase()}</span>
-             </div>
-             <h1 className="text-[clamp(3.5rem,10vw,8rem)] font-display text-white tracking-tighter leading-none uppercase">
-                DISCOVER ALL<span className="opacity-20 italic">.</span>
-             </h1>
+      <div className="max-w-[1800px] mx-auto px-6 lg:px-10 mb-16">
+        <div className="flex flex-col gap-6 border-b border-gray-100 pb-12">
+          <div className="flex items-center gap-4">
+             <span className="text-technical text-[10px] text-gray-400 font-[900] tracking-[0.3em]">ALL CLOTHING</span>
           </div>
-          
-          <div className="flex flex-wrap gap-8 sm:gap-12 overflow-x-auto pb-4 sm:pb-0 scrollbar-hide">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`text-technical text-[11px] font-bold tracking-[0.3em] transition-all whitespace-nowrap
-                  ${selectedCategory === cat 
-                    ? 'text-white border-b border-[var(--color-accent-primary)] pb-2' 
-                    : 'text-[var(--color-text-secondary)] hover:text-white'
-                  }
-                `}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+          <h1 className="text-[clamp(3.5rem,10vw,7rem)] font-[900] text-black tracking-[-0.04em] leading-[0.85] uppercase">
+             SHOP ALL
+          </h1>
         </div>
       </div>
 
       {/* Grid Container */}
-      <div className="max-w-[1600px] mx-auto px-4 lg:px-16">
+      <div className="max-w-[1800px] mx-auto px-6 lg:px-10">
         {isLoading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
              {[...Array(8)].map((_, i) => (
-                <div key={i} className="aspect-portrait bg-[var(--color-bg-secondary)] animate-pulse border border-[var(--color-border-subtle)]" />
+                <div key={i} className="aspect-portrait bg-gray-50 animate-pulse border border-gray-100" />
              ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16 sm:gap-y-24">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-12">
             {filteredProducts.map((item, index) => (
-              /* @ts-expect-error - key is a special prop */
               <ProductCard key={item.id} product={item} index={index} />
             ))}
           </div>
