@@ -7,6 +7,8 @@ import { TheSignature } from './pages/TheSignature';
 import { About } from './pages/About';
 import { Archives } from './pages/Archives';
 import { Contact } from './pages/Contact';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { TermsConditions } from './pages/TermsConditions';
 import { StoreProvider } from './context/StoreContext';
 
 export default function App() {
@@ -22,6 +24,8 @@ export default function App() {
             <Route path="about" element={<About />} />
             <Route path="archives" element={<Archives />} />
             <Route path="contact" element={<Contact />} />
+            <Route path="privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="terms-conditions" element={<TermsConditions />} />
             <Route path="collection" element={<Navigate to="/shop" replace />} />
           </Route>
         </Routes>

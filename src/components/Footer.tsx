@@ -62,10 +62,10 @@ export function Footer() {
           </div>
           
           <div className="flex flex-wrap justify-center gap-6">
-            {['Terms & Conditions', 'Privacy Policy'].map((item) => (
-              <span key={item} className="text-technical text-[9px] text-gray-400 font-bold hover:text-black cursor-pointer transition-colors uppercase">
-                {item}
-              </span>
+            {[{title: 'Terms & Conditions', path: '/terms-conditions'}, {title: 'Privacy Policy', path: '/privacy-policy'}].map((item) => (
+              <Link key={item.title} to={item.path} className="text-technical text-[9px] text-gray-400 font-bold hover:text-black cursor-pointer transition-colors uppercase">
+                {item.title}
+              </Link>
             ))}
           </div>
         </div>
