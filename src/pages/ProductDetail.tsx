@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Star, ShieldCheck, Truck, Zap, Info, Plus, Minus } from 'lucide-react';
+import { Star, ShieldCheck, Truck, Zap, Info, Plus, Minus, Ruler } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../lib/currency';
 import { Product, products } from '../data/products';
+import { Accordion } from '../components/Accordion';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -65,7 +66,7 @@ export function ProductDetail() {
         </div>
 
         {/* RIGHT: Technical Rail (40%) */}
-        <div className="lg:w-[40%] lg:sticky lg:top-0 h-fit lg:h-screen overflow-y-auto px-6 lg:px-12 py-32 flex flex-col gap-12 bg-white border-l border-gray-100">
+        <div className="lg:w-[40%] lg:sticky lg:top-0 h-fit lg:h-screen overflow-y-auto px-6 lg:px-12 py-32 flex flex-col gap-12 bg-white border-l border-gray-100 scrollbar-hide">
             
             {/* Header */}
             <div>
@@ -79,6 +80,23 @@ export function ProductDetail() {
                     </div>
                 </div>
             </div>
+
+            {/* Color Selector (If multiple) */}
+            {product.colors && product.colors.length > 0 && (
+                <div className="space-y-4">
+                    <p className="text-technical text-[10px] font-black uppercase">VARIANT // {product.colors[0]}</p>
+                    <div className="flex gap-3">
+                        {product.colors.map(color => (
+                            <button 
+                                key={color}
+                                className="w-8 h-8 rounded-full border border-gray-200 p-0.5 hover:border-black transition-colors"
+                            >
+                                <div className="w-full h-full rounded-full bg-black" />
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Technical Spec Sheet */}
             <div className="bg-black text-white p-8 space-y-8">
@@ -94,8 +112,8 @@ export function ProductDetail() {
                         { label: 'CONSTRUCTION', value: 'Double-Needle' }
                     ].map((spec, i) => (
                         <div key={i}>
-                            <p className="text-technical text-[9px] text-white/40 mb-1">{spec.label}</p>
-                            <p className="font-display font-bold text-lg tracking-tight uppercase">{spec.value}</p>
+                            <p className="text-technical text-[9px] text-white/40 mb-1 uppercase">{spec.label}</p>
+                            <p className="font-display font-bold text-lg tracking-tight uppercase">{spec.value || 'NOT SPECIFIED'}</p>
                         </div>
                     ))}
                 </div>
@@ -105,7 +123,10 @@ export function ProductDetail() {
             <div className="space-y-6">
                 <div className="flex justify-between items-center">
                     <p className="text-technical text-[10px] font-black">SELECT ARCHIVE SIZE</p>
-                    <button className="text-technical text-[9px] underline decoration-gray-300 hover:decoration-black transition-colors font-black">SIZE GUIDE</button>
+                    <button className="flex items-center gap-2 text-technical text-[9px] underline decoration-gray-300 hover:decoration-black transition-colors font-black">
+                        <Ruler size={12} />
+                        SIZE GUIDE
+                    </button>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                     {(product.sizes || ['XS', 'S', 'M', 'L', 'XL', 'XXL']).map(size => (
@@ -123,6 +144,15 @@ export function ProductDetail() {
                         </button>
                     ))}
                 </div>
+                {/* Model Measurements */}
+                {product.specs?.modelHeight && (
+                    <div className="pt-4 border-t border-gray-100">
+                        <p className="text-technical text-[9px] text-gray-400 mb-2 uppercase tracking-widest">MODEL STATS</p>
+                        <p className="text-[11px] font-bold text-black uppercase leading-relaxed">
+                            MODEL IS {product.specs.modelHeight} AND WEARING SIZE {product.specs.modelSize}
+                        </p>
+                    </div>
+                )}
             </div>
 
             {/* Add to Bag */}
@@ -136,8 +166,29 @@ export function ProductDetail() {
                 </button>
                 <div className="flex items-center justify-center gap-3 text-black py-4 border border-gray-100 bg-gray-50">
                     <Star size={14} fill="currentColor" />
-                    <span className="text-technical text-[9px] font-black uppercase">Earn {Math.floor(product.price * 1.5)} Prestige Points</span>
+                    <span className="text-technical text-[9px] font-black uppercase tracking-widest">Earn {Math.floor(product.price * 1.5)} Prestige Points</span>
                 </div>
+            </div>
+
+            {/* Info Accordions */}
+            <div className="border-t border-gray-100">
+                <Accordion title="PRODUCT DESCRIPTION" defaultOpen={true}>
+                    <p>{product.description}</p>
+                    {product.specs && (
+                        <ul className="mt-4 space-y-2 list-none p-0">
+                            {product.specs.composition && <li>— {product.specs.composition}</li>}
+                            {product.specs.gsm && <li>— {product.specs.gsm}</li>}
+                            {product.specs.fit && <li>— {product.specs.fit}</li>}
+                        </ul>
+                    )}
+                </Accordion>
+                <Accordion title="SHIPPING & RETURNS">
+                    <p>Global Express shipping via DHL Worldwide. 2-4 day delivery window for most international orders. Domestic shipping within Uganda takes 1-2 business days.</p>
+                    <p className="mt-4">Returns accepted within 14 days of delivery for unworn items in original packaging.</p>
+                </Accordion>
+                <Accordion title="SUSTAINABILITY">
+                    <p>Ethically sourced materials. Crafted with a focus on longevity and minimal environmental impact in our Kampala laboratory.</p>
+                </Accordion>
             </div>
 
             {/* Trust Badges */}
@@ -145,14 +196,14 @@ export function ProductDetail() {
                 <div className="flex gap-4 items-start">
                     <Truck size={20} className="shrink-0" />
                     <div>
-                        <p className="text-technical text-[9px] mb-1 font-black">GLOBAL EXPRESS</p>
+                        <p className="text-technical text-[9px] mb-1 font-black uppercase">GLOBAL EXPRESS</p>
                         <p className="text-gray-400 text-[11px] leading-tight">DHL Worldwide 2-4 day delivery.</p>
                     </div>
                 </div>
                 <div className="flex gap-4 items-start">
                     <ShieldCheck size={20} className="shrink-0" />
                     <div>
-                        <p className="text-technical text-[9px] mb-1 font-black">AUTHENTICITY</p>
+                        <p className="text-technical text-[9px] mb-1 font-black uppercase tracking-widest">AUTHENTICITY</p>
                         <p className="text-gray-400 text-[11px] leading-tight">Serialized lab verification.</p>
                     </div>
                 </div>

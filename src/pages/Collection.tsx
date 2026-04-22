@@ -1,22 +1,24 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useStore } from '../context/StoreContext';
+import { Filter, ChevronDown, LayoutGrid, List } from 'lucide-react';
+import { useStore, SortOption } from '../context/StoreContext';
 import { Product, products as allProducts } from '../data/products';
 import { ProductCard } from '../components/ProductCard';
+import { FilterDrawer } from '../components/FilterDrawer';
+import { fetchProducts } from '../lib/api';
 
 export function Collection() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
-  const { isLoading, setLoading } = useStore();
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const { isLoading, setLoading, filters, setFilters, sort, setSort } = useStore();
 
   useEffect(() => {
     setLoading(true);
-    // Simulate API fetch
-    setTimeout(() => {
-      setProducts(allProducts);
+    fetchProducts(filters, sort).then(data => {
+      setProducts(data);
       setLoading(false);
-    }, 800);
-  }, [setLoading]);
+    });
+  }, [filters, sort, setLoading]);
 
   const categories = useMemo(() => {
     const cats = allProducts.reduce((acc, p) => {
@@ -26,14 +28,21 @@ export function Collection() {
     return ['ALL', ...cats];
   }, []);
 
-  const filteredProducts = useMemo(() => {
-    if (selectedCategory === 'ALL') return products;
-    return products.filter(p => p.category === selectedCategory);
-  }, [products, selectedCategory]);
+  const selectedCategory = filters.categories.length === 0 ? 'ALL' : filters.categories[0];
+
+  const handleCategoryChange = (cat: string) => {
+    if (cat === 'ALL') {
+      setFilters({ ...filters, categories: [] });
+    } else {
+      setFilters({ ...filters, categories: [cat] });
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-[var(--color-bg-primary)] pb-32 pt-[clamp(8rem,14vw,12rem)]">
       
+      <FilterDrawer isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} />
+
       {/* Category Header */}
       <div className="max-w-[1800px] mx-auto px-6 lg:px-10 mb-12">
         <div className="flex flex-col gap-8 border-b border-gray-100 pb-12">
@@ -50,7 +59,7 @@ export function Collection() {
               {categories.map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setSelectedCategory(cat)}
+                  onClick={() => handleCategoryChange(cat)}
                   className={`text-technical text-[11px] font-[800] tracking-[0.2em] transition-all relative pb-1
                     ${selectedCategory === cat ? 'text-black' : 'text-gray-400 hover:text-black'}
                   `}
@@ -66,9 +75,32 @@ export function Collection() {
               ))}
             </div>
 
-            {/* Item Count */}
-            <div className="text-technical text-[10px] text-gray-400 font-bold tracking-[0.1em]">
-              SHOWING {filteredProducts.length} {filteredProducts.length === 1 ? 'PIECE' : 'PIECES'}
+            {/* Item Count & Sort/Refine */}
+            <div className="flex items-center gap-8">
+                <div className="hidden lg:block text-technical text-[10px] text-gray-400 font-bold tracking-[0.1em] mr-4">
+                  SHOWING {products.length} {products.length === 1 ? 'PIECE' : 'PIECES'}
+                </div>
+                
+                <button 
+                    onClick={() => setIsFilterOpen(true)}
+                    className="flex items-center gap-3 text-technical text-[11px] font-[900] tracking-widest border border-black px-6 py-3 hover:bg-black hover:text-white transition-all"
+                >
+                    <Filter size={14} /> REFINE
+                </button>
+                
+                <div className="relative group hidden sm:block">
+                    <select 
+                        value={sort}
+                        onChange={(e) => setSort(e.target.value as SortOption)}
+                        className="appearance-none bg-transparent text-technical text-[11px] font-[900] tracking-widest border border-black px-6 py-3 pr-10 cursor-pointer focus:outline-none"
+                    >
+                        <option value="latest">LATEST</option>
+                        <option value="price-low">PRICE: LOW-HIGH</option>
+                        <option value="price-high">PRICE: HIGH-LOW</option>
+                        <option value="popular">POPULAR</option>
+                    </select>
+                    <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
             </div>
           </div>
         </div>
@@ -88,30 +120,19 @@ export function Collection() {
             className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24"
           >
             <AnimatePresence mode="popLayout">
-              {products.map((item, index) => {
-                // If it's the tote bag, leave the space empty
-                if (item.image.includes('tote-bag.png')) {
-                  return <div key="space-filler" className="hidden md:block" />;
-                }
-                
-                // Only show products that match the category filter, 
-                // but we need to maintain the grid order for the "space" logic.
-                // For simplicity in this specific "2x3" request, we'll assume ALL category
-                // or handle the filtering while keeping the slot.
-                if (selectedCategory !== 'ALL' && item.category !== selectedCategory) return null;
-
-                return <ProductCard key={item.id} product={item} index={index} />;
-              })}
+              {products.map((item, index) => (
+                <ProductCard key={item.id} product={item} index={index} />
+              ))}
             </AnimatePresence>
           </motion.div>
         )}
 
         {/* Empty State */}
-        {!isLoading && filteredProducts.length === 0 && (
+        {!isLoading && products.length === 0 && (
           <div className="py-32 flex flex-col items-center justify-center border border-dashed border-[var(--color-border-subtle)]">
             <p className="text-technical text-[12px] text-[var(--color-text-secondary)] tracking-[0.2em]">NO PIECES FOUND IN THIS DEPARTMENT.</p>
             <button 
-              onClick={() => setSelectedCategory('ALL')}
+              onClick={() => handleCategoryChange('ALL')}
               className="mt-6 text-technical text-[10px] font-bold border-b border-black pb-1"
             >
               CLEAR FILTERS

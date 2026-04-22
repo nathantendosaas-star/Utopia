@@ -36,7 +36,13 @@ export function SearchModal() {
           aria-modal="true"
           aria-label="Search"
         >
-          <div className="max-w-[1280px] w-full mx-auto px-[clamp(1.25rem,5vw,4rem)] py-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+            className="max-w-[1280px] w-full mx-auto px-[clamp(1.25rem,5vw,4rem)] py-8"
+          >
             <div className="flex justify-end mb-8">
               <button onClick={() => setSearchOpen(false)} className="hover:text-[var(--color-accent-primary)] transition-colors" aria-label="Close search">
                 <X size={32} strokeWidth={1} />

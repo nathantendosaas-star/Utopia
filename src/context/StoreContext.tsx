@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { Product } from '../data/products';
 
 export interface CartItem {
@@ -17,7 +17,18 @@ export interface User {
   name: string;
   email: string;
   orders: Order[];
+  prestigePoints: number;
 }
+
+export interface Filters {
+  categories: string[];
+  sizes: string[];
+  colors: string[];
+  minPrice: number;
+  maxPrice: number;
+}
+
+export type SortOption = 'latest' | 'price-low' | 'price-high' | 'popular';
 
 interface StoreContextType {
   cart: CartItem[];
@@ -45,6 +56,16 @@ interface StoreContextType {
   
   currency: 'UGX' | 'USD' | 'GBP';
   setCurrency: (currency: 'UGX' | 'USD' | 'GBP') => void;
+
+  // Filtering & Sorting
+  filters: Filters;
+  setFilters: (filters: Filters) => void;
+  sort: SortOption;
+  setSort: (sort: SortOption) => void;
+  
+  // Prestige Loyalty
+  prestigePoints: number;
+  prestigeRank: string;
   
   isLoading: boolean;
   setLoading: (isLoading: boolean) => void;
@@ -62,6 +83,32 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [currency, setCurrency] = useState<'UGX' | 'USD' | 'GBP'>('UGX');
   const [isLoading, setLoading] = useState(false);
+
+  // Filtering & Sorting State
+  const [filters, setFilters] = useState<Filters>({
+    categories: [],
+    sizes: [],
+    colors: [],
+    minPrice: 0,
+    maxPrice: 1000000
+  });
+  const [sort, setSort] = useState<SortOption>('latest');
+
+  // Prestige Loyalty State
+  const [prestigePoints, setPrestigePoints] = useState(0);
+
+  const prestigeRank = useMemo(() => {
+    if (prestigePoints >= 10000) return 'PLATINUM';
+    if (prestigePoints >= 5000) return 'GOLD';
+    if (prestigePoints >= 1000) return 'SILVER';
+    return 'BRONZE';
+  }, [prestigePoints]);
+
+  useEffect(() => {
+    if (user) {
+      setPrestigePoints(user.prestigePoints);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (isCartOpen || isSearchOpen || isUserOpen || isNavOpen || quickViewProduct) {
@@ -101,7 +148,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setUser({
       name: "Demo User",
       email: "demo@utopia199x.com",
-      orders: []
+      orders: [],
+      prestigePoints: 450
     });
   };
 
@@ -115,7 +163,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       currentUser = {
         name: "Demo User",
         email: "demo@utopia199x.com",
-        orders: []
+        orders: [],
+        prestigePoints: 0
       };
     }
     
@@ -126,11 +175,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       total: cartTotal
     };
 
+    const earnedPoints = Math.floor(cartTotal * 1.5);
+
     setUser({
       ...currentUser,
-      orders: [newOrder, ...currentUser.orders]
+      orders: [newOrder, ...currentUser.orders],
+      prestigePoints: currentUser.prestigePoints + earnedPoints
     });
     
+    setPrestigePoints(prev => prev + earnedPoints);
     setCart([]);
   };
 
@@ -144,6 +197,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       isNavOpen, setNavOpen,
       quickViewProduct, setQuickViewProduct,
       currency, setCurrency,
+      filters, setFilters,
+      sort, setSort,
+      prestigePoints, prestigeRank,
       isLoading, setLoading
     }}>
       {children}
