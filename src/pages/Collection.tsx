@@ -77,15 +77,15 @@ export function Collection() {
       {/* Grid Container */}
       <div className="max-w-[1800px] mx-auto px-6 lg:px-10">
         {isLoading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-             {[...Array(8)].map((_, i) => (
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+             {[...Array(6)].map((_, i) => (
                 <div key={i} className="aspect-portrait bg-gray-50 animate-pulse border border-gray-100" />
              ))}
           </div>
         ) : (
           <motion.div 
             layout
-            className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-16"
+            className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-16"
           >
             <AnimatePresence mode="popLayout">
               {filteredProducts.map((item, index) => (

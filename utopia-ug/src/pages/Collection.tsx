@@ -87,13 +87,13 @@ export function Collection() {
 
       <div className="max-w-[1440px] mx-auto px-[clamp(1.25rem,5vw,6rem)]">
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-             {[...Array(8)].map((_, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+             {[...Array(6)].map((_, i) => (
                 <div key={i} className="aspect-square bg-white/5 animate-pulse border border-white/5" />
              ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-24">
             {filteredProducts.map((item, index) => (
               <CollectionItem key={item.id} item={item} index={index} />
             ))}

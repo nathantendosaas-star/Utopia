@@ -61,7 +61,7 @@ export function SearchModal() {
               ) : query.trim() !== '' && filteredProducts.length === 0 ? (
                 <p className="font-mono text-[var(--text-micro)] text-[var(--color-text-secondary)] uppercase tracking-[var(--tracking-widest)]">No results found for "{query}"</p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredProducts.map(product => (
                     <div key={product.id} className="group cursor-pointer flex flex-col gap-4">
                       <div className="relative aspect-[3/4] overflow-hidden border border-[var(--color-border-subtle)] bg-[#160E06]">
