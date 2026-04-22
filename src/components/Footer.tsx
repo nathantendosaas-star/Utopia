@@ -28,8 +28,8 @@ export function Footer() {
               <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Shipping</Link></li>
               <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Returns</Link></li>
               <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Size Guide</Link></li>
-              <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Terms & Conditions</Link></li>
-              <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Privacy Policy</Link></li>
+              <li><Link to="/terms-conditions" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Terms & Conditions</Link></li>
+              <li><Link to="/privacy-policy" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Privacy Policy</Link></li>
             </ul>
           </div>
 
