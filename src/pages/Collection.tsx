@@ -75,9 +75,9 @@ export function Collection() {
       </div>
 
       {/* Grid Container */}
-      <div className="max-w-[1800px] mx-auto px-6 lg:px-10">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         {isLoading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
              {[...Array(6)].map((_, i) => (
                 <div key={i} className="aspect-portrait bg-gray-50 animate-pulse border border-gray-100" />
              ))}
@@ -85,12 +85,23 @@ export function Collection() {
         ) : (
           <motion.div 
             layout
-            className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-16"
+            className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24"
           >
             <AnimatePresence mode="popLayout">
-              {filteredProducts.map((item, index) => (
-                <ProductCard key={item.id} product={item} index={index} />
-              ))}
+              {products.map((item, index) => {
+                // If it's the tote bag, leave the space empty
+                if (item.image.includes('tote-bag.png')) {
+                  return <div key="space-filler" className="hidden md:block" />;
+                }
+                
+                // Only show products that match the category filter, 
+                // but we need to maintain the grid order for the "space" logic.
+                // For simplicity in this specific "2x3" request, we'll assume ALL category
+                // or handle the filtering while keeping the slot.
+                if (selectedCategory !== 'ALL' && item.category !== selectedCategory) return null;
+
+                return <ProductCard key={item.id} product={item} index={index} />;
+              })}
             </AnimatePresence>
           </motion.div>
         )}

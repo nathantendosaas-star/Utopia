@@ -85,18 +85,22 @@ export function Collection() {
         </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-[clamp(1.25rem,5vw,6rem)]">
+      <div className="max-w-[1200px] mx-auto px-[clamp(1.25rem,5vw,6rem)]">
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
              {[...Array(6)].map((_, i) => (
                 <div key={i} className="aspect-square bg-white/5 animate-pulse border border-white/5" />
              ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-24">
-            {filteredProducts.map((item, index) => (
-              <CollectionItem key={item.id} item={item} index={index} />
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
+            {products.map((item, index) => {
+              if (item.image.includes('tote-bag.png')) {
+                return <div key="space-filler" className="hidden md:block" />;
+              }
+              if (selectedCategory !== 'All' && (item.category || 'Uncategorized') !== selectedCategory) return null;
+              return <CollectionItem key={item.id} item={item} index={index} />;
+            })}
           </div>
         )}
       </div>
