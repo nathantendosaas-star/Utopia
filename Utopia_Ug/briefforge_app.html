@@ -1,0 +1,1532 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BriefForge</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0ede8;
+    --muted: rgba(240,237,232,0.5);
+    --hint: rgba(240,237,232,0.28);
+    --accent: #d4a853;
+    --accent2: #e8c87a;
+    --danger: #e05757;
+    --success: #4caf7d;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+
+  #app { min-height: 100vh; }
+
+  /* ── AUTH SCREEN ── */
+  #auth-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212,168,83,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 80% 80%, rgba(212,168,83,0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .auth-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .auth-card {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    background: var(--surface);
+    border: 0.5px solid var(--border2);
+    border-radius: 2px;
+    padding: 3rem 2.5rem;
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.25rem;
+  }
+
+  .logo-tagline {
+    font-size: 13px;
+    color: var(--hint);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    font-weight: 400;
+  }
+
+  .tab-row {
+    display: flex;
+    gap: 0;
+    border: 0.5px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  .tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: #0a0a0a;
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--hint);
+    margin-bottom: 0.5rem;
+  }
+
+  .field input {
+    width: 100%;
+    background: var(--surface2);
+    border: 0.5px solid var(--border);
+    border-radius: 2px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .field input:focus { border-color: var(--accent); }
+  .field input::placeholder { color: var(--hint); }
+
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0a0a;
+    border: none;
+    border-radius: 2px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 13px;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    margin-top: 0.5rem;
+  }
+
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .auth-error {
+    background: rgba(224,87,87,0.1);
+    border: 0.5px solid rgba(224,87,87,0.3);
+    border-radius: 2px;
+    color: var(--danger);
+    font-size: 13px;
+    padding: 10px 14px;
+    margin-bottom: 1rem;
+    display: none;
+  }
+
+  .auth-divider {
+    text-align: center;
+    font-size: 11px;
+    color: var(--hint);
+    letter-spacing: 0.06em;
+    margin: 1.5rem 0 1.25rem;
+    position: relative;
+  }
+  .auth-divider::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 0.5px;
+    background: var(--border);
+  }
+  .auth-divider span { background: var(--surface); padding: 0 1rem; position: relative; }
+
+  /* ── DEMO BYPASS ── */
+  .demo-link {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: var(--hint);
+    margin-top: 1.5rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .demo-link:hover { color: var(--muted); }
+
+  /* ── MAIN APP ── */
+  #main-app { display: none; min-height: 100vh; flex-direction: column; }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 56px;
+    border-bottom: 0.5px solid var(--border);
+    position: sticky; top: 0; z-index: 10;
+    background: var(--bg);
+  }
+
+  .topbar-logo {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .usage-pill {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--hint);
+    background: var(--surface2);
+    border: 0.5px solid var(--border);
+    border-radius: 2px;
+    padding: 5px 10px;
+  }
+
+  .usage-pill.warn { color: var(--accent); border-color: rgba(212,168,83,0.3); }
+
+  .signout-btn {
+    background: none;
+    border: 0.5px solid var(--border);
+    border-radius: 2px;
+    color: var(--hint);
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .signout-btn:hover { border-color: var(--border2); color: var(--muted); }
+
+  .upgrade-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: 2px;
+    color: #0a0a0a;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 14px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .app-body {
+    display: flex;
+    flex: 1;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    border-right: 0.5px solid var(--border);
+    padding: 1.5rem 1rem;
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    margin-bottom: 2rem;
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--hint);
+    margin-bottom: 0.75rem;
+    padding: 0 0.5rem;
+  }
+
+  .brief-type-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background: none;
+    border: none;
+    border-radius: 2px;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 400;
+    padding: 9px 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.12s;
+  }
+
+  .brief-type-btn:hover { background: var(--surface); color: var(--text); }
+  .brief-type-btn.active { background: var(--surface2); color: var(--accent); border: 0.5px solid rgba(212,168,83,0.2); }
+
+  .brief-type-icon {
+    width: 28px; height: 28px;
+    background: var(--surface2);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .brief-type-btn.active .brief-type-icon { background: rgba(212,168,83,0.12); }
+
+  .history-item {
+    padding: 9px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .history-item:hover { background: var(--surface); }
+
+  .history-item-title {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .history-item-meta {
+    font-size: 10px;
+    color: var(--hint);
+    font-family: var(--font-mono);
+    margin-top: 2px;
+  }
+
+  /* ── MAIN PANEL ── */
+  .main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .generator-panel {
+    padding: 2.5rem 3rem;
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    flex: 1;
+  }
+
+  .panel-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .panel-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(212,168,83,0.08);
+    border: 0.5px solid rgba(212,168,83,0.2);
+    border-radius: 2px;
+    padding: 5px 10px;
+    margin-bottom: 1rem;
+  }
+
+  .panel-title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .panel-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── FORM ── */
+  .brief-form {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .form-field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--hint);
+    margin-bottom: 0.5rem;
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 2px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color 0.15s;
+    resize: vertical;
+  }
+
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus { border-color: rgba(212,168,83,0.5); }
+
+  .form-field input::placeholder,
+  .form-field textarea::placeholder { color: var(--hint); }
+
+  .form-field select { cursor: pointer; }
+  .form-field select option { background: #1a1a1a; }
+
+  .generate-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #0a0a0a;
+    border: none;
+    border-radius: 2px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    align-self: flex-start;
+    margin-top: 0.5rem;
+  }
+  .generate-btn:hover { background: var(--accent2); }
+  .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(0,0,0,0.2);
+    border-top-color: #0a0a0a;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── OUTPUT ── */
+  .output-section {
+    margin-top: 2.5rem;
+    border-top: 0.5px solid var(--border);
+    padding-top: 2rem;
+    display: none;
+  }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .output-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .output-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 2px;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 400;
+    padding: 7px 12px;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .action-btn:hover { border-color: var(--border2); color: var(--text); }
+  .action-btn svg { width: 13px; height: 13px; }
+
+  .brief-output {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 2px;
+    padding: 2rem 2.5rem;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-wrap;
+    font-family: var(--font-body);
+    min-height: 200px;
+    position: relative;
+  }
+
+  .cursor-blink {
+    display: inline-block;
+    width: 2px;
+    height: 16px;
+    background: var(--accent);
+    animation: blink 0.9s step-end infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .brief-output h2 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--accent);
+    margin: 1.5rem 0 0.5rem;
+    padding-top: 1.5rem;
+    border-top: 0.5px solid var(--border);
+  }
+  .brief-output h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+
+  .brief-output h3 {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 1.25rem 0 0.4rem;
+  }
+
+  .brief-output p { margin-bottom: 0.75rem; }
+  .brief-output ul, .brief-output ol { padding-left: 1.5rem; margin-bottom: 0.75rem; }
+  .brief-output li { margin-bottom: 0.4rem; }
+  .brief-output strong { color: var(--accent2); font-weight: 500; }
+
+  /* ── UPGRADE GATE ── */
+  .upgrade-gate {
+    background: linear-gradient(135deg, rgba(212,168,83,0.06) 0%, transparent 100%);
+    border: 0.5px solid rgba(212,168,83,0.25);
+    border-radius: 2px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+    display: none;
+  }
+  .upgrade-gate h3 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  .upgrade-gate p {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .upgrade-gate-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #0a0a0a;
+    border: none;
+    border-radius: 2px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 13px 28px;
+    cursor: pointer;
+  }
+
+  /* ── PRICING MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 0.5px solid var(--border2);
+    border-radius: 2px;
+    padding: 2.5rem;
+    max-width: 680px;
+    width: 100%;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1.25rem; right: 1.25rem;
+    background: none;
+    border: none;
+    color: var(--hint);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px 8px;
+  }
+  .modal-close:hover { color: var(--muted); }
+
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .modal-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .pricing-card {
+    background: var(--surface2);
+    border: 0.5px solid var(--border);
+    border-radius: 2px;
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  .pricing-card.featured {
+    border-color: rgba(212,168,83,0.4);
+    background: rgba(212,168,83,0.04);
+  }
+
+  .pricing-badge {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+    background: var(--accent);
+    border-radius: 2px;
+    padding: 3px 8px;
+    margin-bottom: 1rem;
+    display: inline-block;
+  }
+
+  .pricing-name {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--hint);
+    margin-bottom: 0.5rem;
+  }
+
+  .pricing-price {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .pricing-period {
+    font-size: 12px;
+    color: var(--hint);
+    margin-bottom: 1.25rem;
+  }
+
+  .pricing-features {
+    list-style: none;
+    margin-bottom: 1.5rem;
+  }
+
+  .pricing-features li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 5px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .pricing-features li::before {
+    content: '—';
+    color: var(--hint);
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .pricing-cta {
+    width: 100%;
+    background: var(--surface);
+    border: 0.5px solid var(--border2);
+    border-radius: 2px;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .pricing-cta:hover { background: var(--border); color: var(--text); }
+
+  .pricing-card.featured .pricing-cta {
+    background: var(--accent);
+    color: #0a0a0a;
+    border-color: var(--accent);
+  }
+  .pricing-card.featured .pricing-cta:hover { background: var(--accent2); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    background: var(--surface2);
+    border: 0.5px solid var(--border2);
+    border-radius: 2px;
+    color: var(--text);
+    font-size: 13px;
+    padding: 12px 18px;
+    z-index: 200;
+    display: none;
+    animation: slideup 0.2s ease;
+  }
+  @keyframes slideup { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .generator-panel { padding: 1.5rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-bg"></div>
+  <div class="auth-grid"></div>
+  <div class="auth-card">
+    <div class="logo">BriefForge</div>
+    <div class="logo-tagline">AI-Powered Creative Briefs</div>
+    <div class="tab-row">
+      <button class="tab-btn active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+      <button class="tab-btn" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+    </div>
+    <div class="auth-error" id="auth-error"></div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="auth-email" placeholder="you@company.com">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="auth-password" placeholder="••••••••">
+    </div>
+    <div class="field" id="name-field" style="display:none;">
+      <label>Name</label>
+      <input type="text" id="auth-name" placeholder="Your name">
+    </div>
+    <button class="btn-primary" id="auth-submit" onclick="handleAuth()">Sign In</button>
+    <div class="auth-divider"><span>or</span></div>
+    <button class="btn-primary" style="background: var(--surface2); color: var(--muted); border: 0.5px solid var(--border);" onclick="enterDemo()">Continue as Demo</button>
+    <span class="demo-link" onclick="enterDemo()">Skip auth — explore BriefForge as a demo user</span>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">BriefForge</div>
+    <div class="topbar-right">
+      <div class="usage-pill" id="usage-display">3 / 3 briefs free</div>
+      <button class="upgrade-btn" onclick="openPricing()">Upgrade ↑</button>
+      <button class="signout-btn" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Brief Types</div>
+        <button class="brief-type-btn active" onclick="selectType(this, 'brand')" data-type="brand">
+          <div class="brief-type-icon">◈</div>
+          Brand Identity
+        </button>
+        <button class="brief-type-btn" onclick="selectType(this, 'launch')" data-type="launch">
+          <div class="brief-type-icon">◎</div>
+          Product Launch
+        </button>
+        <button class="brief-type-btn" onclick="selectType(this, 'campaign')" data-type="campaign">
+          <div class="brief-type-icon">◉</div>
+          Marketing Campaign
+        </button>
+        <button class="brief-type-btn" onclick="selectType(this, 'ux')" data-type="ux">
+          <div class="brief-type-icon">⬡</div>
+          UX / Design
+        </button>
+        <button class="brief-type-btn" onclick="selectType(this, 'content')" data-type="content">
+          <div class="brief-type-icon">◫</div>
+          Content Strategy
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Recent Briefs</div>
+        <div id="history-list">
+          <div class="history-item">
+            <div class="history-item-title">Brand Brief — Masembe Group</div>
+            <div class="history-item-meta">today · brand</div>
+          </div>
+          <div class="history-item">
+            <div class="history-item-title">Launch Brief — KeyNote AI</div>
+            <div class="history-item-meta">yesterday · launch</div>
+          </div>
+          <div class="history-item">
+            <div class="history-item-title">Campaign — Q2 Growth Push</div>
+            <div class="history-item-meta">3 days ago · campaign</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN PANEL -->
+    <div class="main-panel">
+      <div class="generator-panel">
+
+        <div class="panel-header">
+          <div class="panel-type-badge" id="current-type-badge">◈ Brand Identity Brief</div>
+          <h1 class="panel-title" id="panel-title">Build your brand brief</h1>
+          <p class="panel-desc" id="panel-desc">Define your brand's core identity, voice, and positioning. Get a comprehensive brief your designer or agency can execute from directly.</p>
+        </div>
+
+        <!-- FORM -->
+        <div class="brief-form" id="brief-form">
+
+          <!-- BRAND FIELDS (default) -->
+          <div id="fields-brand">
+            <div class="form-row">
+              <div class="form-field">
+                <label>Brand / Company Name</label>
+                <input type="text" id="brand-name" placeholder="e.g. Masembe Group">
+              </div>
+              <div class="form-field">
+                <label>Industry</label>
+                <input type="text" id="brand-industry" placeholder="e.g. Luxury Real Estate">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label>Target Audience</label>
+                <input type="text" id="brand-audience" placeholder="e.g. HNW individuals aged 35–60">
+              </div>
+              <div class="form-field">
+                <label>Brand Tone</label>
+                <select id="brand-tone">
+                  <option value="luxury">Luxury / Premium</option>
+                  <option value="bold">Bold / Disruptive</option>
+                  <option value="minimal">Clean / Minimal</option>
+                  <option value="friendly">Warm / Approachable</option>
+                  <option value="technical">Technical / Authoritative</option>
+                  <option value="playful">Playful / Creative</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Core Offering</label>
+              <input type="text" id="brand-offering" placeholder="e.g. Premium residential developments in East Africa">
+            </div>
+            <div class="form-field">
+              <label>Brand Differentiator (what makes you different?)</label>
+              <textarea id="brand-diff" rows="3" placeholder="e.g. First developer in East Africa combining Scandinavian minimalism with local cultural heritage in design..."></textarea>
+            </div>
+          </div>
+
+          <div id="fields-launch" style="display:none;">
+            <div class="form-row">
+              <div class="form-field">
+                <label>Product Name</label>
+                <input type="text" id="launch-name" placeholder="e.g. BriefForge Pro">
+              </div>
+              <div class="form-field">
+                <label>Launch Date</label>
+                <input type="text" id="launch-date" placeholder="e.g. May 2025">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label>Target Customer</label>
+                <input type="text" id="launch-customer" placeholder="e.g. Solo founders & freelancers">
+              </div>
+              <div class="form-field">
+                <label>Price Point</label>
+                <input type="text" id="launch-price" placeholder="e.g. $19/month freemium">
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Problem Being Solved</label>
+              <textarea id="launch-problem" rows="3" placeholder="e.g. Founders spend hours writing creative briefs by hand..."></textarea>
+            </div>
+          </div>
+
+          <div id="fields-campaign" style="display:none;">
+            <div class="form-row">
+              <div class="form-field">
+                <label>Brand / Product</label>
+                <input type="text" id="campaign-brand" placeholder="e.g. Grid Motors Kla">
+              </div>
+              <div class="form-field">
+                <label>Campaign Goal</label>
+                <select id="campaign-goal">
+                  <option value="awareness">Brand Awareness</option>
+                  <option value="leads">Lead Generation</option>
+                  <option value="sales">Direct Sales</option>
+                  <option value="launch">Product Launch</option>
+                  <option value="retention">Customer Retention</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label>Budget Range</label>
+                <input type="text" id="campaign-budget" placeholder="e.g. $5,000–$10,000">
+              </div>
+              <div class="form-field">
+                <label>Timeline</label>
+                <input type="text" id="campaign-timeline" placeholder="e.g. 6 weeks, Q2 2025">
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Key Message</label>
+              <textarea id="campaign-message" rows="3" placeholder="e.g. Luxury EV ownership is now within reach in Kampala..."></textarea>
+            </div>
+          </div>
+
+          <div id="fields-ux" style="display:none;">
+            <div class="form-row">
+              <div class="form-field">
+                <label>Product / Feature Name</label>
+                <input type="text" id="ux-product" placeholder="e.g. BriefForge Dashboard">
+              </div>
+              <div class="form-field">
+                <label>Platform</label>
+                <select id="ux-platform">
+                  <option value="web">Web App</option>
+                  <option value="mobile">Mobile App</option>
+                  <option value="desktop">Desktop</option>
+                  <option value="both">Web + Mobile</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Primary User Persona</label>
+              <input type="text" id="ux-persona" placeholder="e.g. Non-technical founder, 25–40, uses SaaS tools daily">
+            </div>
+            <div class="form-field">
+              <label>Core User Problem</label>
+              <textarea id="ux-problem" rows="3" placeholder="e.g. Users can't find their generated briefs easily, leading to repeated generation..."></textarea>
+            </div>
+          </div>
+
+          <div id="fields-content" style="display:none;">
+            <div class="form-row">
+              <div class="form-field">
+                <label>Brand / Creator Name</label>
+                <input type="text" id="content-brand" placeholder="e.g. Nathan Builds">
+              </div>
+              <div class="form-field">
+                <label>Primary Channel</label>
+                <select id="content-channel">
+                  <option value="linkedin">LinkedIn</option>
+                  <option value="twitter">Twitter/X</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="newsletter">Newsletter</option>
+                  <option value="blog">Blog / SEO</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label>Target Audience</label>
+                <input type="text" id="content-audience" placeholder="e.g. Young African founders & builders">
+              </div>
+              <div class="form-field">
+                <label>Content Goal</label>
+                <select id="content-goal">
+                  <option value="authority">Build Authority</option>
+                  <option value="leads">Generate Leads</option>
+                  <option value="community">Grow Community</option>
+                  <option value="sales">Drive Sales</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Core Topics / Expertise</label>
+              <textarea id="content-topics" rows="3" placeholder="e.g. AI tools, solopreneur income, digital products, building in public..."></textarea>
+            </div>
+          </div>
+
+          <button class="generate-btn" id="generate-btn" onclick="generateBrief()">
+            <div class="spinner" id="btn-spinner"></div>
+            <span id="btn-text">Generate Brief →</span>
+          </button>
+        </div>
+
+        <!-- UPGRADE GATE -->
+        <div class="upgrade-gate" id="upgrade-gate">
+          <h3>You've used your 3 free briefs</h3>
+          <p>Upgrade to Pro for unlimited briefs, clean PDF exports, and all 5 brief types — billed monthly or annually.</p>
+          <button class="upgrade-gate-btn" onclick="openPricing()">View Plans →</button>
+        </div>
+
+        <!-- OUTPUT -->
+        <div class="output-section" id="output-section">
+          <div class="output-header">
+            <div class="output-title">Your Brief</div>
+            <div class="output-actions">
+              <button class="action-btn" onclick="copyBrief()">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M11 5V3a1 1 0 00-1-1H3a1 1 0 00-1 1v7a1 1 0 001 1h2"/></svg>
+                Copy
+              </button>
+              <button class="action-btn" onclick="downloadPDF()">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h10M8 3v7m0 0l-3-3m3 3l3-3"/></svg>
+                Download PDF
+              </button>
+            </div>
+          </div>
+          <div class="brief-output" id="brief-output"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PRICING MODAL -->
+<div class="modal-overlay" id="pricing-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closePricing()">×</button>
+    <div class="modal-title">Upgrade BriefForge</div>
+    <div class="modal-sub">Unlimited briefs. Clean PDF exports. Built for founders who move fast.</div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-name">Free</div>
+        <div class="pricing-price">$0</div>
+        <div class="pricing-period">forever</div>
+        <ul class="pricing-features">
+          <li>3 briefs per month</li>
+          <li>2 brief types</li>
+          <li>Watermarked PDF</li>
+          <li>Basic output</li>
+        </ul>
+        <button class="pricing-cta" onclick="closePricing()">Current Plan</button>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="pricing-name">Pro</div>
+        <div class="pricing-price">$19</div>
+        <div class="pricing-period">per month · or $190/yr</div>
+        <ul class="pricing-features">
+          <li>Unlimited briefs</li>
+          <li>All 5 brief types</li>
+          <li>Clean PDF export</li>
+          <li>Brief history & search</li>
+          <li>Priority generation</li>
+        </ul>
+        <button class="pricing-cta" onclick="handleStripeCheckout('pro')">Upgrade to Pro →</button>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-name">Agency</div>
+        <div class="pricing-price">$49</div>
+        <div class="pricing-period">per month · or $490/yr</div>
+        <ul class="pricing-features">
+          <li>Everything in Pro</li>
+          <li>White-label PDF export</li>
+          <li>Team sharing links</li>
+          <li>5 team seats</li>
+          <li>Client brief portal</li>
+        </ul>
+        <button class="pricing-cta" onclick="handleStripeCheckout('agency')">Upgrade to Agency →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const BRIEF_TYPES = {
+  brand: {
+    icon: '◈', label: 'Brand Identity Brief',
+    title: 'Build your brand brief',
+    desc: 'Define your brand\'s core identity, voice, and positioning. Get a comprehensive brief your designer or agency can execute from directly.',
+    prompt: (d) => `Generate a comprehensive, professional Brand Identity Brief with the following details:
+
+Brand Name: ${d['brand-name'] || 'Not specified'}
+Industry: ${d['brand-industry'] || 'Not specified'}
+Target Audience: ${d['brand-audience'] || 'Not specified'}
+Brand Tone: ${d['brand-tone'] || 'Not specified'}
+Core Offering: ${d['brand-offering'] || 'Not specified'}
+Key Differentiator: ${d['brand-diff'] || 'Not specified'}
+
+Create a detailed, structured brief with these sections:
+1. Brand Overview & Vision
+2. Brand Positioning Statement
+3. Target Audience Deep Dive
+4. Brand Voice & Tone Guidelines
+5. Visual Identity Direction (colors, typography, imagery style)
+6. Key Brand Messages
+7. Competitive Landscape & Differentiation
+8. Brand Do's and Don'ts
+
+Write this as a professional creative brief that could be handed to a design agency or brand strategist. Be specific, actionable, and comprehensive. Use real strategic thinking.`
+  },
+  launch: {
+    icon: '◎', label: 'Product Launch Brief',
+    title: 'Plan your product launch',
+    desc: 'Coordinate every element of your launch with a structured brief that covers positioning, channels, messaging, and success metrics.',
+    prompt: (d) => `Generate a comprehensive Product Launch Brief:
+
+Product Name: ${d['launch-name'] || 'Not specified'}
+Launch Date: ${d['launch-date'] || 'Not specified'}
+Target Customer: ${d['launch-customer'] || 'Not specified'}
+Price Point: ${d['launch-price'] || 'Not specified'}
+Problem Being Solved: ${d['launch-problem'] || 'Not specified'}
+
+Create a detailed launch brief covering:
+1. Product Overview & Value Proposition
+2. Target Customer Profile
+3. Positioning & Messaging Framework
+4. Go-to-Market Strategy
+5. Launch Channel Plan (organic, paid, partnerships)
+6. Pre-Launch, Launch Day & Post-Launch timeline
+7. Success Metrics & KPIs
+8. Risk Factors & Contingencies
+
+Be actionable and specific. This brief should be executable by a solo founder or small team.`
+  },
+  campaign: {
+    icon: '◉', label: 'Marketing Campaign Brief',
+    title: 'Brief your next campaign',
+    desc: 'From goal to creative execution — build a campaign brief that keeps every stakeholder aligned and every dollar accountable.',
+    prompt: (d) => `Generate a professional Marketing Campaign Brief:
+
+Brand / Product: ${d['campaign-brand'] || 'Not specified'}
+Campaign Goal: ${d['campaign-goal'] || 'Not specified'}
+Budget: ${d['campaign-budget'] || 'Not specified'}
+Timeline: ${d['campaign-timeline'] || 'Not specified'}
+Key Message: ${d['campaign-message'] || 'Not specified'}
+
+Include these sections:
+1. Campaign Objective & Success Definition
+2. Target Audience & Psychographic Profile
+3. Core Message & Creative Direction
+4. Channel Strategy & Budget Allocation
+5. Creative Assets Required
+6. Content Calendar Overview
+7. KPIs & Measurement Framework
+8. Approval Process & Stakeholders`
+  },
+  ux: {
+    icon: '⬡', label: 'UX / Design Brief',
+    title: 'Define your design challenge',
+    desc: 'Give your designer or team a precise brief that covers user needs, constraints, and success criteria before a single pixel is designed.',
+    prompt: (d) => `Generate a comprehensive UX/Design Brief:
+
+Product/Feature: ${d['ux-product'] || 'Not specified'}
+Platform: ${d['ux-platform'] || 'Not specified'}
+User Persona: ${d['ux-persona'] || 'Not specified'}
+Core Problem: ${d['ux-problem'] || 'Not specified'}
+
+Cover:
+1. Design Challenge Statement
+2. User Persona & Jobs to Be Done
+3. Current State & Pain Points
+4. Desired User Outcomes
+5. Design Principles for This Project
+6. Constraints & Technical Requirements
+7. Key Screens / Flows to Design
+8. Success Metrics & Usability Goals
+9. Inspiration References & Aesthetic Direction`
+  },
+  content: {
+    icon: '◫', label: 'Content Strategy Brief',
+    title: 'Build your content engine',
+    desc: 'A 90-day content strategy brief that defines your pillars, formats, cadence, and growth metrics — ready to hand off or execute.',
+    prompt: (d) => `Generate a comprehensive Content Strategy Brief:
+
+Brand/Creator: ${d['content-brand'] || 'Not specified'}
+Primary Channel: ${d['content-channel'] || 'Not specified'}
+Target Audience: ${d['content-audience'] || 'Not specified'}
+Content Goal: ${d['content-goal'] || 'Not specified'}
+Core Topics: ${d['content-topics'] || 'Not specified'}
+
+Include:
+1. Content Mission Statement
+2. Audience Profile & Content Needs
+3. Content Pillars (3-5 core themes with rationale)
+4. Content Formats & Channel-Specific Strategy
+5. 30/60/90-Day Content Roadmap
+6. Posting Cadence & Production Workflow
+7. Tone of Voice & Style Guide
+8. Growth KPIs & Analytics Setup
+9. Content Repurposing Framework`
+  }
+};
+
+let currentType = 'brand';
+let briefsUsed = 0;
+const MAX_FREE_BRIEFS = 3;
+let currentBriefText = '';
+let isLoggedIn = false;
+let authMode = 'signin';
+
+function switchTab(mode) {
+  authMode = mode;
+  document.getElementById('tab-signin').classList.toggle('active', mode === 'signin');
+  document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+  document.getElementById('name-field').style.display = mode === 'signup' ? 'block' : 'none';
+  document.getElementById('auth-submit').textContent = mode === 'signin' ? 'Sign In' : 'Create Account';
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+async function handleAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const btn = document.getElementById('auth-submit');
+  const errEl = document.getElementById('auth-error');
+
+  if (!email || !password) {
+    errEl.textContent = 'Please enter your email and password.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = authMode === 'signin' ? 'Signing in...' : 'Creating account...';
+
+  // Simulate auth (replace with Firebase SDK in production)
+  await new Promise(r => setTimeout(r, 900));
+
+  // Demo: always succeed
+  enterApp(email.split('@')[0]);
+}
+
+function enterDemo() {
+  enterApp('Builder');
+}
+
+function enterApp(name) {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'flex';
+  document.getElementById('main-app').style.flexDirection = 'column';
+  isLoggedIn = true;
+  updateUsageDisplay();
+}
+
+function signOut() {
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('main-app').style.display = 'none';
+  briefsUsed = 0;
+  updateUsageDisplay();
+}
+
+function selectType(btn, type) {
+  document.querySelectorAll('.brief-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentType = type;
+  const config = BRIEF_TYPES[type];
+  document.getElementById('current-type-badge').textContent = config.icon + ' ' + config.label;
+  document.getElementById('panel-title').textContent = config.title;
+  document.getElementById('panel-desc').textContent = config.desc;
+  document.querySelectorAll('[id^="fields-"]').forEach(el => el.style.display = 'none');
+  document.getElementById('fields-' + type).style.display = 'block';
+  document.getElementById('output-section').style.display = 'none';
+  document.getElementById('upgrade-gate').style.display = 'none';
+}
+
+function updateUsageDisplay() {
+  const el = document.getElementById('usage-display');
+  const remaining = MAX_FREE_BRIEFS - briefsUsed;
+  el.textContent = remaining + ' / ' + MAX_FREE_BRIEFS + ' briefs free';
+  el.classList.toggle('warn', remaining <= 1);
+}
+
+function getFormData() {
+  const inputs = document.querySelectorAll('#fields-' + currentType + ' input, #fields-' + currentType + ' select, #fields-' + currentType + ' textarea');
+  const data = {};
+  inputs.forEach(el => { data[el.id] = el.value; });
+  return data;
+}
+
+async function generateBrief() {
+  if (briefsUsed >= MAX_FREE_BRIEFS) {
+    document.getElementById('upgrade-gate').style.display = 'block';
+    document.getElementById('output-section').style.display = 'none';
+    return;
+  }
+
+  const btn = document.getElementById('generate-btn');
+  const spinner = document.getElementById('btn-spinner');
+  const btnText = document.getElementById('btn-text');
+
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  btnText.textContent = 'Generating...';
+
+  const outputSection = document.getElementById('output-section');
+  const outputEl = document.getElementById('brief-output');
+  outputSection.style.display = 'block';
+  outputEl.innerHTML = '<span class="cursor-blink"></span>';
+
+  const formData = getFormData();
+  const config = BRIEF_TYPES[currentType];
+  const prompt = config.prompt(formData);
+
+  currentBriefText = '';
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1800,
+        stream: true,
+        messages: [
+          {
+            role: 'user',
+            content: prompt + '\n\nFormat with clear section headers using ## for main sections and ### for subsections. Make it genuinely useful, specific, and professional — not generic. Around 800-1000 words.'
+          }
+        ]
+      })
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    outputEl.innerHTML = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+              currentBriefText += parsed.delta.text;
+              outputEl.innerHTML = renderMarkdown(currentBriefText) + '<span class="cursor-blink"></span>';
+              outputEl.scrollTop = outputEl.scrollHeight;
+            }
+          } catch(e) {}
+        }
+      }
+    }
+
+    outputEl.innerHTML = renderMarkdown(currentBriefText);
+    briefsUsed++;
+    updateUsageDisplay();
+
+    // Save to history sidebar
+    addToHistory(formData, currentType);
+
+  } catch (err) {
+    outputEl.innerHTML = '<p style="color:var(--danger)">Generation failed. Check your API connection and try again.</p>';
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  spinner.style.display = 'none';
+  btnText.textContent = 'Generate Brief →';
+}
+
+function renderMarkdown(text) {
+  return text
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, m => '<ul>' + m + '</ul>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<[hul])/gm, '')
+    .replace(/<p><\/p>/g, '');
+}
+
+function addToHistory(data, type) {
+  const config = BRIEF_TYPES[type];
+  const name = data[Object.keys(data)[0]] || 'Untitled';
+  const list = document.getElementById('history-list');
+  const item = document.createElement('div');
+  item.className = 'history-item';
+  item.innerHTML = `
+    <div class="history-item-title">${config.label.replace(' Brief','')} — ${name}</div>
+    <div class="history-item-meta">just now · ${type}</div>
+  `;
+  list.prepend(item);
+}
+
+function copyBrief() {
+  const text = currentBriefText;
+  navigator.clipboard.writeText(text).then(() => showToast('Brief copied to clipboard'));
+}
+
+function downloadPDF() {
+  const content = document.getElementById('brief-output').innerHTML;
+  const win = window.open('', '_blank');
+  win.document.write(`
+    <html><head><title>BriefForge — Brief</title>
+    <style>
+      body { font-family: Georgia, serif; max-width: 780px; margin: 3rem auto; color: #1a1a1a; line-height: 1.8; }
+      h1 { font-size: 28px; color: #8B6914; border-bottom: 1px solid #e0d5c0; padding-bottom: 1rem; }
+      h2 { font-size: 20px; color: #8B6914; margin-top: 2rem; }
+      h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-top: 1.5rem; }
+      strong { color: #5a3e10; }
+      .watermark { position: fixed; bottom: 1rem; right: 1rem; font-size: 11px; color: #ccc; font-family: sans-serif; }
+    </style></head>
+    <body>
+    <h1>BriefForge — ${BRIEF_TYPES[currentType].label}</h1>
+    ${content}
+    <div class="watermark">Generated by BriefForge · Free Plan</div>
+    </body></html>
+  `);
+  win.document.close();
+  win.print();
+  showToast('PDF ready to print/save');
+}
+
+function openPricing() { document.getElementById('pricing-modal').classList.add('open'); }
+function closePricing() { document.getElementById('pricing-modal').classList.remove('open'); }
+
+function handleStripeCheckout(plan) {
+  showToast('Stripe checkout — connect your Stripe keys to activate');
+  closePricing();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+document.getElementById('pricing-modal').addEventListener('click', function(e) {
+  if (e.target === this) closePricing();
+});
+
+document.getElementById('auth-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleAuth();
+});
+</script>
+</body>
+</html>

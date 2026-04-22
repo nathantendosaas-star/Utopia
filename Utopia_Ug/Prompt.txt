@@ -1,0 +1,417 @@
+TASK: Full UI/UX design audit of Represent Clo public website. Scrape the site, crawl all accessible internal links, and write a rebuild-ready findings report.
+
+TARGET:
+https://row.representclo.com/
+
+OUTPUT:
+@Findings.txt
+
+MODE:
+STRICT
+NO GUESSING
+SPEC-LEVEL DETAIL
+FAIL IF INCOMPLETE
+
+OBJECTIVE:
+Crawl the full public website experience on Represent Clo and analyze it as a design system teardown. Treat this like a full reverse-engineering pass of the site’s UI, UX, component library, layout logic, visual language, product presentation, motion patterns, responsiveness, and ecommerce structure.
+
+This is not a summary.
+This is not a brand overview.
+This is a spec-level design audit that should make it possible for a designer or developer to recreate the site’s look, feel, structure, and interaction model without revisiting the original website.
+
+PRIMARY FOCUS:
+- design language
+- visual identity
+- layout structure
+- navigation patterns
+- ecommerce browsing flow
+- product presentation
+- product card system
+- collection pages
+- PDP structure
+- cart/checkout touchpoints if publicly accessible
+- footer and trust system
+- responsive behavior
+- motion / interaction details
+- recurring UI patterns
+
+SCOPE:
+Start at the root domain and follow every accessible internal link you can reach from the public website.
+
+Include:
+- homepage / landing pages
+- category pages
+- collection pages
+- product listing pages
+- product detail pages
+- editorial pages
+- campaign pages
+- lookbook pages
+- about / brand pages
+- FAQ / support pages
+- shipping / returns / policy pages if linked publicly
+- cart / checkout entry pages if publicly accessible
+- header-linked and footer-linked pages when relevant
+
+Exclude:
+- external domains
+- private / account-only areas unless publicly reachable
+- unreachable or blocked content unless you explicitly note the access issue
+- anything outside the public web experience
+
+RULES:
+- Do not guess.
+- Do not invent details.
+- Only document what is directly observed.
+- If something cannot be verified, mark it as unknown / not observed.
+- If a pattern repeats, mark it as recurring.
+- If a standard ecommerce pattern is implemented in a distinctive way, explain the distinction.
+- Use precise, developer-friendly language.
+- Prioritize structure, hierarchy, spacing, component composition, and interaction behavior.
+- Do not write a shallow summary. The report must be dense and implementation-ready.
+
+WORKFLOW:
+
+STEP 1 — CRAWL
+- Fetch the root URL.
+- Recursively follow all internal links.
+- Traverse the site deeply enough to capture the full public experience.
+- Log every visited URL.
+- Deduplicate URLs.
+- Track redirects, blocked pages, and errors.
+- Include only pages that are part of the public design system or ecommerce flow.
+
+STEP 2 — CLASSIFY PAGES
+For every visited page, record:
+- page title
+- URL
+- page type
+- purpose
+- role in the user journey
+
+Classify pages into:
+- landing
+- category
+- collection
+- listing
+- product_detail
+- editorial
+- support
+- policy
+- cart / commerce
+- brand / about
+
+STEP 3 — GLOBAL SYSTEM EXTRACTION
+Extract the site-wide design system from the public pages:
+- navigation system
+- layout / grid system
+- typography system
+- color system
+- spacing system
+- imagery system
+- component patterns
+- motion patterns
+- content hierarchy
+- ecommerce pattern language
+- trust / reassurance system
+
+STEP 4 — PAGE TEARDOWN
+For every page type, document top-to-bottom in exact order.
+
+1. HEADER
+Capture:
+- logo placement
+- header height and structure
+- nav items
+- utility icons / links
+- search
+- account
+- cart
+- wishlist
+- mobile menu behavior
+- sticky behavior
+- dropdown / mega-menu behavior
+- any regional or language controls
+
+2. ABOVE THE FOLD
+Capture:
+- hero type
+- background treatment
+- headline hierarchy
+- supporting copy
+- CTA placement
+- CTA wording
+- imagery style
+- whether the hero is editorial, commercial, or hybrid
+- how the first viewport frames the brand
+
+3. SECTION FLOW
+For every section:
+- purpose
+- layout type (grid, list, split, carousel, masonry, etc.)
+- alignment
+- spacing
+- content type
+- hierarchy
+- visual rhythm
+- whether the section is promotional, editorial, or commerce-led
+
+4. COMPONENTS
+Capture every visible reusable UI component:
+- cards
+- buttons
+- inputs
+- filters
+- badges
+- labels
+- tabs
+- chips
+- accordions
+- drawers
+- modals
+- dropdowns
+- banners
+- carousels
+- pagination
+- overlays
+- tooltips
+- trust blocks
+- info callouts
+
+For each component, document:
+- structure
+- visible states
+- placement
+- labels
+- hover behavior
+- mobile behavior
+- how it contributes to the overall system
+
+STEP 5 — ECOMMERCE SYSTEM (CRITICAL)
+Document the commerce experience in detail.
+
+PRODUCT CARDS:
+- image ratio
+- image placement
+- title position
+- price placement and style
+- badge types
+- color swatches
+- review/rating display
+- hover behavior
+- quick add / quick view behavior
+- spacing between cards
+- information density
+- whether cards are uniform or varied
+- how cards differ by page type, if they do
+
+FILTERS:
+- filter types
+- filter categories
+- UI pattern used (sidebar, drawer, chips, accordion, tabs, etc.)
+- interaction style
+- mobile behavior
+- whether filters are aesthetic, functional, or both
+
+SORTING:
+- available sort options
+- UI placement
+- control style
+- interaction behavior
+- whether sorting is integrated with filters or separated
+
+PRODUCT DETAIL PAGES:
+- image gallery behavior
+- main product information order
+- price display
+- variant selectors
+- size / color / fit options
+- stock / availability language
+- delivery / shipping / returns blocks
+- trust and reassurance blocks
+- reviews and ratings
+- sticky add-to-cart behavior
+- related / recommended products
+- supporting content sections
+- size guide / fabric / care information if present
+- how the page persuades the user to buy
+
+STEP 6 — DESIGN SYSTEM AUDIT
+Extract the visual language precisely.
+
+TYPOGRAPHY:
+- hierarchy
+- scale
+- weight usage
+- casing patterns
+- letter spacing behavior
+- body copy style
+- labels and metadata style
+- tone conveyed through type
+
+COLORS:
+- primary colors
+- secondary colors
+- neutrals
+- CTA colors
+- background colors
+- contrast behavior
+- luxury / streetwear / lifestyle cues
+- whether the palette is monochrome, muted, bold, seasonal, or campaign-driven
+
+SPACING:
+- section gaps
+- padding patterns
+- density
+- whitespace usage
+- container widths
+- rhythm and balance
+- how spacing contributes to premium perception
+
+IMAGERY:
+- product photography style
+- editorial / campaign photography style
+- lifestyle photography style
+- crop rules
+- background treatment
+- aspect ratios
+- consistency across pages
+- whether imagery is studio-shot, editorial, mixed, or heavily art-directed
+- how visuals support brand positioning
+
+STEP 7 — INTERACTIONS AND MOTION
+Capture observed interaction behavior:
+- hover states
+- transitions
+- dropdown animations
+- modal animations
+- drawer animations
+- scroll behavior
+- sticky behavior
+- carousel behavior
+- lazy loading behavior if visible
+- subtle motion cues
+- page-load animation patterns
+
+Only write what is observed.
+Do not assume animation or motion if it cannot be verified.
+
+STEP 8 — RESPONSIVE BEHAVIOR
+Document how the site changes across:
+- mobile
+- tablet
+- desktop
+
+For each breakpoint, note:
+- navigation transformation
+- grid changes
+- stacking behavior
+- text scaling
+- image resizing
+- filter placement
+- CTA adjustments
+- spacing changes
+- any elements hidden, collapsed, or rearranged
+- how the design preserves brand feel across devices
+
+STEP 9 — FOOTER
+Capture:
+- footer structure
+- link groups
+- utility sections
+- newsletter signup
+- social links
+- legal links
+- support links
+- store / shipping / returns links
+- brand tone in footer copy
+
+STEP 10 — PATTERN EXTRACTION
+List reusable patterns that could be applied to a similar premium ecommerce / streetwear website:
+- layout patterns
+- card systems
+- collection systems
+- product systems
+- navigation patterns
+- filter patterns
+- CTA patterns
+- typography patterns
+- footer patterns
+- promotional block patterns
+- editorial block patterns
+
+STEP 11 — IMPLEMENTATION INSIGHTS
+Summarize the findings in practical terms:
+- what makes the UX effective
+- what feels especially polished
+- what is intentionally consistent
+- what needs to be replicated to recreate the experience
+- what design decisions are core to Represent Clo’s identity
+- what could be adapted into a new website without copying the brand directly
+
+REPORT REQUIREMENTS:
+The final report in @Findings.txt must include:
+
+1. Page inventory
+- every visited page
+- title
+- URL
+- page type
+- purpose
+
+2. Detailed page-by-page teardown
+- top-to-bottom structure
+- sections
+- components
+- interactions
+- content hierarchy
+
+3. System-level analysis
+- navigation
+- layout
+- typography
+- color
+- imagery
+- spacing
+- component patterns
+- motion patterns
+
+4. Ecommerce behavior
+- catalog
+- filters
+- sorting
+- product cards
+- product detail pages
+- cart touchpoints
+- CTA behavior
+
+5. Responsive analysis
+- mobile
+- tablet
+- desktop
+
+6. Reusable design patterns
+- what can be reused in a similar build
+
+7. Implementation notes
+- developer-ready observations
+- patterns to replicate
+- patterns to avoid guessing about
+
+FORMAT:
+- Use clear headings and subheadings
+- Keep it dense and spec-heavy
+- Keep it readable
+- Use precise, direct language
+- Avoid filler language
+- Avoid generic brand commentary
+- Avoid shallow summary language
+
+FINAL CHECK:
+- Verify @Findings.txt exists
+- Verify it contains the completed report
+- Verify all accessible pages were analyzed
+- Verify the report is detailed enough for implementation use
+- Verify page coverage is broad and not limited to the homepage
+
+END
