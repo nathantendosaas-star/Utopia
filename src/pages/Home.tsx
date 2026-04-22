@@ -41,8 +41,8 @@ export function Home() {
               <span className="block text-[clamp(3.2rem,17.6vw,16rem)] font-display font-[900] uppercase leading-[0.75] tracking-[-0.02em] text-white">
                 UTOPIA
               </span>
-              <span className="block text-[clamp(3.2rem,17.6vw,16rem)] font-display font-[900] uppercase leading-[0.75] tracking-[-0.02em] text-transparent stroke-white stroke-1" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.5)' }}>
-                UGANDA
+              <span className="block text-[clamp(3.2rem,17.6vw,16rem)] font-display font-[900] uppercase leading-[0.75] tracking-[-0.01em] text-transparent stroke-white stroke-1" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.5)' }}>
+                UG
               </span>
             </h1>
           </motion.div>
