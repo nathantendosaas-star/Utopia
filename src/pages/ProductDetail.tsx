@@ -155,19 +155,47 @@ export function ProductDetail() {
                 )}
             </div>
 
-            {/* Add to Bag */}
+            {/* Add to Bag / App Exclusive Gate */}
             <div className="space-y-4">
-                <button 
-                    id="main-cta-btn"
-                    onClick={() => addToCart(product)}
-                    className="btn-primary w-full py-8 flex items-center justify-center gap-4 text-sm"
-                >
-                    ADD TO WARDROBE <Zap size={18} className="fill-white" />
-                </button>
-                <div className="flex items-center justify-center gap-3 text-black py-4 border border-gray-100 bg-gray-50">
-                    <Star size={14} fill="currentColor" />
-                    <span className="text-technical text-[9px] font-black uppercase tracking-widest">Earn {Math.floor(product.price * 1.5)} Prestige Points</span>
-                </div>
+                {product.badge === 'LIMITED' ? (
+                    <div className="bg-black text-white p-10 flex flex-col items-center text-center gap-8 border border-white/10">
+                        <div className="w-48 h-48 bg-white p-4 flex items-center justify-center">
+                            {/* Mock QR Code */}
+                            <div className="w-full h-full border-2 border-black flex flex-col items-center justify-center gap-2">
+                                <div className="grid grid-cols-5 gap-1">
+                                    {[...Array(25)].map((_, i) => (
+                                        <div key={i} className={`w-4 h-4 ${Math.random() > 0.5 ? 'bg-black' : 'bg-transparent'}`} />
+                                    ))}
+                                </div>
+                                <p className="text-[6px] font-black">UTOPIA APP</p>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="text-xl font-black uppercase tracking-tighter">APP EXCLUSIVE DROP</h3>
+                            <p className="text-[10px] text-white/40 uppercase tracking-widest leading-relaxed">
+                                SCAN TO DOWNLOAD THE UTOPIA APP AND ACCESS THIS PIECE. 
+                                SERIALIZED DROPS ARE EXCLUSIVE TO OUR MOBILE ECOSYSTEM.
+                            </p>
+                        </div>
+                        <button className="w-full py-4 border border-white/20 text-[10px] font-black uppercase tracking-widest cursor-not-allowed opacity-50">
+                            LOCKED
+                        </button>
+                    </div>
+                ) : (
+                    <>
+                        <button 
+                            id="main-cta-btn"
+                            onClick={() => addToCart(product)}
+                            className="btn-primary w-full py-8 flex items-center justify-center gap-4 text-sm"
+                        >
+                            ADD TO WARDROBE <Zap size={18} className="fill-white" />
+                        </button>
+                        <div className="flex items-center justify-center gap-3 text-black py-4 border border-gray-100 bg-gray-50">
+                            <Star size={14} fill="currentColor" />
+                            <span className="text-technical text-[9px] font-black uppercase tracking-widest">Earn {Math.floor(product.price * 1.5)} Prestige Points</span>
+                        </div>
+                    </>
+                )}
             </div>
 
             {/* Info Accordions */}

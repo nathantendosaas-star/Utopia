@@ -97,6 +97,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   // Prestige Loyalty State
   const [prestigePoints, setPrestigePoints] = useState(0);
 
+  useEffect(() => {
+    // Simulate Geo-IP Detection
+    const detectLocation = async () => {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const regions: ('USD' | 'GBP')[] = ['USD', 'GBP'];
+        const randomRegion = regions[Math.floor(Math.random() * regions.length)];
+        console.log(`[GEO-IP] Simulated detection: Setting currency to ${randomRegion}`);
+        // setCurrency(randomRegion); // Commented out to prevent surprising user
+    };
+    detectLocation();
+  }, []);
+
   const prestigeRank = useMemo(() => {
     if (prestigePoints >= 10000) return 'PLATINUM';
     if (prestigePoints >= 5000) return 'GOLD';

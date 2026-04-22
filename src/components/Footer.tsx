@@ -49,6 +49,8 @@ export function Footer() {
               <li><Link to="/archives" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Archives</Link></li>
               <li><Link to="/philosophy" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Philosophy</Link></li>
               <li><Link to="/retail" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Retail</Link></li>
+              <li><Link to="/prestige" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Prestige Rewards</Link></li>
+              <li><Link to="/support" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">FAQ / Support</Link></li>
             </ul>
           </div>
 

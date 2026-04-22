@@ -17,6 +17,9 @@ import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsConditions } from './pages/TermsConditions';
 import { StoreProvider } from './context/StoreContext';
 
+import { Prestige } from './pages/Prestige';
+import { Support } from './pages/Support';
+
 export default function App() {
   return (
     <StoreProvider>
@@ -38,6 +41,8 @@ export default function App() {
             <Route path="retail" element={<Retail />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route path="terms-conditions" element={<TermsConditions />} />
+            <Route path="prestige" element={<Prestige />} />
+            <Route path="support" element={<Support />} />
           </Route>
         </Routes>
       </BrowserRouter>
