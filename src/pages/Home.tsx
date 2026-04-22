@@ -72,7 +72,7 @@ export function Home() {
       </section>
 
       {/* 2. The Blueprint — Technical Callouts */}
-      <section className="relative py-40 bg-white bg-blueprint">
+      <section className="relative py-40 bg-white">
         <div className="max-w-[1800px] mx-auto px-6 lg:px-10">
           <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
             
