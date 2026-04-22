@@ -11,7 +11,7 @@
   :root {
     /* UTOPIA UG SPEC — HIGH CONTRAST BRUTALISM */
     --color-bg-primary:        #FFFFFF; 
-    --color-bg-secondary:      #F8F8F8; 
+    --color-bg-secondary:      #000000; 
     --color-bg-tertiary:       #111111;
     --color-surface-elevated:  #FFFFFF;
     --color-text-primary:      #000000; 
@@ -20,7 +20,12 @@
     --color-accent-primary:    #000000; 
     --color-accent-hover:      #333333;
     --color-border-subtle:     #E5E5E5;
-    --color-border-strong:     #111111;
+    --color-border-strong:     #000000;
+
+    /* BLUEPRINT SYSTEM */
+    --blueprint-grid:          rgba(0, 0, 0, 0.05);
+    --blueprint-line:          rgba(0, 0, 0, 0.1);
+    --blueprint-accent:        #000000;
 
     /* TYPOGRAPHY — EXTREME CONTRAST */
     --text-hero:               clamp(4rem, 15vw, 15rem);
@@ -218,5 +223,12 @@
 
 .image-hover-zoom:hover img {
   transform: scale(1.05);
+}
+
+.bg-blueprint {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, var(--blueprint-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-grid) 1px, transparent 1px);
 }
 
