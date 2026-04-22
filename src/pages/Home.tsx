@@ -22,7 +22,7 @@ export function Home() {
             loop 
             muted 
             playsInline
-            className="w-full h-full object-cover brightness-[0.4] grayscale-[0.5]"
+            className="w-full h-full object-cover brightness-[0.4]"
           >
             <source src={product.video} type="video/mp4" />
           </video>
@@ -183,7 +183,7 @@ export function Home() {
                     </div>
                 </div>
             </div>
-            <div className="relative aspect-[3/4] overflow-hidden grayscale">
+            <div className="relative aspect-[3/4] overflow-hidden">
                 <motion.img 
                     initial={{ scale: 1.2 }}
                     whileInView={{ scale: 1 }}
@@ -217,7 +217,7 @@ export function Home() {
                     transition={{ delay: i * 0.2 }}
                     className="aspect-[4/5] bg-gray-50 overflow-hidden"
                   >
-                      <img src={img} alt="Detail" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+                      <img src={img} alt="Detail" className="w-full h-full object-cover transition-all duration-1000" />
                   </motion.div>
               ))}
           </div>

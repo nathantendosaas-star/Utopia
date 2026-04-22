@@ -57,7 +57,7 @@ export function ProductDetail() {
                         <img 
                             src={img} 
                             alt={`${product.name} view ${index + 1}`} 
-                            className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" 
+                            className="w-full h-full object-cover transition-all duration-1000" 
                         />
                     </motion.div>
                 ))}

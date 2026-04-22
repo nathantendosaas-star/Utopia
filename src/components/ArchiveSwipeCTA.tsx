@@ -66,10 +66,10 @@ export function ArchiveSwipeCTA({ onIndexChange }: { onIndexChange?: (index: num
       className="relative w-48 h-64 sm:w-56 sm:h-72 md:w-72 md:h-96 group"
     >
       {/* Background Stack Effect (Real Images) */}
-      <div className="absolute inset-0 translate-x-4 translate-y-4 -z-20 group-hover:translate-x-8 group-hover:translate-y-8 group-hover:scale-110 transition-all duration-700 rounded-2xl overflow-hidden opacity-20 grayscale">
+      <div className="absolute inset-0 translate-x-4 translate-y-4 -z-20 group-hover:translate-x-8 group-hover:translate-y-8 group-hover:scale-110 transition-all duration-700 rounded-2xl overflow-hidden opacity-20">
         <img src={archiveImages[nextNextIndex]} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
       </div>
-      <div className="absolute inset-0 translate-x-2 translate-y-2 -z-10 group-hover:translate-x-4 group-hover:translate-y-4 group-hover:scale-105 transition-all duration-700 rounded-2xl overflow-hidden opacity-40 grayscale-[0.5]">
+      <div className="absolute inset-0 translate-x-2 translate-y-2 -z-10 group-hover:translate-x-4 group-hover:translate-y-4 group-hover:scale-105 transition-all duration-700 rounded-2xl overflow-hidden opacity-40">
         <img src={archiveImages[nextIndex]} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
       </div>
 

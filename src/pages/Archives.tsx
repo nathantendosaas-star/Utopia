@@ -39,7 +39,7 @@ export function Archives() {
               <div className="md:w-2/3 grid grid-cols-3 gap-4">
                 {item.images.map((img, i) => (
                   <div key={i} className="aspect-[3/4] overflow-hidden bg-zinc-900 border border-zinc-800">
-                    <img src={img} alt="" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+                    <img src={img} alt="" className="w-full h-full object-cover transition-all duration-700" />
                   </div>
                 ))}
               </div>

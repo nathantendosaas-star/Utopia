@@ -70,7 +70,7 @@ export function QuickViewModal() {
                 {/* Thumbnail Previews (Mockup for design) */}
                 <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex gap-4 opacity-40 group-hover:opacity-100 transition-opacity">
                     {[...Array(4)].map((_, i) => (
-                      <div key={i} className={`w-12 h-12 border ${i === 0 ? 'border-white' : 'border-white/10'} bg-white/5 overflow-hidden grayscale hover:grayscale-0 transition-all cursor-pointer`}>
+                      <div key={i} className={`w-12 h-12 border ${i === 0 ? 'border-white' : 'border-white/10'} bg-white/5 overflow-hidden hover:opacity-70 transition-all cursor-pointer`}>
                         <img src={quickViewProduct.image} className="w-full h-full object-cover" alt="" />
                       </div>
                     ))}
