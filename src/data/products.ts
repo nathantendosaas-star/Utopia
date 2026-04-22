@@ -101,8 +101,8 @@ export const products: Product[] = [
     id: '5', 
     name: "UTOPIA CANVAS TOTE BAG", 
     price: 25000, 
-    image: "/input_file_1.png", 
-    images: ["/input_file_1.png"],
+    image: "/tote-bag.png", 
+    images: ["/tote-bag.png"],
     category: "ACCESSORIES",
     badge: "LIMITED",
     description: "Heavy-duty canvas tote with reinforced handles and interior zip pocket. Perfect for daily essentials."
