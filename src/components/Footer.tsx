@@ -25,9 +25,9 @@ export function Footer() {
             <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Client Services</h4>
             <ul className="flex flex-col gap-3">
               <li><Link to="/contact" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Contact</Link></li>
-              <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Shipping</Link></li>
-              <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Returns</Link></li>
-              <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Size Guide</Link></li>
+              <li><Link to="/shipping" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Shipping</Link></li>
+              <li><Link to="/returns" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Returns</Link></li>
+              <li><Link to="/size-guide" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Size Guide</Link></li>
               <li><Link to="/terms-conditions" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Terms & Conditions</Link></li>
               <li><Link to="/privacy-policy" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Privacy Policy</Link></li>
             </ul>
@@ -38,16 +38,16 @@ export function Footer() {
             <ul className="flex flex-col gap-3">
               <li><Link to="/signature" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">The Signature</Link></li>
               <li><Link to="/archives" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Archives</Link></li>
-              <li><Link to="/signature" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Philosophy</Link></li>
-              <li><Link to="/contact" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Retail</Link></li>
+              <li><Link to="/philosophy" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Philosophy</Link></li>
+              <li><Link to="/retail" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Retail</Link></li>
             </ul>
           </div>
 
           <div className="flex flex-col gap-8">
             <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Social</h4>
             <ul className="flex flex-col gap-3">
-              <li><a href="#" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Instagram</a></li>
-              <li><a href="#" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">TikTok</a></li>
+              <li><a href="https://instagram.com/utopia_ug" target="_blank" rel="noopener noreferrer" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Instagram</a></li>
+              <li><a href="https://tiktok.com/@utopia_ug" target="_blank" rel="noopener noreferrer" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">TikTok</a></li>
             </ul>
           </div>
         </div>
