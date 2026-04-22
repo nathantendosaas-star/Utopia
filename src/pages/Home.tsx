@@ -38,10 +38,10 @@ export function Home() {
           >
             <p className="text-technical text-white/60 mb-8 tracking-[0.4em]">SEASON 01 — SS26</p>
             <h1 className="relative">
-              <span className="block text-[clamp(4rem,22vw,20rem)] font-[900] uppercase leading-[0.75] tracking-[-0.06em] text-white">
+              <span className="block text-[clamp(3.2rem,17.6vw,16rem)] font-[900] uppercase leading-[0.75] tracking-[-0.06em] text-white">
                 UTOPIA
               </span>
-              <span className="block text-[clamp(4rem,22vw,20rem)] font-[900] uppercase leading-[0.75] tracking-[-0.06em] text-transparent stroke-white stroke-1" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.5)' }}>
+              <span className="block text-[clamp(3.2rem,17.6vw,16rem)] font-[900] uppercase leading-[0.75] tracking-[-0.06em] text-transparent stroke-white stroke-1" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.5)' }}>
                 UGANDA
               </span>
             </h1>
