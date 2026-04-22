@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Search, ShoppingBag, User, X, Zap, Menu } from 'lucide-react';
+import { Search, ShoppingBag, User, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../context/StoreContext';
 import { CartDrawer } from './CartDrawer';
@@ -55,11 +55,11 @@ export function Layout() {
                 <Menu size={20} strokeWidth={1.5} />
               </button>
               <div className="hidden lg:flex items-center gap-10">
-                <Link to="/shop" className="text-nav hover:opacity-50 transition-opacity">
-                  Collection
+                <Link to="/shop" className="text-nav hover:opacity-50 transition-opacity uppercase font-black text-[11px] tracking-widest">
+                  Shop
                 </Link>
-                <Link to="/archives" className="text-nav hover:opacity-50 transition-opacity">
-                  Archives
+                <Link to="/signature" className="text-nav hover:opacity-50 transition-opacity uppercase font-black text-[11px] tracking-widest">
+                  The Signature
                 </Link>
               </div>
             </div>
@@ -74,7 +74,7 @@ export function Layout() {
             {/* Right Nav */}
             <div className="flex items-center justify-end gap-10 flex-1">
               <div className="hidden lg:flex items-center gap-10">
-                <Link to="/about" className="text-nav hover:opacity-50 transition-opacity">Philosophy</Link>
+                <Link to="/archives" className="text-nav hover:opacity-50 transition-opacity uppercase font-black text-[11px] tracking-widest">Archives</Link>
               </div>
               
               <div className="flex items-center gap-6">
@@ -106,10 +106,10 @@ export function Layout() {
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
           >
             <Outlet />
           </motion.div>
@@ -126,4 +126,3 @@ export function Layout() {
     </div>
   );
 }
-

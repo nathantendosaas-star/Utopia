@@ -1,0 +1,162 @@
+# DESIGN SYSTEM AUDIT: REPRESENT CLO (OFFICIAL GLOBAL STORE)
+**Target:** https://row.representclo.com/
+**Date:** April 20, 2026
+**Mode:** SPEC-LEVEL DETAIL / IMPLEMENTATION-READY
+
+---
+
+## 1. PAGE INVENTORY
+| Title | URL | Page Type | Purpose |
+|-------|-----|-----------|---------|
+| Official Global Store | / | landing | Brand entry, collection highlights, campaign focus |
+| Discover All Products | /collections/discover-all-products | listing | Full catalog access, deep filtering, commerce hub |
+| Product Detail Page | /products/[handle] | product_detail | Transactional focus, technical specs, fit details |
+| About Us | /pages/about | brand / about | Brand narrative, timeline, mission statement |
+| Support Hub | /pages/support (Zendesk) | support | Customer service, FAQ, self-service |
+| Prestige Loyalty | /pages/prestige | brand / commerce | Retention, rewards program explanation |
+
+---
+
+## 2. GLOBAL DESIGN SYSTEM
+
+### 2.1 VISUAL IDENTITY & COLOR SYSTEM
+- **Core Palette:** 
+  - **Backgrounds:** Pure Black (#000000), Pure White (#FFFFFF), Light Grey (#F5F5F3 - Paper aesthetic in specific contexts).
+  - **Text:** High-contrast Black/White.
+  - **Accent:** "Electric Orange" (#FF3E00) used for status badges, CTAs, and active states.
+  - **Neutrals:** Mid-greys for secondary info and borders (#E0E0DE, #CCCCCC).
+- **Tone:** Luxury Streetwear. Gritty but polished. Heavy use of industrial/technical cues (gsm weights, model measurements, coordinates).
+
+### 2.2 TYPOGRAPHY SYSTEM
+- **Font Families:** 
+  - **Display:** High-impact, heavy-weight sans-serif (e.g., Anton or custom) for hero headlines.
+  - **Body:** Clean, neutral sans-serif (e.g., Inter) for standard UI.
+  - **Technical:** Monospaced fonts for fit details, measurements, and "technical numbers".
+- **Casing Patterns:**
+  - **Uppercase:** All nav items, headlines, labels, and metadata.
+  - **Sentence Case:** Long-form body copy in "About" or product descriptions.
+- **Letter Spacing:** Wide tracking on technical labels (e.g., `EST. 199X / KLA`).
+
+### 2.3 SPACING & GRID
+- **Container Max:** 1600px.
+- **Gutter:** Consistent responsive padding (typically 1rem on mobile, 4rem on desktop).
+- **Grid Logic:** 
+  - Desktop Listing: 4-column grid.
+  - Mobile Listing: 2-column grid.
+  - PDP: Split layout (60/40 or 50/50) with sticky info rail.
+
+---
+
+## 3. COMPONENT TEARDOWN
+
+### 3.1 HEADER (STICKY)
+- **Structure:** 
+  - Top Bar: Promotional announcement ("DOWNLOAD THE APP...").
+  - Primary Row: Logo (Center), Shop/247 (Left), Utility Icons (Right: Search, Account, Wishlist, Cart).
+- **Interactions:** 
+  - Hover states on nav items trigger mega-menus with image-based "Featured" slots.
+  - Cart/Search trigger full-screen or side-drawer overlays.
+
+### 3.2 PRODUCT CARDS (LISTING)
+- **Image Ratio:** 4:5 or 3:4 (Portrait focus).
+- **Multi-State:** Hover swaps to the second product image (e.g., front view to detail/back view).
+- **Quick-Add System:** 
+  - Sizes are listed directly on the card as clickable buttons.
+  - Size selection triggers immediate "Add to Cart" or opens a quick-buy drawer.
+- **Badges:** Small, high-contrast pills ("RESTOCKED", "BESTSELLER", "APP EXCLUSIVE").
+- **Metadata:** Title (Uppercase), Color Variant count (e.g., "15 Colours"), Price.
+
+### 3.3 PRODUCT DETAIL PAGE (PDP)
+- **Image Gallery:** 
+  - Vertically stacked large images or high-speed carousel.
+  - "View in 3D" button integrated for specific silhouettes.
+- **Info Rail:** 
+  - Title & Price at top.
+  - App-Exclusive Locking: Specific products require QR code scan/app download to purchase.
+  - Color Swatches: Small thumbnail circles.
+  - Size Selector: Horizontal list of boxes.
+  - Model Stats: Precise height/weight and size worn (e.g., "Model is 184.5cm... wearing size M").
+- **Accordions:** "Product Details" and "Shipping & Returns" with clean borders and minimalist icons.
+
+### 3.4 FOOTER
+- **Sections:** Client Services, Company, Social, Country/Currency Selector.
+- **Newsletter:** Prominent signup with Prestige loyalty hook.
+- **Visuals:** High-quality "black still" background imagery.
+
+---
+
+## 4. ECOMMERCE SYSTEM DETAILS
+
+### 4.1 FILTERING & SORTING
+- **UI:** Left-hand sidebar (Desktop) / Slide-out drawer (Mobile).
+- **Categories:** Price Range (Slider), Category, Size, Color.
+- **Sorting:** Dropdown integrated into the listing header (Latest, Popular, Price H-L/L-H).
+
+### 4.2 CART / CHECKOUT
+- **Drawer Cart:** Slides from right. High-density list.
+- **Upsell:** "You may also like" or "Style with" integrated directly into the empty cart or below items.
+- **Trust System:** "Free shipping over $X", "Earn Prestige Points", "DHL Express" logos.
+
+---
+
+## 5. INTERACTION & MOTION PATTERNS
+
+### 5.1 GLOBAL UI TRANSITIONS
+- **Page Load:** Subtle fade-in (600ms) with a Y-axis slide-up (20px) for container elements.
+- **Route Transitions:** Cross-fade between pages to maintain the high-end "app-like" feel.
+- **Sticky Header:** On scroll > 50px, the header height reduces by 20% and the background opacity increases from 0.8 to 0.95 with a `backdrop-filter: blur(10px)`.
+
+### 5.2 COMPONENT ANIMATIONS
+- **Product Card Hover:**
+  - **Image Swap:** Primary image cross-fades (300ms) to secondary image.
+  - **Size Reveal:** A "Quick Add" size bar slides up from the bottom of the card (ease-out-expo).
+- **Drawers (Cart/Filters):**
+  - **Motion:** `translateX(100% -> 0)` for Cart; `translateX(-100% -> 0)` for Filters.
+  - **Backdrop:** Dimming overlay fades in (opacity 0 -> 0.5) simultaneously.
+- **Search Overlay:**
+  - **Interaction:** Full-screen opacity fade with a subtle scale-up (0.98 -> 1.0) of the search results grid.
+- **Accordions:**
+  - **Motion:** Smooth height transition (CSS `grid-template-rows` or Framer Motion `height`) to prevent layout jumping.
+
+### 5.3 TECHNICAL MOTIFS (VHS/ANALOG)
+- **Glitch Effect:** Occasional VHS-style glitch animations on promotional banners or during high-traffic "drop" events.
+- **Loading State:** A "technical scanner" line moving vertically or a simple monospaced "LOADING..." text to maintain brand consistency.
+
+---
+
+## 6. ADVANCED FEATURES
+
+### 6.1 ECOMMERCE LOGIC
+- **Size-on-Card:** Direct selection of size from the listing page adds to cart without requiring a PDP visit.
+- **Prestige Rewards Integration:** 
+  - Dynamic "Earn X Points" calculation on every PDP based on the current product price.
+  - "Rank Up" logic visible in account areas, incentivizing higher spend.
+- **App-Exclusive Gates:** 
+  - Specific "Drop" products are locked behind a QR code, forcing users into the iOS/Android app ecosystem for purchase.
+  - UI displays a "COMING SOON" or "APP EXCLUSIVE" badge with a non-interactive purchase button.
+
+### 6.2 PRODUCT VISUALIZATION
+- **3D Model Viewer:** High-fidelity GLB/USDZ integration for footwear (e.g., Reptor, Apex) allowing 360-degree rotation and zoom.
+- **Color Swatch Syncing:** Selecting a color swatch on the PDP instantly updates the image gallery and title/SKU metadata.
+
+### 6.3 TRUST & LOCALIZATION
+- **Geo-IP Localization:** Automatic detection of country, currency, and language upon first entry.
+- **Dynamic Shipping Thresholds:** A "Progress Bar" in the cart drawer showing how much more is needed for "Free Express Shipping".
+- **Stockist Map:** Interactive integration for physical retail locations.
+
+---
+
+## 7. IMPLEMENTATION INSIGHTS (FOR DEVELOPERS)
+- **Patterns to Replicate:**
+  - **Size-on-Card:** Eliminates one click from the purchase path; critical for conversion.
+  - **Technical Numbers:** Standardizing product details (gsm, composition, measurements) creates a "spec-heavy" premium feel.
+  - **Atmospheric Backgrounds:** Use of grain, noise textures, and subtle "light leaks" (radial gradients) over pure black backgrounds.
+- **Motion Library Recommendation:**
+  - Use **Framer Motion** for React-based UI transitions.
+  - Use **GSAP ScrollTrigger** for complex, scroll-driven editorial sequences.
+- **Avoid:**
+  - Guessing on breakpoints. The site uses standard tailwind-like breakpoints but with refined text scaling (`clamp()`).
+  - Shallow descriptions. The brand’s authority comes from the density of technical information.
+
+---
+**END OF AUDIT**

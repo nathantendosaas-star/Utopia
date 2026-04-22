@@ -8,10 +8,10 @@ export function NavigationDrawer() {
   const { isNavOpen, setNavOpen } = useStore();
 
   const links = [
-    { name: 'Shop The Piece', path: '/shop' },
+    { name: 'Home', path: '/' },
+    { name: 'The Signature', path: '/signature' },
+    { name: 'Shop', path: '/shop' },
     { name: 'Archives', path: '/archives' },
-    { name: 'Our Story', path: '/about' },
-    { name: 'Contact', path: '/contact' },
   ];
 
   return (

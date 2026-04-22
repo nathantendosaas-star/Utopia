@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Instagram, Twitter, Youtube } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -10,11 +9,11 @@ export function Footer() {
           
           {/* Join Collective */}
           <div className="lg:col-span-2 flex flex-col gap-8">
-            <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Join REPRESENT COLLECTIVE</h4>
+            <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Join UTOPIA COLLECTIVE</h4>
             <div className="flex flex-col gap-6">
               <p className="text-technical text-[10px] text-gray-500 tracking-wider">EARN POINTS & REWARDS ON ALL PURCHASES</p>
               <div className="flex flex-col gap-4">
-                <Link to="/signup" className="text-technical text-[11px] font-[900] border-b border-black inline-block self-start pb-1">
+                <Link to="/contact" className="text-technical text-[11px] font-[900] border-b border-black inline-block self-start pb-1">
                   SIGN UP
                 </Link>
               </div>
@@ -22,24 +21,34 @@ export function Footer() {
           </div>
 
           {/* Links Columns */}
-          {[
-            { title: 'Client Services', links: ['Contact', 'Shipping', 'Returns', 'Size Guide', 'FAQ'] },
-            { title: 'Company', links: ['About', 'Careers', 'Retail', 'Privacy', 'Cookies'] },
-            { title: 'Social', links: ['Instagram', 'Twitter', 'YouTube', 'TikTok'] },
-          ].map((col) => (
-            <div key={col.title} className="flex flex-col gap-8">
-              <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">{col.title}</h4>
-              <ul className="flex flex-col gap-3">
-                {col.links.map((link) => (
-                  <li key={link}>
-                    <Link to={`/${link.toLowerCase().replace(' ', '-')}`} className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium">
-                      {link}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="flex flex-col gap-8">
+            <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Client Services</h4>
+            <ul className="flex flex-col gap-3">
+              <li><Link to="/contact" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Contact</Link></li>
+              <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Shipping</Link></li>
+              <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Returns</Link></li>
+              <li><Link to="/shop" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Size Guide</Link></li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col gap-8">
+            <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Utopia</h4>
+            <ul className="flex flex-col gap-3">
+              <li><Link to="/signature" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">The Signature</Link></li>
+              <li><Link to="/archives" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Archives</Link></li>
+              <li><Link to="/signature" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Philosophy</Link></li>
+              <li><Link to="/contact" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Retail</Link></li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col gap-8">
+            <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Social</h4>
+            <ul className="flex flex-col gap-3">
+              <li><a href="#" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Instagram</a></li>
+              <li><a href="#" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">Twitter</a></li>
+              <li><a href="#" className="text-technical text-[10px] text-gray-500 hover:text-black transition-colors font-medium uppercase">TikTok</a></li>
+            </ul>
+          </div>
 
           {/* Country / App */}
           <div className="flex flex-col gap-8">
@@ -51,7 +60,7 @@ export function Footer() {
               </div>
               
               <div className="flex flex-col gap-4 mt-4">
-                <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Download App</h4>
+                <h4 className="text-technical text-[11px] font-[900] tracking-[0.2em]">Utopia App</h4>
                 <div className="flex items-center gap-4">
                   <span className="text-technical text-[10px] text-gray-400 font-bold border border-gray-200 px-3 py-1 cursor-pointer hover:border-black hover:text-black transition-all">iOS</span>
                   <span className="text-technical text-[10px] text-gray-400 font-bold border border-gray-200 px-3 py-1 cursor-pointer hover:border-black hover:text-black transition-all">Android</span>
@@ -67,12 +76,12 @@ export function Footer() {
             <Link to="/" className="text-xl font-[900] uppercase tracking-[-0.05em] mb-4">
               UTOPIA UG
             </Link>
-            <p className="text-technical text-[9px] text-gray-400 font-bold">© UTOPIA CLOTHING LIMITED 2026</p>
+            <p className="text-technical text-[9px] text-gray-400 font-bold uppercase">© UTOPIA CLOTHING LIMITED 2026</p>
           </div>
           
           <div className="flex flex-wrap justify-center gap-6">
-            {['Terms & Conditions', 'Privacy Policy', 'Shipping Policy', 'Returns Policy', 'Cookie Preferences', 'Modern Slavery'].map((item) => (
-              <span key={item} className="text-technical text-[9px] text-gray-400 font-bold hover:text-black cursor-pointer transition-colors">
+            {['Terms & Conditions', 'Privacy Policy', 'Modern Slavery'].map((item) => (
+              <span key={item} className="text-technical text-[9px] text-gray-400 font-bold hover:text-black cursor-pointer transition-colors uppercase">
                 {item}
               </span>
             ))}

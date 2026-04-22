@@ -1,164 +1,145 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Link } from 'react-router-dom';
-import { useStore } from '../context/StoreContext';
 import { products } from '../data/products';
-import { Zap, ArrowRight, Layers, Box } from 'lucide-react';
+import { ArrowRight, Zap, MoveDown } from 'lucide-react';
 
 export function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const product = products[0];
   const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
-  const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+  const y = useTransform(scrollY, [0, 500], [0, 200]);
+  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
   return (
-    <div ref={containerRef} className="relative w-full bg-white">
+    <div ref={containerRef} className="relative w-full bg-black overflow-hidden">
       
-      {/* 1. Hero Section - Brutalist & Immersive */}
-      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
-        <motion.div style={{ y: y1 }} className="absolute inset-0 z-0">
+      {/* 1. Cinematic Hero Section */}
+      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+        <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
           <video 
             autoPlay 
             loop 
             muted 
             playsInline
-            className="w-full h-full object-cover brightness-[0.6] grayscale-[0.3]"
+            className="w-full h-full object-cover brightness-[0.5] grayscale-[0.2]"
           >
-            <source src="/hero-video.mp4" type="video/mp4" />
+            <source src={product.video} type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
         </motion.div>
 
-        <div className="relative z-10 w-full px-6 flex flex-col items-center">
+        <div className="relative z-10 w-full px-6 flex flex-col items-center text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
-            className="text-center"
+            transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
           >
-            <p className="text-technical text-white/60 mb-8 tracking-[0.4em]">SEASON 01 — SS26</p>
-            <h1 className="relative">
-              <span className="block text-[clamp(3.2rem,17.6vw,16rem)] font-display font-[900] uppercase leading-[0.75] tracking-[-0.02em] text-white">
+            <p className="text-technical text-white/60 mb-8 tracking-[0.5em] uppercase">Utopia Ug // The Signature Series</p>
+            <h1 className="relative mb-12">
+              <span className="block text-[clamp(4rem,20vw,18rem)] font-display font-[900] uppercase leading-[0.75] tracking-[-0.03em] text-white">
                 UTOPIA
               </span>
-              <span className="block text-[clamp(3.2rem,17.6vw,16rem)] font-display font-[900] uppercase leading-[0.75] tracking-[-0.01em] text-transparent stroke-white stroke-1" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.5)' }}>
+              <span className="block text-[clamp(4rem,20vw,18rem)] font-display font-[900] uppercase leading-[0.75] tracking-[-0.02em] text-transparent stroke-white stroke-1" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.4)' }}>
                 UG
               </span>
             </h1>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1 }}
-            className="mt-12 flex flex-col sm:flex-row gap-6"
-          >
-            <Link to="/shop" className="btn-ghost-white group flex items-center gap-3">
-              EXPLORE COLLECTION <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <Link to="/signature" className="btn-ghost-white group flex items-center gap-3 min-w-[240px]">
+                THE STORY <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link to="/shop" className="btn-primary group flex items-center gap-3 min-w-[240px]">
+                SHOP THE PIECE <Zap size={14} className="fill-white" />
+              </Link>
+            </div>
           </motion.div>
         </div>
 
-        {/* Technical Corner Info */}
-        <div className="absolute bottom-10 left-10 z-10 hidden lg:block">
-          <div className="text-technical text-white/40 flex flex-col gap-1">
-            <span>LAT: 0.3476° N</span>
-            <span>LONG: 32.5825° E</span>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 text-white/30 flex flex-col items-center gap-2"
+        >
+          <span className="text-technical text-[10px]">SCROLL TO DISCOVER</span>
+          <MoveDown size={16} className="animate-bounce" />
+        </motion.div>
+      </section>
+
+      {/* 2. Manifesto Section */}
+      <section className="relative py-32 px-6 bg-black border-t border-white/10">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="space-y-12"
+            >
+              <h2 className="text-heading text-6xl md:text-8xl text-white leading-tight">
+                RAW UTILITY.<br />
+                KAMPALA<br />
+                SPIRIT.
+              </h2>
+              <p className="text-xl text-white/60 leading-relaxed font-light max-w-md">
+                Utopia isn't a destination. It's the grit of the street and the precision of the studio. 
+                We don't just make clothes; we build uniforms for those who navigate the void 
+                between the concrete and the clouds.
+              </p>
+              <div className="pt-8">
+                <Link to="/signature" className="text-nav text-white flex items-center gap-4 group">
+                  READ THE MANIFESTO <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
+                </Link>
+              </div>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="relative aspect-[4/5] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000"
+            >
+              <img 
+                src={product.images[1]} 
+                alt="Signature Detail" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 border-[20px] border-black/20 pointer-events-none" />
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* 2. Marquee - Brand Energy */}
-      <div className="bg-black py-6 border-y border-white/10 overflow-hidden">
-        <div className="animate-marquee flex gap-12 items-center">
-          {[...Array(10)].map((_, i) => (
-            <div key={i} className="flex items-center gap-12">
-              <span className="text-heading text-4xl text-white">UTOPIA UGANDA</span>
-              <Zap size={24} className="text-white fill-white" />
-              <span className="text-heading text-4xl text-transparent stroke-white" style={{ WebkitTextStroke: '1px white' }}>STREETWEAR</span>
-              <Box size={24} className="text-white" />
-            </div>
+      {/* 3. The Blueprint Brief */}
+      <section className="py-32 px-6 bg-[#111] text-white overflow-hidden">
+        <div className="max-w-7xl mx-auto text-center mb-24">
+          <p className="text-technical text-white/40 mb-4">SPECIFICATIONS // ID: 001-SS26</p>
+          <h2 className="text-heading text-5xl md:text-7xl uppercase">The Engineering</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-1px bg-white/10">
+          {[
+            { label: 'MATERIAL', value: product.specs?.composition },
+            { label: 'WEIGHT', value: product.specs?.gsm },
+            { label: 'FIT', value: product.specs?.fit }
+          ].map((spec, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.2 }}
+              className="bg-black p-12 flex flex-col items-center gap-4 text-center border border-white/5"
+            >
+              <span className="text-technical text-white/30">{spec.label}</span>
+              <span className="text-3xl font-bold tracking-tighter">{spec.value}</span>
+            </motion.div>
           ))}
         </div>
-      </div>
-
-      {/* 3. Lookbook Section - Asymmetrical Technical Grid */}
-      <section className="py-32 px-6 lg:px-10 max-w-[1920px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20">
-          
-          {/* Item 1 - Large Left */}
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="lg:col-span-7 group"
-          >
-            <div className="relative aspect-[4/5] overflow-hidden bg-gray-100 mb-8">
-              <img 
-                src={products[0]?.image || "/shirt-1.jpg"} 
-                alt="Product" 
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-              />
-              <div className="absolute top-6 left-6 bg-black text-white px-3 py-1 text-technical">
-                NEW RELEASE
-              </div>
-            </div>
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-heading text-3xl mb-2">{products[0]?.name}</h3>
-                <div className="flex gap-4 text-technical text-gray-500">
-                  <span>{products[0]?.specs?.gsm}</span>
-                  <span>{products[0]?.specs?.fit}</span>
-                </div>
-              </div>
-              <Link to={`/product/${products[0]?.id}`} className="p-4 border border-black hover:bg-black hover:text-white transition-colors">
-                <ArrowRight size={20} />
-              </Link>
-            </div>
-          </motion.div>
-
-          {/* Item 2 - Smaller Offset Right */}
-          <motion.div 
-            style={{ y: y2 }}
-            className="lg:col-span-4 lg:col-start-9 mt-20"
-          >
-            <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-8 group">
-               <img 
-                src={products[0]?.secondaryImage || "/shirt-2.jpg"} 
-                alt="Product" 
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div className="border-l-2 border-black pl-6">
-              <p className="text-technical text-gray-400 mb-4">SPECIFICATIONS</p>
-              <p className="text-sm leading-relaxed text-gray-600 mb-6 italic">
-                "{products[0]?.description?.split('.')[0]}."
-              </p>
-              <Link to="/shop" className="text-nav flex items-center gap-2 group">
-                VIEW TECHNICAL SPECS <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-          </motion.div>
-
-        </div>
-      </section>
-
-      {/* 4. Full Width Editorial */}
-      <section className="relative h-[90vh] w-full overflow-hidden bg-black">
-        <motion.img 
-          initial={{ scale: 1.2 }}
-          whileInView={{ scale: 1 }}
-          transition={{ duration: 1.5 }}
-          src="/hero-desktop.png" 
-          alt="Technical Apparel" 
-          className="w-full h-full object-cover opacity-80 grayscale"
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center px-6">
-            <h2 className="text-heading text-[clamp(3rem,10vw,8rem)] text-white mb-8">THE VAULT</h2>
-            <Link to="/archives" className="btn-ghost-white">BROWSE ARCHIVES</Link>
-          </div>
+        
+        <div className="mt-24 text-center">
+          <Link to="/shop" className="btn-ghost-white">VIEW ALL TECHNICAL DETAILS</Link>
         </div>
       </section>
 
