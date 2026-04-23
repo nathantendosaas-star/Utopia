@@ -30,23 +30,26 @@ export function Layout() {
   const isHome = location.pathname === '/';
 
   return (
-    <div className="min-h-screen bg-white selection:bg-black selection:text-white">
+    <div className="min-h-screen bg-[var(--color-bg-primary)] text-white selection:bg-white selection:text-black">
       {/* VHS Scanner Line */}
       <div className="scanner-line" />
 
       {/* 1. Technical Info / Promo Bar */}
-      <div className="bg-black text-white text-[10px] py-2 px-6 flex justify-between items-center z-[110] relative font-mono tracking-widest border-b border-white/10">
-        <div className="hidden sm:block">STATUS: ONLINE // SS26 ACTIVE</div>
-        <div className="uppercase animate-pulse">Worldwide Shipping Available</div>
-        <div className="hidden sm:block">UG — KLA</div>
+      <div className="bg-black text-white text-[10px] py-2 px-6 flex justify-between items-center z-[110] relative font-mono tracking-widest border-b border-white/5">
+        <div className="hidden sm:flex items-center gap-3">
+          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+          STATUS: ONLINE // SYS_v1.04
+        </div>
+        <div className="uppercase animate-pulse text-[9px]">RESTRICTED ACCESS // ARCHIVE_MODE_ACTIVE</div>
+        <div className="hidden sm:block">0.3476° N, 32.5825° E</div>
       </div>
 
       {/* Primary Header */}
       <header 
-        className={`fixed w-full z-[100] transition-all duration-500 ease-in-out
+        className={`fixed w-full z-[100] transition-all duration-500 ease-in-out border-b
           ${scrolled || !isHome 
-            ? 'bg-white text-black py-4 border-b border-gray-100' 
-            : 'bg-transparent text-white py-6 border-b border-white/10'}
+            ? 'bg-[var(--color-bg-primary)]/80 backdrop-blur-xl border-white/5 py-4' 
+            : 'bg-transparent border-white/5 py-6'}
         `}
       >
         <div className="max-w-[1920px] mx-auto px-6 lg:px-10">
@@ -59,37 +62,37 @@ export function Layout() {
               </button>
               <div className="hidden lg:flex items-center gap-10">
                 <div className="relative group">
-                    <Link to="/shop" className="text-nav hover:opacity-50 transition-opacity uppercase font-black text-[11px] tracking-widest flex items-center gap-1">
-                        Shop
+                    <Link to="/shop" className="text-nav hover:opacity-50 transition-opacity uppercase font-bold text-[10px] tracking-widest flex items-center gap-1">
+                        [ SHOP_COLLECTION ]
                     </Link>
                     {/* Mega Menu Mockup */}
                     <div className="absolute top-full left-0 pt-8 opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-500 z-[200]">
-                        <div className="bg-white border border-gray-100 p-8 shadow-2xl flex gap-12 w-[600px]">
+                        <div className="bg-[var(--color-bg-primary)] border border-white/10 p-8 shadow-2xl flex gap-12 w-[600px]">
                             <div className="flex flex-col gap-4">
-                                <p className="text-technical text-[9px] font-black border-b border-black pb-2 mb-2">COLLECTIONS</p>
+                                <p className="text-technical text-[9px] font-black border-b border-white/20 pb-2 mb-2">// CATEGORIES</p>
                                 <Link to="/shop" className="text-[11px] font-bold hover:translate-x-1 transition-transform uppercase">The Signature</Link>
                                 <Link to="/shop" className="text-[11px] font-bold hover:translate-x-1 transition-transform uppercase">The Archive</Link>
                                 <Link to="/shop" className="text-[11px] font-bold hover:translate-x-1 transition-transform uppercase">Accessories</Link>
                             </div>
-                            <div className="flex-1 aspect-[16/9] bg-gray-100 relative overflow-hidden">
-                                <img src="/hero-desktop.png" alt="Featured" className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/10" />
+                            <div className="flex-1 aspect-[16/9] bg-white/5 relative overflow-hidden">
+                                <img src="/hero-desktop.png" alt="Featured" className="w-full h-full object-cover grayscale brightness-50" />
+                                <div className="absolute inset-0 bg-black/40" />
                                 <div className="absolute bottom-4 left-4">
-                                    <p className="text-white text-[10px] font-black uppercase tracking-widest">SS26 DROP 01</p>
+                                    <p className="text-white text-[10px] font-black uppercase tracking-widest">[ SS26_DROP_01 ]</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <Link to="/signature" className="text-nav hover:opacity-50 transition-opacity uppercase font-black text-[11px] tracking-widest">
-                  The Signature
+                <Link to="/signature" className="text-nav hover:opacity-50 transition-opacity uppercase font-bold text-[10px] tracking-widest">
+                  [ THE_SIGNATURE ]
                 </Link>
               </div>
             </div>
 
             {/* Center: Logo */}
             <div className="flex justify-center">
-              <Link to="/" className="text-2xl font-[900] uppercase tracking-[-0.06em] leading-none glitch-text">
+              <Link to="/" className="text-2xl font-[900] uppercase tracking-[-0.06em] leading-none glitch-text text-white">
                 UTOPIA UG
               </Link>
             </div>
@@ -97,7 +100,7 @@ export function Layout() {
             {/* Right Nav */}
             <div className="flex items-center justify-end gap-10 flex-1">
               <div className="hidden lg:flex items-center gap-10">
-                <Link to="/archives" className="text-nav hover:opacity-50 transition-opacity uppercase font-black text-[11px] tracking-widest">Archives</Link>
+                <Link to="/archives" className="text-nav hover:opacity-50 transition-opacity uppercase font-bold text-[10px] tracking-widest">[ ARCHIVES ]</Link>
               </div>
               
               <div className="flex items-center gap-6">
