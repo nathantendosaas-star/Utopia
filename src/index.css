@@ -23,29 +23,29 @@
     --color-border-strong:     #FFFFFF;
 
     /* TYPOGRAPHY — INDUSTRIAL MONO */
-    --text-hero:               clamp(4rem, 15vw, 15rem);
-    --text-display:            clamp(2.5rem, 10vw, 8rem);
-    --text-heading-lg:         2.25rem;
-    --text-heading-md:         1.5rem;
+    --text-hero:               clamp(3.5rem, 18vw, 15rem);
+    --text-display:            clamp(2rem, 12vw, 8rem);
+    --text-heading-lg:         clamp(1.75rem, 8vw, 2.25rem);
+    --text-heading-md:         clamp(1.25rem, 6vw, 1.5rem);
     --text-heading-sm:         1rem;
     --text-body:               0.875rem;
     --text-label:              0.75rem;
     --text-micro:              0.65rem;
 
-    --leading-none:            0.85;
-    --leading-tight:           1.1;
+    --leading-none:            0.8;
+    --leading-tight:           1.05;
     --leading-normal:          1.5;
     
     --tracking-tight:          -0.05em;
     --tracking-normal:         0em;
     --tracking-wide:           0.05em;
     --tracking-wider:          0.1em;
-    --tracking-widest:         0.25em;
+    --tracking-widest:         0.2em;
 
     /* Layout System */
     --container-max:           1920px;
     --gutter-desktop:          3rem;
-    --gutter-mobile:           1.5rem;
+    --gutter-mobile:           1.25rem;
   }
 
   * {

@@ -77,24 +77,34 @@ export function ProductCard({ product, index }: { product: Product, index: numbe
       </div>
 
       {/* Metadata */}
-      <div className="flex flex-col gap-1.5 px-1">
+      <div className="flex flex-col gap-1 sm:gap-1.5 px-1">
         <div className="flex justify-between items-start gap-4">
-          <h3 className="text-technical text-[10px] font-[700] leading-tight text-white group-hover:opacity-60 transition-opacity">
+          <h3 className="text-technical text-[9px] sm:text-[10px] font-[700] leading-tight text-white group-hover:opacity-60 transition-opacity">
             [ {product.name.toUpperCase()} ]
           </h3>
-          <p className="text-technical text-[10px] font-[700] text-white">
+          <p className="text-technical text-[9px] sm:text-[10px] font-[700] text-white whitespace-nowrap">
             {formatPrice(product.price, currency)}
           </p>
         </div>
         <div className="flex justify-between items-center">
           {product.category && (
-            <p className="text-technical text-[9px] text-gray-500 font-medium">
+            <p className="text-technical text-[8px] sm:text-[9px] text-gray-500 font-medium uppercase">
               // {product.category.toUpperCase()}
             </p>
           )}
-          <p className="text-technical text-[9px] text-gray-600 font-medium">
+          <p className="hidden xs:block text-technical text-[8px] sm:text-[9px] text-gray-600 font-medium">
             UTP_REF_{product.id.substring(0, 4).toUpperCase()}
           </p>
+          {/* Mobile Quick Add Trigger */}
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsHovered(!isHovered);
+            }}
+            className="xs:hidden text-white/40 hover:text-white transition-colors"
+          >
+            <Zap size={14} />
+          </button>
         </div>
       </div>
     </motion.div>
