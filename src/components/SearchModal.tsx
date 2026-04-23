@@ -94,7 +94,7 @@ export function SearchModal() {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
