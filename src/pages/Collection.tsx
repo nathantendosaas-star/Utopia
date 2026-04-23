@@ -45,10 +45,10 @@ export function Collection() {
 
       {/* Category Header */}
       <div className="max-w-[1800px] mx-auto px-6 lg:px-10 mb-12">
-        <div className="flex flex-col gap-8 border-b border-gray-100 pb-12">
+        <div className="flex flex-col gap-8 border-b border-white/10 pb-12">
           <div className="flex flex-col gap-2">
-            <span className="text-technical text-[10px] text-gray-400 font-[900] tracking-[0.3em] uppercase">COLLECTIONS</span>
-            <h1 className="text-[clamp(3rem,8vw,6rem)] font-[900] text-black tracking-[-0.04em] leading-[0.85] uppercase">
+            <span className="text-technical text-[10px] text-white/40 font-[900] tracking-[0.3em] uppercase">COLLECTIONS</span>
+            <h1 className="text-[clamp(3rem,8vw,6rem)] font-[900] text-white tracking-[-0.04em] leading-[0.85] uppercase">
                {selectedCategory === 'ALL' ? 'SHOP ALL' : selectedCategory}
             </h1>
           </div>
@@ -61,14 +61,14 @@ export function Collection() {
                   key={cat}
                   onClick={() => handleCategoryChange(cat)}
                   className={`text-technical text-[11px] font-[800] tracking-[0.2em] transition-all relative pb-1
-                    ${selectedCategory === cat ? 'text-black' : 'text-gray-400 hover:text-black'}
+                    ${selectedCategory === cat ? 'text-white' : 'text-white/40 hover:text-white'}
                   `}
                 >
                   {cat}
                   {selectedCategory === cat && (
                     <motion.div 
                       layoutId="activeCategory"
-                      className="absolute bottom-0 left-0 w-full h-[2px] bg-black"
+                      className="absolute bottom-0 left-0 w-full h-[2px] bg-white"
                     />
                   )}
                 </button>
@@ -77,29 +77,29 @@ export function Collection() {
 
             {/* Item Count & Sort/Refine */}
             <div className="flex items-center gap-8">
-                <div className="hidden lg:block text-technical text-[10px] text-gray-400 font-bold tracking-[0.1em] mr-4">
+                <div className="hidden lg:block text-technical text-[10px] text-white/40 font-bold tracking-[0.1em] mr-4">
                   SHOWING {products.length} {products.length === 1 ? 'PIECE' : 'PIECES'}
                 </div>
                 
                 <button 
                     onClick={() => setIsFilterOpen(true)}
-                    className="flex items-center gap-3 text-technical text-[11px] font-[900] tracking-widest border border-black px-6 py-3 hover:bg-black hover:text-white transition-all"
+                    className="flex items-center gap-3 text-technical text-[11px] font-[900] tracking-widest border border-white/20 px-6 py-3 hover:bg-white hover:text-black transition-all"
                 >
-                    <Filter size={14} /> REFINE
+                    <Filter size={14} /> [ REFINE ]
                 </button>
                 
                 <div className="relative group hidden sm:block">
                     <select 
                         value={sort}
                         onChange={(e) => setSort(e.target.value as SortOption)}
-                        className="appearance-none bg-transparent text-technical text-[11px] font-[900] tracking-widest border border-black px-6 py-3 pr-10 cursor-pointer focus:outline-none"
+                        className="appearance-none bg-transparent text-technical text-[11px] font-[900] tracking-widest border border-white/20 px-6 py-3 pr-10 cursor-pointer focus:outline-none text-white"
                     >
-                        <option value="latest">LATEST</option>
-                        <option value="price-low">PRICE: LOW-HIGH</option>
-                        <option value="price-high">PRICE: HIGH-LOW</option>
-                        <option value="popular">POPULAR</option>
+                        <option value="latest" className="bg-black">LATEST</option>
+                        <option value="price-low" className="bg-black">PRICE: LOW-HIGH</option>
+                        <option value="price-high" className="bg-black">PRICE: HIGH-LOW</option>
+                        <option value="popular" className="bg-black">POPULAR</option>
                     </select>
-                    <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40" />
                 </div>
             </div>
           </div>
@@ -109,9 +109,13 @@ export function Collection() {
       {/* Grid Container */}
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
              {[...Array(6)].map((_, i) => (
-                <div key={i} className="aspect-portrait bg-gray-50 animate-pulse border border-gray-100" />
+                <div key={i} className="flex flex-col gap-5">
+                    <div className="aspect-portrait bg-white/5 animate-pulse border border-white/5" />
+                    <div className="h-4 w-2/3 bg-white/5 animate-pulse" />
+                    <div className="h-4 w-1/3 bg-white/5 animate-pulse" />
+                </div>
              ))}
           </div>
         ) : (
@@ -129,13 +133,13 @@ export function Collection() {
 
         {/* Empty State */}
         {!isLoading && products.length === 0 && (
-          <div className="py-32 flex flex-col items-center justify-center border border-dashed border-[var(--color-border-subtle)]">
-            <p className="text-technical text-[12px] text-[var(--color-text-secondary)] tracking-[0.2em]">NO PIECES FOUND IN THIS DEPARTMENT.</p>
+          <div className="py-32 flex flex-col items-center justify-center border border-dashed border-white/10">
+            <p className="text-technical text-[12px] text-white/40 tracking-[0.2em]">[ NO_PIECES_FOUND_IN_THIS_DEPARTMENT ]</p>
             <button 
               onClick={() => handleCategoryChange('ALL')}
-              className="mt-6 text-technical text-[10px] font-bold border-b border-black pb-1"
+              className="mt-6 text-technical text-[10px] font-bold border-b border-white pb-1 text-white hover:text-white/60 transition-colors"
             >
-              CLEAR FILTERS
+              // RESET_FILTERS
             </button>
           </div>
         )}
