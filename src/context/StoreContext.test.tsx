@@ -8,7 +8,8 @@ const mockProduct: Product = {
   id: 'test-1',
   name: 'Test Shirt',
   price: 50,
-  image: '/test.jpg'
+  image: '/test.jpg',
+  images: ['/test.jpg']
 };
 
 describe('StoreContext', () => {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
+import { Zap } from 'lucide-react';
 import { Product } from '../data/products';
 import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../lib/currency';

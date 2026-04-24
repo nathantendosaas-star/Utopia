@@ -90,9 +90,9 @@ export function CartDrawer() {
                             
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center border border-white/10">
-                                <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="p-1.5 sm:p-2 hover:bg-white/5 transition-colors border-r border-white/10"><Minus size={11} sm:size={12} /></button>
+                                <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="p-1.5 sm:p-2 hover:bg-white/5 transition-colors border-r border-white/10"><Minus size={11} /></button>
                                 <span className="text-technical text-[9px] sm:text-[10px] px-3 sm:px-4 font-[800] text-white">{item.quantity}</span>
-                                <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="p-1.5 sm:p-2 hover:bg-white/5 transition-colors border-l border-white/10"><Plus size={11} sm:size={12} /></button>
+                                <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="p-1.5 sm:p-2 hover:bg-white/5 transition-colors border-l border-white/10"><Plus size={11} /></button>
                                 </div>
                                 <span className="text-technical text-[10px] sm:text-[11px] font-[800] tracking-wider text-white">{formatPrice(item.product.price * item.quantity, currency)}</span>
                             </div>

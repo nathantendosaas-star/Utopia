@@ -45,12 +45,12 @@ export function SearchModal() {
           >
             <div className="flex justify-end mb-6 sm:mb-8">
               <button onClick={() => setSearchOpen(false)} className="hover:text-[var(--color-accent-primary)] transition-colors" aria-label="Close search">
-                <X size={28} sm:size={32} strokeWidth={1} />
+                <X size={28} strokeWidth={1} />
               </button>
             </div>
             
             <div className="relative border-b border-[var(--color-text-primary)] pb-3 sm:pb-4 mb-8 sm:mb-12">
-              <SearchIcon size={24} sm:size={32} strokeWidth={1} className="absolute left-0 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)]" />
+              <SearchIcon size={24} strokeWidth={1} className="absolute left-0 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)]" />
               <input 
                 type="text" 
                 placeholder="SEARCH THE ARCHIVE..." 

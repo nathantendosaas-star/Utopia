@@ -40,7 +40,7 @@ export function QuickViewModal() {
                   onClick={() => setQuickViewProduct(null)} 
                   className="absolute top-6 sm:top-8 right-6 sm:right-8 z-20 hover:text-[var(--color-accent-primary)] transition-colors"
                 >
-                  <X size={28} sm:size={32} strokeWidth={1} />
+                  <X size={28} strokeWidth={1} />
                 </button>
 
                 <div className="relative aspect-square w-full max-w-xl">

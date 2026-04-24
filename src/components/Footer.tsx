@@ -70,7 +70,7 @@ export function Footer() {
           
           <div className="flex flex-wrap justify-center gap-8 sm:gap-10 items-center">
             <div className="flex items-center gap-3">
-                <Globe size={13} sm:size={14} className="text-gray-500" />
+                <Globe size={13} className="text-gray-500" />
                 <select 
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value as any)}

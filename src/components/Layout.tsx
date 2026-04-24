@@ -107,16 +107,16 @@ export function Layout() {
               
               <div className="flex items-center gap-3 sm:gap-6">
                 <button onClick={() => setSearchOpen(true)} className="hover:opacity-50 transition-opacity glitch-hover">
-                  <Search size={18} sm:size={20} strokeWidth={1.5} />
+                  <Search size={18} strokeWidth={1.5} />
                 </button>
                 <button onClick={() => setUserOpen(true)} className="hover:opacity-50 transition-opacity glitch-hover hidden xs:block">
-                  <User size={18} sm:size={20} strokeWidth={1.5} />
+                  <User size={18} strokeWidth={1.5} />
                 </button>
                 <button 
                   onClick={() => setCartOpen(true)}
                   className="hover:opacity-50 transition-opacity flex items-center relative glitch-hover"
                 >
-                  <ShoppingBag size={18} sm:size={20} strokeWidth={1.5} />
+                  <ShoppingBag size={18} strokeWidth={1.5} />
                   {cartCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-white text-black text-[7px] sm:text-[8px] font-bold w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center">
                       {cartCount}

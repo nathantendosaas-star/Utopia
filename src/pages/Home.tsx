@@ -170,13 +170,13 @@ export function Home() {
                 </motion.h2>
                 <div className="flex flex-col sm:flex-row gap-8 sm:gap-12">
                     <div className="space-y-4 sm:space-y-6">
-                        <Info className="text-white/40" size={28} sm:size={32} />
+                        <Info className="text-white/40" size={28} />
                         <p className="text-white/30 text-technical text-[10px] sm:text-xs leading-relaxed max-w-[200px] uppercase">
                             [ ENGINEERED_FOR_THE_VOID_BETWEEN_THE_CONCRETE_AND_THE_CLOUDS ]
                         </p>
                     </div>
                     <div className="space-y-4 sm:space-y-6">
-                        <ShieldCheck className="text-white/40" size={28} sm:size={32} />
+                        <ShieldCheck className="text-white/40" size={28} />
                         <p className="text-white/30 text-technical text-[10px] sm:text-xs leading-relaxed max-w-[200px] uppercase">
                             [ SERIALIZED_PRODUCTION // LIMITED_TO_100_PIECES_PER_DROP ]
                         </p>
@@ -203,7 +203,7 @@ export function Home() {
           <div className="max-w-7xl mx-auto text-center mb-16 sm:mb-32">
               <h2 className="text-heading text-5xl sm:text-9xl mb-6 sm:mb-8 text-white tracking-[-0.05em]">THE_SIGNATURE.</h2>
               <Link to="/shop" className="btn-primary group flex items-center gap-4 mx-auto w-fit py-6 sm:py-8 px-10 sm:px-16 !bg-white !text-black text-[10px] sm:text-[11px]">
-                  [ ACCESS_THE_LAB ] <Zap size={14} sm:size={16} className="fill-black" />
+                  [ ACCESS_THE_LAB ] <Zap size={14} className="fill-black" />
               </Link>
           </div>
           

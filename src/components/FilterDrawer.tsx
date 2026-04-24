@@ -9,7 +9,7 @@ interface FilterDrawerProps {
 }
 
 export function FilterDrawer({ isOpen, onClose }: FilterDrawerProps) {
-  const { filters, setFilters, products } = useStore();
+  const { filters, setFilters } = useStore();
 
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   const allColors = ['BLACK', 'VINTAGE WHITE', 'MIDNIGHT BLACK', 'CHARCOAL', 'GREY', 'NAVY'];
