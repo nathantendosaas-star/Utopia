@@ -98,16 +98,6 @@ export const products: Product[] = [
     description: "Long sleeve graphic tee with screen-printed artwork on the sleeves and back."
   },
   { 
-    id: '5', 
-    name: "UTOPIA CANVAS TOTE BAG", 
-    price: 25000, 
-    image: "/tote-bag.png", 
-    images: ["/tote-bag.png"],
-    category: "ACCESSORIES",
-    badge: "LIMITED",
-    description: "Heavy-duty canvas tote with reinforced handles and interior zip pocket. Perfect for daily essentials."
-  },
-  { 
     id: '6', 
     name: "UTOPIA ESSENTIAL BEANIE", 
     price: 20000, 
