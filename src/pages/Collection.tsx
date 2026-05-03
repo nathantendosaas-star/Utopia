@@ -10,23 +10,29 @@ import { fetchProducts } from '../lib/api';
 export function Collection() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [allFetchedProducts, setAllFetchedProducts] = useState<Product[]>([]);
   const { isLoading, setLoading, filters, setFilters, sort, setSort } = useStore();
 
   useEffect(() => {
     setLoading(true);
-    fetchProducts(filters, sort).then(data => {
-      setProducts(data);
-      setLoading(false);
+    // Fetch all products once to get categories
+    fetchProducts().then(allData => {
+      setAllFetchedProducts(allData);
+      // Then fetch filtered products
+      fetchProducts(filters, sort).then(filteredData => {
+        setProducts(filteredData);
+        setLoading(false);
+      });
     });
   }, [filters, sort, setLoading]);
 
   const categories = useMemo(() => {
-    const cats = allProducts.reduce((acc, p) => {
+    const cats = allFetchedProducts.reduce((acc, p) => {
       if (p.category && !acc.includes(p.category)) acc.push(p.category);
       return acc;
     }, [] as string[]);
     return ['ALL', ...cats];
-  }, []);
+  }, [allFetchedProducts]);
 
   const selectedCategory = filters.categories.length === 0 ? 'ALL' : filters.categories[0];
 

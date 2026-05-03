@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Star, ShieldCheck, Truck, Zap, Info, Plus, Minus, Ruler } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../lib/currency';
-import { Product, products } from '../data/products';
+import { Product } from '../data/products';
 import { Accordion } from '../components/Accordion';
 import { db, analytics } from '../lib/firebase';
 import { collection, addDoc, query, where, onSnapshot, orderBy, serverTimestamp } from 'firebase/firestore';
 import { logEvent } from 'firebase/analytics';
+import { fetchProductById } from '../lib/api';
 
 interface Review {
   id: string;
@@ -34,20 +35,25 @@ export function ProductDetail() {
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   useEffect(() => {
-    const p = id ? products.find(item => item.id === id) : products[0];
-    if (p) {
-      setProduct(p);
-      if (p.sizes && p.sizes.length > 0) setSelectedSize(p.sizes[0]);
-      
-      if (analytics) {
-        logEvent(analytics, 'view_item', {
-          item_id: p.id,
-          item_name: p.name,
-          item_category: p.category,
-          price: p.price
-        });
+    const loadProduct = async () => {
+      if (!id) return;
+      const p = await fetchProductById(id);
+      if (p) {
+        setProduct(p);
+        if (p.sizes && p.sizes.length > 0) setSelectedSize(p.sizes[0]);
+        
+        if (analytics) {
+          logEvent(analytics, 'view_item', {
+            item_id: p.id,
+            item_name: p.name,
+            item_category: p.category,
+            price: p.price
+          });
+        }
       }
-    }
+    };
+
+    loadProduct();
 
     if (id) {
       const q = query(
@@ -85,8 +91,14 @@ export function ProductDetail() {
     if (!id || !reviewName || !reviewComment) return;
 
     setIsSubmittingReview(true);
+    
+    // Set a timeout to prevent indefinite hanging
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('REQUEST_TIMEOUT')), 10000)
+    );
+
     try {
-      await addDoc(collection(db, 'reviews'), {
+      const submissionPromise = addDoc(collection(db, 'reviews'), {
         productId: id,
         userName: reviewName,
         rating: reviewRating,
@@ -94,12 +106,19 @@ export function ProductDetail() {
         status: 'pending',
         createdAt: serverTimestamp()
       });
+
+      await Promise.race([submissionPromise, timeoutPromise]);
+      
       setReviewSubmitted(true);
       setReviewName('');
       setReviewComment('');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting review:', error);
-      alert('FAILED_TO_SUBMIT_REVIEW_PROTOCOL');
+      if (error.message === 'REQUEST_TIMEOUT') {
+        alert('PROTOCOL_TIMEOUT: UNABLE_TO_CONNECT_TO_CORE. CHECK_NETWORK_OR_DOMAIN_AUTH.');
+      } else {
+        alert(`FAILED_TO_SUBMIT_REVIEW_PROTOCOL: ${error.message || 'UNKNOWN_ERROR'}`);
+      }
     } finally {
       setIsSubmittingReview(false);
     }

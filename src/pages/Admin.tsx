@@ -20,13 +20,25 @@ import {
   Shield,
   Activity,
   Terminal,
-  LucideIcon
+  LucideIcon,
+  Database,
+  Lock,
+  LogOut,
+  Chrome
 } from 'lucide-react';
-import { db, storage } from '../lib/firebase';
-import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db, storage, auth, googleProvider } from '../lib/firebase';
+import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { products as initialProducts, Product } from '../data/products';
 import { AdminProductForm } from '../components/AdminProductForm';
+
+// LIST OF AUTHORIZED EMAILS
+const AUTHORIZED_EMAILS = [
+  'joshuamusiime@gmail.com',
+  'goawyulc1@gmail.com',
+  'nathantendo.saas@gmail.com'
+];
 
 interface Review {
   id: string;
@@ -55,11 +67,6 @@ const MOCK_ANALYTICS = {
   ]
 };
 
-const MOCK_REVIEWS = [
-  { id: '1', user: 'Anonymous', rating: 5, comment: 'Incredible quality and fit.', status: 'pending', date: '2026-05-01' },
-  { id: '2', user: 'User_492', rating: 4, comment: 'The aesthetic is spot on.', status: 'approved', date: '2026-04-28' },
-];
-
 const MOCK_ORDERS = [
   { id: 'ORD-8921', customer: 'JOEL_M', total: 120000, status: 'processing', date: '2026-05-02' },
   { id: 'ORD-7742', customer: 'SARAH_K', total: 45000, status: 'shipped', date: '2026-05-01' },
@@ -67,8 +74,10 @@ const MOCK_ORDERS = [
 ];
 
 export function Admin() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [accessKey, setAccessKey] = useState('');
   const [activeTab, setActiveTab] = useState<'analytics' | 'products' | 'orders' | 'reviews' | 'uploads'>('analytics');
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadCategory, setUploadCategory] = useState('shop');
   const [isUploading, setIsUploading] = useState(false);
@@ -82,21 +91,73 @@ export function Admin() {
   });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && AUTHORIZED_EMAILS.includes(user.email || '')) {
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+      } else {
+        setCurrentUser(null);
+        setIsAuthenticated(false);
+      }
+      setIsAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      if (!AUTHORIZED_EMAILS.includes(result.user.email || '')) {
+        await signOut(auth);
+        alert('ACCESS_DENIED // UNAUTHORIZED_USER_LOG');
+      }
+    } catch (error) {
+      console.error('Login Error:', error);
+      alert('LOGIN_PROTOCOL_FAILED');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Logout Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    // Listen to Products
+    const productsUnsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
+      const productsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Product[];
+      setProducts(productsData);
+    }, (error) => {
+      console.error('Error listening to products:', error);
+    });
+
+    // Listen to Reviews
     const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const reviewsUnsubscribe = onSnapshot(q, (snapshot) => {
       const reviewsData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Review[];
       setReviews(reviewsData);
+    }, (error) => {
+      console.error('Error listening to reviews:', error);
     });
-    return () => unsubscribe();
-  }, []);
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'analytics'), (snapshot) => {
+    // Listen to Analytics
+    const analyticsUnsubscribe = onSnapshot(collection(db, 'analytics'), (snapshot) => {
       const data: any = {};
       snapshot.forEach(doc => {
         data[doc.id] = doc.data();
@@ -107,9 +168,16 @@ export function Admin() {
         productViews: data.counters?.productViews || 0,
         topProducts: data.top_products?.list || []
       });
+    }, (error) => {
+      console.error('Error listening to analytics:', error);
     });
-    return () => unsubscribe();
-  }, []);
+
+    return () => {
+      productsUnsubscribe();
+      reviewsUnsubscribe();
+      analyticsUnsubscribe();
+    };
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const start = Date.now();
@@ -122,6 +190,26 @@ export function Admin() {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const seedDatabase = async () => {
+    if (!window.confirm('INITIATE_DATABASE_SEED_PROTOCOL? THIS_WILL_OVERWRITE_EXISTING_DATA.')) return;
+    
+    setIsSeeding(true);
+    try {
+      for (const product of initialProducts) {
+        await setDoc(doc(db, 'products', product.id), {
+          ...product,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('DATABASE_SEED_PROTOCOL_COMPLETE');
+    } catch (error) {
+      console.error('Error seeding database:', error);
+      alert('SEED_PROTOCOL_FAILED');
+    } finally {
+      setIsSeeding(false);
+    }
+  };
 
   const handleFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,9 +238,14 @@ export function Admin() {
     }
   };
 
-  const deleteProduct = (id: string) => {
+  const deleteProduct = async (id: string) => {
     if (window.confirm('ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_PRODUCT?')) {
-      setProducts(products.filter(p => p.id !== id));
+      try {
+        await deleteDoc(doc(db, 'products', id));
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        alert('FAILED_TO_DELETE_ASSET');
+      }
     }
   };
 
@@ -161,14 +254,23 @@ export function Admin() {
     setIsFormOpen(true);
   };
 
-  const handleSaveProduct = (product: Product) => {
-    if (editingProduct) {
-      setProducts(products.map(p => p.id === product.id ? product : p));
-    } else {
-      setProducts([product, ...products]);
+  const handleSaveProduct = async (product: Product) => {
+    try {
+      const productData = { ...product };
+      // Remove undefined fields for Firestore
+      Object.keys(productData).forEach(key => (productData as any)[key] === undefined && delete (productData as any)[key]);
+      
+      await setDoc(doc(db, 'products', product.id), {
+        ...productData,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      
+      setIsFormOpen(false);
+      setEditingProduct(undefined);
+    } catch (error) {
+      console.error('Error saving product:', error);
+      alert('FAILED_TO_COMMIT_DATA_PACK');
     }
-    setIsFormOpen(false);
-    setEditingProduct(undefined);
   };
 
   const approveReview = async (id: string) => {
@@ -192,6 +294,58 @@ export function Admin() {
     }
   };
 
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <p className="text-technical text-[10px] animate-pulse text-white font-black uppercase tracking-widest">
+          ESTABLISHING_SECURE_CONNECTION...
+        </p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black p-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-full max-w-md bg-white/5 border border-white/10 p-12 space-y-10 text-center"
+        >
+          <div className="flex flex-col items-center gap-6">
+            <div className="p-5 border border-white/10 relative">
+              <Lock size={40} className="text-white" />
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 border border-dashed border-white/20 scale-150 rounded-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-3xl font-black italic tracking-tighter uppercase leading-none">SECURE_GATEWAY</h1>
+              <p className="text-[10px] font-mono opacity-40 uppercase tracking-[0.3em]">
+                RESTRICTED_ACCESS // UTOPIA_ADMIN_CORE
+              </p>
+            </div>
+          </div>
+          
+          <div className="space-y-4 pt-6">
+            <button 
+              onClick={handleGoogleLogin}
+              className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-white border border-white transition-all flex items-center justify-center gap-4 group"
+            >
+              <Chrome size={18} className="transition-transform group-hover:rotate-12" />
+              [ SIGN_IN_WITH_GOOGLE ]
+            </button>
+            <p className="text-[8px] font-mono opacity-20 uppercase tracking-widest">
+              IDENTITY_VERIFICATION_REQUIRED_FOR_ROOT_ACCESS
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pt-32 pb-20 px-4 sm:px-6 lg:px-10 max-w-[1600px] mx-auto bg-[var(--color-bg-primary)]">
       {isFormOpen && (
@@ -212,21 +366,43 @@ export function Admin() {
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-10">
-          <div>
+          <div className="flex-grow">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2 mb-4"
+              className="flex items-center gap-3 mb-4"
             >
               <Shield size={14} className="text-white/40" />
               <span className="text-technical text-[9px] opacity-40">SECURE_ENVIRONMENT // ROOT_ACCESS</span>
+              <span className="text-technical text-[9px] text-green-500 font-bold ml-4 uppercase tracking-widest bg-green-500/5 px-2 py-0.5 border border-green-500/20">
+                ACTIVE_USER: {currentUser?.email}
+              </span>
             </motion.div>
             <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic text-white mb-2 leading-none">
               ADMIN_CORE
             </h1>
-            <p className="text-technical text-[10px] opacity-60 font-mono tracking-widest">
-              TERMINAL_v1.04_BETA // {new Date().toLocaleDateString()}
-            </p>
+            <div className="flex flex-wrap items-center gap-6">
+              <p className="text-technical text-[10px] opacity-60 font-mono tracking-widest">
+                TERMINAL_v1.05_AUTH // {new Date().toLocaleDateString()}
+              </p>
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={seedDatabase}
+                  disabled={isSeeding}
+                  className="text-[9px] font-mono text-blue-500 hover:text-white transition-colors flex items-center gap-2 uppercase tracking-widest"
+                >
+                  <Database size={10} />
+                  {isSeeding ? '[ SEEDING... ]' : '[ SEED_DATABASE ]'}
+                </button>
+                <button 
+                  onClick={handleLogout}
+                  className="text-[9px] font-mono text-red-500 hover:text-white transition-colors flex items-center gap-2 uppercase tracking-widest"
+                >
+                  <LogOut size={10} />
+                  [ TERMINATE_SESSION ]
+                </button>
+              </div>
+            </div>
           </div>
           
           <div className="flex gap-8 text-right font-mono">
@@ -501,7 +677,7 @@ export function Admin() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-[0.2em]">ACCESS_TOKEN</label>
+                          <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-widest">ACCESS_TOKEN</label>
                           <div className="bg-white/5 border border-white/10 p-4 text-[12px] font-mono opacity-20 italic">
                             AUTOGENERATED_BY_SYSTEM
                           </div>

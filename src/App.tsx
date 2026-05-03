@@ -53,7 +53,7 @@ export default function App() {
             <Route path="terms-conditions" element={<TermsConditions />} />
             <Route path="prestige" element={<Prestige />} />
             <Route path="support" element={<Support />} />
-            <Route path="admin" element={<Admin />} />
+            <Route path="adminforutopiaug" element={<Admin />} />
           </Route>
         </Routes>
       </BrowserRouter>
