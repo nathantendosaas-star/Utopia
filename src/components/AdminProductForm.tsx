@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Upload, Plus, Trash2, Database, Layers } from 'lucide-react';
 import { Product } from '../data/products';
+import { storage } from '../lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 interface AdminProductFormProps {
   product?: Product;
@@ -27,9 +29,26 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
       description: ''
     }
   );
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageUpload = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
+      const uploadResult = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(uploadResult.ref);
+      setFormData(prev => ({ ...prev, image: url, images: [url, ...(prev.images || [])] }));
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('UPLOAD_PROTOCOL_FAILED');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isUploading) return;
     onSave({
       ...formData,
       id: product?.id || `ASSET-${Math.floor(Math.random() * 9000 + 1000)}`,
@@ -156,12 +175,23 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                             <input 
                                 type="text" 
                                 required
+                                readOnly
                                 className="flex-grow bg-white/5 border border-white/10 p-4 text-sm font-mono opacity-80 focus:border-white outline-none transition-all"
                                 value={formData.image}
-                                onChange={e => setFormData({...formData, image: e.target.value})}
-                                placeholder="/path/to/image.jpg"
+                                placeholder="UPLOAD_OR_INPUT_URI..."
                             />
-                            <button type="button" className="bg-white text-black px-6 hover:bg-black hover:text-white transition-all border border-white">
+                            <input 
+                                type="file" 
+                                id="product-image-upload" 
+                                className="hidden" 
+                                onChange={e => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                            />
+                            <button 
+                                type="button" 
+                                onClick={() => document.getElementById('product-image-upload')?.click()}
+                                disabled={isUploading}
+                                className="bg-white text-black px-6 hover:bg-black hover:text-white transition-all border border-white disabled:opacity-50"
+                            >
                                 <Upload size={18} />
                             </button>
                         </div>
@@ -254,10 +284,11 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
             </button>
             <button 
               type="submit"
-              className="btn-primary group flex items-center justify-center gap-3 min-w-[280px] !bg-white !text-black hover:!bg-transparent hover:!text-white border-white transition-all"
+              disabled={isUploading}
+              className="btn-primary group flex items-center justify-center gap-3 min-w-[280px] !bg-white !text-black hover:!bg-transparent hover:!text-white border-white transition-all disabled:opacity-50"
             >
-              <Plus size={16} />
-              [ COMMIT_DATA_PACK ]
+              {isUploading ? <Activity size={16} className="animate-spin" /> : <Plus size={16} />}
+              {isUploading ? '[ DISPATCHING_DATA... ]' : '[ COMMIT_DATA_PACK ]'}
             </button>
           </div>
         </form>

@@ -20,8 +20,17 @@ import { StoreProvider } from './context/StoreContext';
 import { Prestige } from './pages/Prestige';
 import { Support } from './pages/Support';
 import { Admin } from './pages/Admin';
+import { analytics } from './lib/firebase';
+import { logEvent } from 'firebase/analytics';
+import { useEffect } from 'react';
 
 export default function App() {
+  useEffect(() => {
+    if (analytics) {
+      logEvent(analytics, 'page_view');
+    }
+  }, []);
+
   return (
     <StoreProvider>
       <BrowserRouter>

@@ -23,8 +23,26 @@ import {
   LucideIcon
 } from 'lucide-react';
 import { db, storage } from '../lib/firebase';
+import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { products as initialProducts, Product } from '../data/products';
 import { AdminProductForm } from '../components/AdminProductForm';
+
+interface Review {
+  id: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  status: 'pending' | 'approved';
+  createdAt: any;
+  productId: string;
+}
+
+interface AnalyticsData {
+  uniqueVisitors: number;
+  productViews: number;
+  topProducts: { name: string, views: number }[];
+}
 
 // Mock data for initial UI build
 const MOCK_ANALYTICS = {
@@ -56,9 +74,42 @@ export function Admin() {
   const [isUploading, setIsUploading] = useState(false);
   const [systemUptime, setSystemUptime] = useState('00:00:00');
   
-  // Product Form State
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
+    uniqueVisitors: 0,
+    productViews: 0,
+    topProducts: []
+  });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
+
+  useEffect(() => {
+    const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const reviewsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Review[];
+      setReviews(reviewsData);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'analytics'), (snapshot) => {
+      const data: any = {};
+      snapshot.forEach(doc => {
+        data[doc.id] = doc.data();
+      });
+      
+      setAnalyticsData({
+        uniqueVisitors: data.counters?.uniqueVisitors || 0,
+        productViews: data.counters?.productViews || 0,
+        topProducts: data.top_products?.list || []
+      });
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const start = Date.now();
@@ -77,11 +128,26 @@ export function Admin() {
     if (!uploadFile) return;
     
     setIsUploading(true);
-    setTimeout(() => {
-      alert(`Simulated upload of ${uploadFile.name} to ${uploadCategory}`);
-      setIsUploading(false);
+    try {
+      const fileRef = ref(storage, `site_assets/${uploadCategory}/${Date.now()}_${uploadFile.name}`);
+      const uploadResult = await uploadBytes(fileRef, uploadFile);
+      const downloadURL = await getDownloadURL(uploadResult.ref);
+      
+      await addDoc(collection(db, 'site_assets'), {
+        name: uploadFile.name,
+        url: downloadURL,
+        category: uploadCategory,
+        createdAt: serverTimestamp()
+      });
+
+      alert(`SUCCESSFULLY_UPLOADED_TO_${uploadCategory.toUpperCase()}`);
       setUploadFile(null);
-    }, 2000);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('UPLOAD_PROTOCOL_FAILED');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const deleteProduct = (id: string) => {
@@ -103,6 +169,27 @@ export function Admin() {
     }
     setIsFormOpen(false);
     setEditingProduct(undefined);
+  };
+
+  const approveReview = async (id: string) => {
+    try {
+      const reviewRef = doc(db, 'reviews', id);
+      await updateDoc(reviewRef, { status: 'approved' });
+    } catch (error) {
+      console.error('Error approving review:', error);
+      alert('FAILED_TO_APPROVE_REVIEW');
+    }
+  };
+
+  const deleteReview = async (id: string) => {
+    if (window.confirm('ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_REVIEW?')) {
+      try {
+        await deleteDoc(doc(db, 'reviews', id));
+      } catch (error) {
+        console.error('Error deleting review:', error);
+        alert('FAILED_TO_DELETE_REVIEW');
+      }
+    }
   };
 
   return (
@@ -203,8 +290,8 @@ export function Admin() {
             >
               {activeTab === 'analytics' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <StatCard title="UNIQUE_VISITORS" value={MOCK_ANALYTICS.uniqueVisitors} icon={<Users className="text-green-500" />} change="+12%" />
-                  <StatCard title="PRODUCT_VIEWS" value={MOCK_ANALYTICS.productViews} icon={<Eye className="text-blue-500" />} change="+4.2%" />
+                  <StatCard title="UNIQUE_VISITORS" value={analyticsData.uniqueVisitors || MOCK_ANALYTICS.uniqueVisitors} icon={<Users className="text-green-500" />} change="+12%" />
+                  <StatCard title="PRODUCT_VIEWS" value={analyticsData.productViews || MOCK_ANALYTICS.productViews} icon={<Eye className="text-blue-500" />} change="+4.2%" />
                   <StatCard title="CONVERSION_RATE" value="3.2%" icon={<TrendingUp className="text-purple-500" />} change="-0.5%" />
                   
                   <div className="col-span-full bg-white/5 border border-white/10 p-8 relative overflow-hidden group">
@@ -215,7 +302,7 @@ export function Admin() {
                       <Activity size={14} /> // TOP_PERFORMING_PRODUCTS
                     </h3>
                     <div className="space-y-6">
-                      {MOCK_ANALYTICS.topProducts.map((p, i) => (
+                      {(analyticsData.topProducts.length > 0 ? analyticsData.topProducts : MOCK_ANALYTICS.topProducts).map((p, i) => (
                         <div key={i} className="flex justify-between items-end border-b border-white/5 pb-2 hover:border-white/20 transition-colors group/item">
                           <div>
                             <span className="text-[9px] font-mono opacity-30 mr-4">0{i+1}</span>
@@ -343,33 +430,49 @@ export function Admin() {
                 <div className="space-y-6">
                   <h3 className="text-[11px] font-black uppercase tracking-widest text-white">// USER_FEEDBACK_MODERATION</h3>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {MOCK_REVIEWS.map((review) => (
+                    {reviews.length > 0 ? reviews.map((review) => (
                       <div key={review.id} className="bg-white/5 border border-white/10 p-8 flex flex-col justify-between gap-6 hover:border-white/20 transition-colors">
                         <div>
                           <div className="flex justify-between items-start mb-6">
                             <div className="flex items-center gap-3">
-                              <span className="text-[9px] font-mono opacity-30 uppercase">{review.date}</span>
+                              <span className="text-[9px] font-mono opacity-30 uppercase">
+                                {review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString() : 'JUST_NOW'}
+                              </span>
                               <div className="flex gap-1 text-white">
                                 {[...Array(5)].map((_, i) => (
                                   <Star key={i} size={10} fill={i < review.rating ? "currentColor" : "none"} className={i < review.rating ? "text-white" : "text-white/10"} />
                                 ))}
                               </div>
                             </div>
-                            <span className="text-[8px] font-mono opacity-20 uppercase tracking-widest">REF: {review.id}</span>
+                            <span className={`text-[8px] font-black px-1.5 py-0.5 border ${review.status === 'approved' ? 'border-green-500/40 text-green-500' : 'border-yellow-500/40 text-yellow-500'} uppercase tracking-widest`}>
+                              {review.status}
+                            </span>
                           </div>
-                          <p className="text-sm font-black uppercase mb-4 tracking-tighter text-white">{review.user}</p>
+                          <p className="text-sm font-black uppercase mb-4 tracking-tighter text-white">{review.userName}</p>
                           <p className="text-[13px] opacity-60 font-mono italic leading-relaxed">"{review.comment}"</p>
                         </div>
                         <div className="flex gap-3 pt-6 border-t border-white/5">
-                          <button className="flex-grow py-3 border border-green-500/30 text-green-500 hover:bg-green-500 hover:text-black text-[10px] font-black uppercase tracking-widest transition-all">
-                            APPROVE_LOG
-                          </button>
-                          <button className="flex-grow py-3 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white text-[10px] font-black uppercase tracking-widest transition-all">
+                          {review.status === 'pending' && (
+                            <button 
+                              onClick={() => approveReview(review.id)}
+                              className="flex-grow py-3 border border-green-500/30 text-green-500 hover:bg-green-500 hover:text-black text-[10px] font-black uppercase tracking-widest transition-all"
+                            >
+                              APPROVE_LOG
+                            </button>
+                          )}
+                          <button 
+                            onClick={() => deleteReview(review.id)}
+                            className="flex-grow py-3 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white text-[10px] font-black uppercase tracking-widest transition-all"
+                          >
                             DISCARD_ASSET
                           </button>
                         </div>
                       </div>
-                    ))}
+                    )) : (
+                      <div className="col-span-full py-20 text-center border border-dashed border-white/10 opacity-30">
+                        <p className="text-[10px] font-mono tracking-widest">NO_REVIEWS_FOUND_IN_BUFFER</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

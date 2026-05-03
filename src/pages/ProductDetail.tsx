@@ -6,6 +6,17 @@ import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../lib/currency';
 import { Product, products } from '../data/products';
 import { Accordion } from '../components/Accordion';
+import { db, analytics } from '../lib/firebase';
+import { collection, addDoc, query, where, onSnapshot, orderBy, serverTimestamp } from 'firebase/firestore';
+import { logEvent } from 'firebase/analytics';
+
+interface Review {
+  id: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: any;
+}
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -14,11 +25,47 @@ export function ProductDetail() {
   const [scrolledPastCta, setScrolledPastCta] = useState(false);
   const { addToCart, currency } = useStore();
 
+  // Review states
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewName, setReviewName] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+
   useEffect(() => {
     const p = id ? products.find(item => item.id === id) : products[0];
     if (p) {
       setProduct(p);
       if (p.sizes && p.sizes.length > 0) setSelectedSize(p.sizes[0]);
+      
+      if (analytics) {
+        logEvent(analytics, 'view_item', {
+          item_id: p.id,
+          item_name: p.name,
+          item_category: p.category,
+          price: p.price
+        });
+      }
+    }
+
+    if (id) {
+      const q = query(
+        collection(db, 'reviews'),
+        where('productId', '==', id),
+        where('status', '==', 'approved'),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const reviewsData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Review[];
+        setReviews(reviewsData);
+      });
+
+      return () => unsubscribe();
     }
 
     const handleScroll = () => {
@@ -32,6 +79,31 @@ export function ProductDetail() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [id]);
+
+  const submitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id || !reviewName || !reviewComment) return;
+
+    setIsSubmittingReview(true);
+    try {
+      await addDoc(collection(db, 'reviews'), {
+        productId: id,
+        userName: reviewName,
+        rating: reviewRating,
+        comment: reviewComment,
+        status: 'pending',
+        createdAt: serverTimestamp()
+      });
+      setReviewSubmitted(true);
+      setReviewName('');
+      setReviewComment('');
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('FAILED_TO_SUBMIT_REVIEW_PROTOCOL');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   if (!product) return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-primary)]">
@@ -217,6 +289,113 @@ export function ProductDetail() {
                 <Accordion title="SUSTAINABILITY">
                     <p className="text-white/60 leading-relaxed">Ethically sourced materials. Crafted with a focus on longevity and minimal environmental impact in our Kampala laboratory.</p>
                 </Accordion>
+            </div>
+
+            {/* Customer Reviews Section */}
+            <div className="border-t border-white/10 pt-12 space-y-12">
+                <div className="flex justify-between items-center">
+                    <h3 className="text-[11px] font-black tracking-[0.3em] text-white uppercase">USER_FEEDBACK_ARCHIVE</h3>
+                    <p className="text-[9px] font-mono text-white/30 uppercase">{reviews.length} _LOGS_FOUND</p>
+                </div>
+
+                {/* Review Form */}
+                {reviewSubmitted ? (
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-white/5 border border-green-500/30 p-8 text-center"
+                    >
+                        <p className="text-[10px] font-black text-green-500 tracking-[0.2em] uppercase mb-2">REVIEW_SUBMITTED_SUCCESSFULLY</p>
+                        <p className="text-[9px] text-white/40 uppercase">Pending_Moderator_Approval</p>
+                    </motion.div>
+                ) : (
+                    <form onSubmit={submitReview} className="bg-white/5 border border-white/10 p-8 space-y-6">
+                        <div className="space-y-4">
+                            <label className="block text-[9px] font-mono text-white/30 uppercase tracking-widest">TRANSMITTER_IDENTIFIER (NAME)</label>
+                            <input 
+                                type="text" 
+                                required
+                                value={reviewName}
+                                onChange={e => setReviewName(e.target.value)}
+                                className="w-full bg-black border border-white/10 p-4 text-[11px] font-black tracking-widest uppercase focus:border-white transition-colors outline-none"
+                                placeholder="INPUT_NAME..."
+                            />
+                        </div>
+
+                        <div className="space-y-4">
+                            <label className="block text-[9px] font-mono text-white/30 uppercase tracking-widest">FEEDBACK_RATING</label>
+                            <div className="flex gap-2">
+                                {[1, 2, 3, 4, 5].map(star => (
+                                    <button 
+                                        key={star}
+                                        type="button"
+                                        onClick={() => setReviewRating(star)}
+                                        className="p-1 hover:scale-110 transition-transform"
+                                    >
+                                        <Star 
+                                            size={16} 
+                                            fill={star <= reviewRating ? "white" : "none"} 
+                                            className={star <= reviewRating ? "text-white" : "text-white/10"} 
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <label className="block text-[9px] font-mono text-white/30 uppercase tracking-widest">DATA_PACK_COMMENT</label>
+                            <textarea 
+                                required
+                                rows={4}
+                                value={reviewComment}
+                                onChange={e => setReviewComment(e.target.value)}
+                                className="w-full bg-black border border-white/10 p-4 text-[11px] font-black tracking-widest uppercase focus:border-white transition-colors outline-none resize-none"
+                                placeholder="INPUT_FEEDBACK_DATA..."
+                            />
+                        </div>
+
+                        <button 
+                            disabled={isSubmittingReview}
+                            className="w-full py-4 bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] hover:bg-transparent hover:text-white border border-white transition-all disabled:opacity-50"
+                        >
+                            {isSubmittingReview ? 'UPLOADING_DATA...' : '[ COMMIT_REVIEW_LOG ]'}
+                        </button>
+                    </form>
+                )}
+
+                {/* Review List */}
+                <div className="space-y-8">
+                    {reviews.map(review => (
+                        <div key={review.id} className="border-b border-white/5 pb-8 group">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="space-y-1">
+                                    <p className="text-sm font-black uppercase tracking-tighter text-white">{review.userName}</p>
+                                    <div className="flex gap-1">
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star 
+                                                key={i} 
+                                                size={8} 
+                                                fill={i < review.rating ? "currentColor" : "none"} 
+                                                className={i < review.rating ? "text-white" : "text-white/10"} 
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                                <span className="text-[8px] font-mono text-white/20 uppercase">
+                                    {review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString() : 'VERIFIED_LOG'}
+                                </span>
+                            </div>
+                            <p className="text-[12px] text-white/60 font-mono italic leading-relaxed group-hover:text-white transition-colors">
+                                "{review.comment}"
+                            </p>
+                        </div>
+                    ))}
+                    {reviews.length === 0 && (
+                        <p className="text-[10px] font-mono text-white/20 text-center py-10 uppercase tracking-widest">
+                            NO_APPROVED_LOGS_FOUND_IN_BUFFER
+                        </p>
+                    )}
+                </div>
             </div>
 
             {/* Trust Badges */}

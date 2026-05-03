@@ -1,0 +1,19 @@
+We need to strip away the 'standard' website feel. I want a High-Contrast Dark Mode with a heavy grain overlay. Use Monospaced typography for the UI and Massive, Bold Sans-Serifs for the branding. Incorporate 'Technical' elements like brackets, coordinates, and raw 1px lines. The site shouldn't feel like a mall; it should feel like a restricted digital archive for the 'Utopia' drop."
+
+1. The "Base" (Texture & Depth)
+Kill the Flatness: Standard websites are flat. Streetwear is raw. Tell him to apply a 3-5% Film Grain or Noise Overlay across the whole site. It should look like a scanned zine.
+The "Shadow" Palette: Don’t just use black. Use "Rich Black" (deep blue/red undertones) and add a vignette (darker edges) so the center of the screen feels like a spotlight in a dark room.
+2. The "Seasoning" (Technical Details)
+Streetwear heads love "Technical/Industrial" looks. We need to add what I call Digital Clutter:
+Coordinates & Timestamps: Tell him to hard-code the Kampala coordinates (0.3476° N, 32.5825° E) in a tiny, 8pt Monospace font at the top or bottom corner.
+The Bracket Language: Every button needs to be "contained."
+Instead of: SHOP
+Use: [ ACCESS_DROP ] or // UTP_001
+Status Indicators: Add a blinking green dot (like in your screenshots) next to "LIVE" or "ONLINE" to give it a "security feed" feel.
+3. The "Main Dish" (Product Presentation)
+The "Corteiz" Glow: For your product shots, don’t just cut them out. Tell him to add a soft outer glow (Bloom) so the clothes look like they’re vibrating.
+Lo-Fi Imagery: If the photos are too perfect, they look "retail." Tell him to crank the contrast and maybe drop the quality slightly or add a "motion blur" to the hero images. It should look like a "leaked" photo.
+4. The "Plating" (Typography Hierarchy)
+Header: Use a font that’s "Illegal" heavy. Huge, wide, and touching the edges of the screen.
+Sub-text: Use Courier New or JetBrains Mono. It needs to look like a warehouse manifest or a shipping label.
+No Rounding: Streetwear is aggressive. Zero border-radius. Everything should have sharp, 90-degree corners. No "bubbles."
