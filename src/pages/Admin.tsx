@@ -1,0 +1,505 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Users, 
+  Star, 
+  Upload, 
+  BarChart3, 
+  MessageSquare, 
+  Image as ImageIcon,
+  CheckCircle2,
+  XCircle,
+  TrendingUp,
+  Eye,
+  Package,
+  ShoppingBag,
+  Plus,
+  Edit,
+  Trash2,
+  ExternalLink,
+  Shield,
+  Activity,
+  Terminal,
+  LucideIcon
+} from 'lucide-react';
+import { db, storage } from '../lib/firebase';
+import { products as initialProducts, Product } from '../data/products';
+import { AdminProductForm } from '../components/AdminProductForm';
+
+// Mock data for initial UI build
+const MOCK_ANALYTICS = {
+  uniqueVisitors: 1248,
+  productViews: 5620,
+  topProducts: [
+    { name: 'THE_SIGNATURE_TEE', views: 842 },
+    { name: 'ARCHIVE_SWEATPANTS', views: 615 },
+    { name: 'VINTAGE_TOTE', views: 428 }
+  ]
+};
+
+const MOCK_REVIEWS = [
+  { id: '1', user: 'Anonymous', rating: 5, comment: 'Incredible quality and fit.', status: 'pending', date: '2026-05-01' },
+  { id: '2', user: 'User_492', rating: 4, comment: 'The aesthetic is spot on.', status: 'approved', date: '2026-04-28' },
+];
+
+const MOCK_ORDERS = [
+  { id: 'ORD-8921', customer: 'JOEL_M', total: 120000, status: 'processing', date: '2026-05-02' },
+  { id: 'ORD-7742', customer: 'SARAH_K', total: 45000, status: 'shipped', date: '2026-05-01' },
+  { id: 'ORD-6610', customer: 'ALEX_W', total: 85000, status: 'delivered', date: '2026-04-30' },
+];
+
+export function Admin() {
+  const [activeTab, setActiveTab] = useState<'analytics' | 'products' | 'orders' | 'reviews' | 'uploads'>('analytics');
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadCategory, setUploadCategory] = useState('shop');
+  const [isUploading, setIsUploading] = useState(false);
+  const [systemUptime, setSystemUptime] = useState('00:00:00');
+  
+  // Product Form State
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
+
+  useEffect(() => {
+    const start = Date.now();
+    const interval = setInterval(() => {
+      const diff = Date.now() - start;
+      const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+      const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+      const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+      setSystemUptime(`${h}:${m}:${s}`);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleFileUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!uploadFile) return;
+    
+    setIsUploading(true);
+    setTimeout(() => {
+      alert(`Simulated upload of ${uploadFile.name} to ${uploadCategory}`);
+      setIsUploading(false);
+      setUploadFile(null);
+    }, 2000);
+  };
+
+  const deleteProduct = (id: string) => {
+    if (window.confirm('ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_PRODUCT?')) {
+      setProducts(products.filter(p => p.id !== id));
+    }
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setIsFormOpen(true);
+  };
+
+  const handleSaveProduct = (product: Product) => {
+    if (editingProduct) {
+      setProducts(products.map(p => p.id === product.id ? product : p));
+    } else {
+      setProducts([product, ...products]);
+    }
+    setIsFormOpen(false);
+    setEditingProduct(undefined);
+  };
+
+  return (
+    <div className="min-h-screen pt-32 pb-20 px-4 sm:px-6 lg:px-10 max-w-[1600px] mx-auto bg-[var(--color-bg-primary)]">
+      {isFormOpen && (
+        <AdminProductForm 
+          product={editingProduct} 
+          onClose={() => {
+            setIsFormOpen(false);
+            setEditingProduct(undefined);
+          }} 
+          onSave={handleSaveProduct}
+        />
+      )}
+
+      {/* Decorative Scanner Line */}
+      <div className="scanner-line opacity-20" />
+
+      <div className="flex flex-col gap-10">
+        
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-10">
+          <div>
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-2 mb-4"
+            >
+              <Shield size={14} className="text-white/40" />
+              <span className="text-technical text-[9px] opacity-40">SECURE_ENVIRONMENT // ROOT_ACCESS</span>
+            </motion.div>
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic text-white mb-2 leading-none">
+              ADMIN_CORE
+            </h1>
+            <p className="text-technical text-[10px] opacity-60 font-mono tracking-widest">
+              TERMINAL_v1.04_BETA // {new Date().toLocaleDateString()}
+            </p>
+          </div>
+          
+          <div className="flex gap-8 text-right font-mono">
+            <div className="hidden sm:block">
+              <p className="text-[9px] opacity-30 uppercase tracking-widest mb-1">SYSTEM_UPTIME</p>
+              <p className="text-xl font-black italic tracking-tighter text-white">{systemUptime}</p>
+            </div>
+            <div>
+              <p className="text-[9px] opacity-30 uppercase tracking-widest mb-1">STATUS</p>
+              <div className="flex items-center gap-2 text-green-500">
+                <Activity size={12} className="animate-pulse" />
+                <p className="text-xl font-black italic tracking-tighter">ONLINE</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide border-b border-white/5">
+          <TabButton 
+            active={activeTab === 'analytics'} 
+            onClick={() => setActiveTab('analytics')}
+            Icon={BarChart3}
+            label="ANALYTICS"
+          />
+          <TabButton 
+            active={activeTab === 'products'} 
+            onClick={() => setActiveTab('products')}
+            Icon={Package}
+            label="PRODUCTS"
+          />
+          <TabButton 
+            active={activeTab === 'orders'} 
+            onClick={() => setActiveTab('orders')}
+            Icon={ShoppingBag}
+            label="ORDERS"
+          />
+          <TabButton 
+            active={activeTab === 'reviews'} 
+            onClick={() => setActiveTab('reviews')}
+            Icon={MessageSquare}
+            label="REVIEWS"
+          />
+          <TabButton 
+            active={activeTab === 'uploads'} 
+            onClick={() => setActiveTab('uploads')}
+            Icon={Upload}
+            label="FILE_UPLOAD"
+          />
+        </div>
+
+        {/* Content Area */}
+        <div className="min-h-[500px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
+            >
+              {activeTab === 'analytics' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <StatCard title="UNIQUE_VISITORS" value={MOCK_ANALYTICS.uniqueVisitors} icon={<Users className="text-green-500" />} change="+12%" />
+                  <StatCard title="PRODUCT_VIEWS" value={MOCK_ANALYTICS.productViews} icon={<Eye className="text-blue-500" />} change="+4.2%" />
+                  <StatCard title="CONVERSION_RATE" value="3.2%" icon={<TrendingUp className="text-purple-500" />} change="-0.5%" />
+                  
+                  <div className="col-span-full bg-white/5 border border-white/10 p-8 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                      <Terminal size={120} />
+                    </div>
+                    <h3 className="text-[11px] font-black uppercase mb-8 tracking-widest border-b border-white/10 pb-4 flex items-center gap-3">
+                      <Activity size={14} /> // TOP_PERFORMING_PRODUCTS
+                    </h3>
+                    <div className="space-y-6">
+                      {MOCK_ANALYTICS.topProducts.map((p, i) => (
+                        <div key={i} className="flex justify-between items-end border-b border-white/5 pb-2 hover:border-white/20 transition-colors group/item">
+                          <div>
+                            <span className="text-[9px] font-mono opacity-30 mr-4">0{i+1}</span>
+                            <span className="text-sm font-black uppercase tracking-tighter group-hover/item:text-white transition-colors">{p.name}</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-white/40">{p.views} VIEWS</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'products' && (
+                <div className="space-y-8">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="text-[11px] font-black uppercase tracking-widest text-white">// INVENTORY_MANAGEMENT</h3>
+                      <p className="text-[9px] font-mono opacity-40 uppercase mt-1">TOTAL_COUNT: {products.length} _ITEMS</p>
+                    </div>
+                    <button 
+                      onClick={() => setIsFormOpen(true)}
+                      className="btn-primary !py-3 !px-6 flex items-center gap-3 !bg-white !text-black border-white hover:!bg-transparent hover:!text-white transition-all"
+                    >
+                      <Plus size={14} />
+                      [ ADD_NEW_ASSET ]
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 gap-4">
+                    {products.map((product) => (
+                      <motion.div 
+                        layout
+                        key={product.id} 
+                        className="bg-white/5 border border-white/10 p-4 hover:border-white/30 transition-all flex flex-col sm:flex-row items-center gap-6 group"
+                      >
+                        <div className="w-20 h-20 bg-black overflow-hidden border border-white/5 flex-shrink-0">
+                          <img 
+                            src={product.image} 
+                            alt={product.name} 
+                            className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" 
+                          />
+                        </div>
+                        <div className="flex-grow text-center sm:text-left">
+                          <div className="flex items-center gap-3 justify-center sm:justify-start mb-1">
+                            <h4 className="text-lg font-black uppercase tracking-tighter">{product.name}</h4>
+                            <span className="text-[8px] px-1.5 py-0.5 border border-white/20 opacity-40 font-mono">{product.id}</span>
+                          </div>
+                          <p className="text-[10px] font-mono opacity-50 uppercase tracking-widest">
+                            {product.category} <span className="mx-2 text-white/10">|</span> <span className="text-white/80">UGX {product.price.toLocaleString()}</span>
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => handleEditProduct(product)}
+                            className="p-3 bg-white/5 hover:bg-white text-white/60 hover:text-black transition-all"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button 
+                            onClick={() => deleteProduct(product.id)}
+                            className="p-3 bg-white/5 hover:bg-red-500 text-white/40 hover:text-white transition-all"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                          <a 
+                            href={`/product/${product.id}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="p-3 bg-white/5 hover:bg-white text-white/40 hover:text-black transition-all"
+                          >
+                            <ExternalLink size={16} />
+                          </a>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'orders' && (
+                <div className="space-y-8">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-white">// ORDER_LOGISTICS_FLOW</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-[800px]">
+                      <thead>
+                        <tr className="text-left border-b border-white/20">
+                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest">ORDER_ID</th>
+                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest">CUSTOMER_ID</th>
+                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest">TIMESTAMP</th>
+                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest">VALUE_UGX</th>
+                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest">STATUS_CODE</th>
+                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest text-right">PROTOCOL</th>
+                        </tr>
+                      </thead>
+                      <tbody className="font-mono">
+                        {MOCK_ORDERS.map((order) => (
+                          <tr key={order.id} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors group">
+                            <td className="py-6 text-xs font-bold text-white tracking-widest">{order.id}</td>
+                            <td className="py-6 text-xs uppercase opacity-80">{order.customer}</td>
+                            <td className="py-6 text-[10px] opacity-40 uppercase">{order.date}</td>
+                            <td className="py-6 text-xs font-black italic">{order.total.toLocaleString()}</td>
+                            <td className="py-6">
+                              <span className={`text-[9px] font-black px-2 py-1 uppercase tracking-widest border
+                                ${order.status === 'delivered' ? 'border-green-500/40 text-green-500 bg-green-500/5' : 
+                                  order.status === 'processing' ? 'border-blue-500/40 text-blue-500 bg-blue-500/5' : 
+                                  'border-yellow-500/40 text-yellow-500 bg-yellow-500/5'}`}>
+                                {order.status}
+                              </span>
+                            </td>
+                            <td className="py-6 text-right">
+                              <button className="text-[10px] font-black hover:bg-white hover:text-black px-4 py-2 border border-white/10 transition-all uppercase tracking-widest">
+                                [ VIEW_DATAPACK ]
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'reviews' && (
+                <div className="space-y-6">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-white">// USER_FEEDBACK_MODERATION</h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {MOCK_REVIEWS.map((review) => (
+                      <div key={review.id} className="bg-white/5 border border-white/10 p-8 flex flex-col justify-between gap-6 hover:border-white/20 transition-colors">
+                        <div>
+                          <div className="flex justify-between items-start mb-6">
+                            <div className="flex items-center gap-3">
+                              <span className="text-[9px] font-mono opacity-30 uppercase">{review.date}</span>
+                              <div className="flex gap-1 text-white">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star key={i} size={10} fill={i < review.rating ? "currentColor" : "none"} className={i < review.rating ? "text-white" : "text-white/10"} />
+                                ))}
+                              </div>
+                            </div>
+                            <span className="text-[8px] font-mono opacity-20 uppercase tracking-widest">REF: {review.id}</span>
+                          </div>
+                          <p className="text-sm font-black uppercase mb-4 tracking-tighter text-white">{review.user}</p>
+                          <p className="text-[13px] opacity-60 font-mono italic leading-relaxed">"{review.comment}"</p>
+                        </div>
+                        <div className="flex gap-3 pt-6 border-t border-white/5">
+                          <button className="flex-grow py-3 border border-green-500/30 text-green-500 hover:bg-green-500 hover:text-black text-[10px] font-black uppercase tracking-widest transition-all">
+                            APPROVE_LOG
+                          </button>
+                          <button className="flex-grow py-3 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white text-[10px] font-black uppercase tracking-widest transition-all">
+                            DISCARD_ASSET
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'uploads' && (
+                <div className="max-w-3xl mx-auto py-12">
+                   <div className="bg-white/5 border border-white/10 p-10 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-white opacity-20" />
+                    <h3 className="text-[11px] font-black uppercase mb-12 tracking-widest border-b border-white/10 pb-4 flex items-center gap-3">
+                      <Upload size={14} /> // MEDIA_DISPATCH_PROTOCOL
+                    </h3>
+                    
+                    <form onSubmit={handleFileUpload} className="space-y-10">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                          <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-[0.2em]">DESTINATION_LAYER</label>
+                          <select 
+                            className="w-full bg-black border border-white/10 p-4 text-[12px] font-black uppercase tracking-widest focus:border-white transition-colors outline-none cursor-pointer"
+                            value={uploadCategory}
+                            onChange={(e) => setUploadCategory(e.target.value)}
+                          >
+                            <option value="shop">SHOP_COLLECTION</option>
+                            <option value="hero">HERO_SECTION</option>
+                            <option value="archives">ARCHIVES_LAYER</option>
+                            <option value="prestige">PRESTIGE_VAULT</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-[0.2em]">ACCESS_TOKEN</label>
+                          <div className="bg-white/5 border border-white/10 p-4 text-[12px] font-mono opacity-20 italic">
+                            AUTOGENERATED_BY_SYSTEM
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div 
+                        className="border-2 border-dashed border-white/10 p-16 text-center hover:border-white/40 hover:bg-white/[0.02] transition-all cursor-pointer relative group"
+                        onClick={() => document.getElementById('file-input')?.click()}
+                      >
+                        <input 
+                          type="file" 
+                          id="file-input" 
+                          className="hidden" 
+                          accept="image/*"
+                          onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                        />
+                        {uploadFile ? (
+                          <div className="flex flex-col items-center gap-4">
+                            <div className="w-20 h-20 border border-white/10 p-2">
+                                <ImageIcon size={64} className="text-white opacity-100" />
+                            </div>
+                            <p className="text-sm font-black uppercase tracking-[0.2em] text-white">{uploadFile.name}</p>
+                            <p className="text-[9px] font-mono opacity-30">{(uploadFile.size / 1024 / 1024).toFixed(2)} MB // READY_FOR_DISPATCH</p>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-6">
+                            <div className="p-6 border border-white/5 group-hover:border-white/20 transition-colors">
+                                <Upload size={48} className="opacity-10 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            <p className="text-[10px] font-mono opacity-40 group-hover:opacity-100 tracking-widest transition-opacity uppercase">
+                              SELECT_SOURCE_DATA_OR_DRAG_FILE
+                            </p>
+                            <p className="text-[8px] font-mono opacity-20 uppercase tracking-widest">[ PNG / JPG / MP4_ALLOWED ]</p>
+                          </div>
+                        )}
+                      </div>
+
+                      <button 
+                        disabled={!uploadFile || isUploading}
+                        className={`w-full py-6 text-[11px] font-black tracking-[0.4em] uppercase transition-all border
+                          ${!uploadFile || isUploading 
+                            ? 'bg-transparent border-white/5 text-white/10 cursor-not-allowed' 
+                            : 'bg-white text-black border-white hover:bg-transparent hover:text-white active:scale-[0.99]'}`}
+                      >
+                        {isUploading ? 'DISPATCHING_DATA...' : '[ INITIATE_UPLOAD_PROTOCOL ]'}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TabButton({ active, onClick, Icon, label }: { active: boolean, onClick: () => void, Icon: LucideIcon, label: string }) {
+  return (
+    <button 
+      onClick={onClick}
+      className={`relative flex items-center gap-3 px-8 py-5 text-[10px] font-black tracking-[0.2em] transition-all flex-shrink-0 group
+        ${active ? 'text-black' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+    >
+      {active && (
+        <motion.div 
+          layoutId="activeTab"
+          className="absolute inset-0 bg-white"
+          transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+        />
+      )}
+      <span className="relative z-10 flex items-center gap-2">
+        <Icon size={14} />
+        {label}
+      </span>
+    </button>
+  );
+}
+
+function StatCard({ title, value, icon, change }: { title: string, value: string | number, icon: React.ReactNode, change: string }) {
+  const isPositive = change.startsWith('+');
+  return (
+    <div className="bg-white/5 border border-white/10 p-8 relative group overflow-hidden">
+      <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 -rotate-45 translate-x-12 -translate-y-12 group-hover:bg-white/10 transition-colors" />
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h4 className="text-[9px] font-mono opacity-30 tracking-[0.2em] uppercase mb-1">{title}</h4>
+          <div className="flex items-center gap-2">
+            <span className={`text-[9px] font-mono ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+              {change}
+            </span>
+            <div className="w-10 h-[1px] bg-white/10" />
+          </div>
+        </div>
+        <div className="p-2 border border-white/5">
+            {icon}
+        </div>
+      </div>
+      <p className="text-4xl font-black italic tracking-tighter uppercase leading-none text-white">{value}</p>
+    </div>
+  );
+}

@@ -19,6 +19,7 @@ import { StoreProvider } from './context/StoreContext';
 
 import { Prestige } from './pages/Prestige';
 import { Support } from './pages/Support';
+import { Admin } from './pages/Admin';
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
             <Route path="terms-conditions" element={<TermsConditions />} />
             <Route path="prestige" element={<Prestige />} />
             <Route path="support" element={<Support />} />
+            <Route path="admin" element={<Admin />} />
           </Route>
         </Routes>
       </BrowserRouter>
