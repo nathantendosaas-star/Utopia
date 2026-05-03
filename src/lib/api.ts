@@ -1,5 +1,5 @@
 import { Product } from '../data/products';
-import { Filters, SortOption } from '../context/StoreContext';
+import { Filters, SortOption } from '../context/ProductContext';
 import { filterProducts, sortProducts } from './utils';
 import { db } from './firebase';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';

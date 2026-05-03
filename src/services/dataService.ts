@@ -12,7 +12,7 @@ import {
   deleteDoc,
   updateDoc
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { db } from '../lib/firebase';
 import { Product, ProductSchema, Review, ReviewSchema } from '../types/schema';
 
 class ProductService {

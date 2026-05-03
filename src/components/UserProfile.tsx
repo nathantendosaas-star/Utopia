@@ -1,10 +1,15 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, User as UserIcon, Package } from 'lucide-react';
-import { useStore } from '../context/StoreContext';
+import { X, User as UserIcon } from 'lucide-react';
+import { useUI } from '../context/UIContext';
+import { useAuth } from '../context/AuthContext';
+import { useProduct } from '../context/ProductContext';
+import { formatPrice } from '../lib/currency';
 
 export function UserProfile() {
-  const { isUserOpen, setUserOpen, user, login, logout } = useStore();
+  const { isUserOpen, setUserOpen } = useUI();
+  const { user, login, logout } = useAuth();
+  const { currency } = useProduct();
 
   return (
     <AnimatePresence>
@@ -94,17 +99,6 @@ export function UserProfile() {
                     <button onClick={logout} className="btn-secondary w-full justify-center">
                       DISCONNECT
                     </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-}
-</button>
                   </div>
                 </>
               )}

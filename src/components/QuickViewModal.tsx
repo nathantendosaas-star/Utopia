@@ -1,10 +1,14 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ShoppingBag, ChevronRight, ChevronLeft } from 'lucide-react';
-import { useStore } from '../context/StoreContext';
+import { X } from 'lucide-react';
+import { useUI } from '../context/UIContext';
+import { useProduct } from '../context/ProductContext';
+import { useCart } from '../context/CartContext';
+import { formatPrice } from '../lib/currency';
 
 export function QuickViewModal() {
-  const { quickViewProduct, setQuickViewProduct, addToCart } = useStore();
+  const { quickViewProduct, setQuickViewProduct, currency } = useProduct();
+  const { addToCart } = useCart();
 
   if (!quickViewProduct) return null;
 
@@ -101,17 +105,6 @@ export function QuickViewModal() {
                        <p>— LIMITED PRODUCTION RUN</p>
                     </div>
                     <p className="pt-8 opacity-20">REF: UG-DROP-001</p>
-                 </div>
-              </div>
-
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-}
--DROP-001</p>
                  </div>
               </div>
 

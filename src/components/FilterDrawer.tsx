@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronDown } from 'lucide-react';
-import { useProduct } from '../context/ProductContext';
-import { Filters } from '../context/StoreContext';
+import { useProduct, Filters } from '../context/ProductContext';
 
 interface FilterDrawerProps {
   isOpen: boolean;

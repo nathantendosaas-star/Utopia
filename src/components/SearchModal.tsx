@@ -1,23 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Search as SearchIcon } from 'lucide-react';
-import { useStore } from '../context/StoreContext';
-import { Product } from '../data/products';
-import { fetchProducts } from '../lib/api';
+import { useUI } from '../context/UIContext';
+import { useCart } from '../context/CartContext';
+import { useProduct } from '../context/ProductContext';
+import { productService } from '../services/dataService';
+import { Product } from '../types/schema';
+import { formatPrice } from '../lib/currency';
 
 export function SearchModal() {
-  const { isSearchOpen, setSearchOpen, addToCart, isLoading, setLoading } = useStore();
+  const { isSearchOpen, setSearchOpen, isLoading, setLoading } = useUI();
+  const { addToCart } = useCart();
+  const { currency } = useProduct();
   const [query, setQuery] = useState('');
   const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   useEffect(() => {
+    let mounted = true;
     if (isSearchOpen && allProducts.length === 0) {
       setLoading(true);
-      fetchProducts().then(data => {
-        setAllProducts(data);
-        setLoading(false);
+      productService.getAllProducts().then(data => {
+        if (mounted) {
+          setAllProducts(data);
+          setLoading(false);
+        }
+      }).catch(err => {
+        console.error('SEARCH_FETCH_FAILED:', err);
+        if (mounted) setLoading(false);
       });
     }
+    return () => { mounted = false; };
   }, [isSearchOpen, allProducts.length, setLoading]);
 
   const filteredProducts = query.trim() === '' 
@@ -88,20 +100,6 @@ export function SearchModal() {
                       <div className="space-y-1">
                         <h3 className="font-display text-[11px] sm:text-[var(--text-body-base)] uppercase text-white truncate">[ {product.name} ]</h3>
                         <p className="font-mono text-[9px] sm:text-[var(--text-micro)] text-[var(--color-text-secondary)]">{formatPrice(product.price, currency)}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-se)] uppercase text-white truncate">[ {product.name} ]</h3>
-                        <p className="font-mono text-[9px] sm:text-[var(--text-micro)] text-[var(--color-text-secondary)]">${product.price}</p>
                       </div>
                     </div>
                   ))}

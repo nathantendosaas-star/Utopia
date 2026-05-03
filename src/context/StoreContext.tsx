@@ -23,6 +23,7 @@ export { useUI as useStoreUI } from './UIContext';
 export { useCart as useStoreCart } from './CartContext';
 export { useAuth as useStoreAuth } from './AuthContext';
 export { useProduct as useStoreProduct } from './ProductContext';
+export type { Filters, SortOption } from './ProductContext';
 
 // We will also export a "hook aggregator" to avoid breaking every single file immediately
 import { useUI } from './UIContext';
