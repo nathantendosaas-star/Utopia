@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Zap } from 'lucide-react';
-import { Product } from '../data/products';
-import { useStore } from '../context/StoreContext';
+import { Product } from '../types/schema';
+import { useCart } from '../context/CartContext';
+import { useProduct } from '../context/ProductContext';
 import { formatPrice } from '../lib/currency';
 import { Link, useNavigate } from 'react-router-dom';
 
 export function ProductCard({ product, index }: { product: Product, index: number }) {
   const [isHovered, setIsHovered] = useState(false);
-  const { addToCart, currency } = useStore();
+  const { addToCart } = useCart();
+  const { currency } = useProduct();
   const navigate = useNavigate();
 
   return (

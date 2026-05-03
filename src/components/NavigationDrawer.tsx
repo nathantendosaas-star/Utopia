@@ -2,10 +2,13 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useStore } from '../context/StoreContext';
+import { useUI } from '../context/UIContext';
+import { useAuth } from '../context/AuthContext';
 
 export function NavigationDrawer() {
-  const { isNavOpen, setNavOpen } = useStore();
+  const { isNavOpen, setNavOpen } = useUI();
+  const { logout, user } = useAuth();
+
 
   const links = [
     { name: 'The Lab (Shop)', path: '/shop' },

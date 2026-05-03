@@ -1,0 +1,102 @@
+import React, { createContext, useContext, useState, ReactNode, useEffect, useMemo } from 'react';
+import { User, Order, CartItem } from '../types/schema';
+import { useCart } from './CartContext';
+
+interface AuthContextType {
+  user: User | null;
+  login: () => void;
+  logout: () => void;
+  checkout: () => void;
+  prestigePoints: number;
+  prestigeRank: string;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const { cart, cartTotal, clearCart } = useCart();
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const saved = localStorage.getItem('utopia_auth');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('utopia_auth', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('utopia_auth');
+    }
+  }, [user]);
+
+  const login = () => {
+    // Simulated login
+    setUser({
+      name: "Demo User",
+      email: "demo@utopia199x.com",
+      orders: [],
+      prestigePoints: 450
+    });
+  };
+
+  const logout = () => {
+    setUser(null);
+  };
+
+  const checkout = () => {
+    if (cart.length === 0) return;
+
+    const currentUser = user || {
+      name: "Guest User",
+      email: "guest@utopia199x.com",
+      orders: [],
+      prestigePoints: 0
+    };
+    
+    const newOrder: Order = {
+      id: `ORD-${crypto.randomUUID().split('-')[0].toUpperCase()}`,
+      date: new Date().toISOString(),
+      items: [...cart],
+      total: cartTotal
+    };
+
+    const earnedPoints = Math.floor(cartTotal * 0.05); // 5% point earn rate
+
+    setUser({
+      ...currentUser,
+      orders: [newOrder, ...currentUser.orders],
+      prestigePoints: currentUser.prestigePoints + earnedPoints
+    });
+    
+    clearCart();
+    alert('ORDER_PROCESSED_SUCCESSFULLY');
+  };
+
+  const prestigePoints = user?.prestigePoints || 0;
+  const prestigeRank = useMemo(() => {
+    if (prestigePoints >= 10000) return 'PLATINUM';
+    if (prestigePoints >= 5000) return 'GOLD';
+    if (prestigePoints >= 1000) return 'SILVER';
+    return 'BRONZE';
+  }, [prestigePoints]);
+
+  return (
+    <AuthContext.Provider value={{
+      user, login, logout, checkout, prestigePoints, prestigeRank
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}

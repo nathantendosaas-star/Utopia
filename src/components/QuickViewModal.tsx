@@ -62,7 +62,7 @@ export function QuickViewModal() {
                    <div className="text-right space-y-1 sm:space-y-2">
                       <p className="text-technical text-[8px] sm:text-[10px] text-white/40">// VALUATION</p>
                       <p className="text-technical text-lg sm:text-2xl tracking-[0.1em] sm:tracking-[0.2em] font-bold">
-                        ${quickViewProduct.price}
+                        {formatPrice(quickViewProduct.price, currency)}
                       </p>
                    </div>
                 </div>
@@ -101,6 +101,17 @@ export function QuickViewModal() {
                        <p>— LIMITED PRODUCTION RUN</p>
                     </div>
                     <p className="pt-8 opacity-20">REF: UG-DROP-001</p>
+                 </div>
+              </div>
+
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+-DROP-001</p>
                  </div>
               </div>
 

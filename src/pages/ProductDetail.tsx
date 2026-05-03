@@ -4,20 +4,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Star, ShieldCheck, Truck, Zap, Info, Plus, Minus, Ruler } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../lib/currency';
-import { Product } from '../data/products';
+import { Product, Review } from '../types/schema';
 import { Accordion } from '../components/Accordion';
 import { db, analytics } from '../lib/firebase';
-import { collection, addDoc, query, where, onSnapshot, orderBy, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 import { logEvent } from 'firebase/analytics';
-import { fetchProductById } from '../lib/api';
-
-interface Review {
-  id: string;
-  userName: string;
-  rating: number;
-  comment: string;
-  createdAt: any;
-}
+import { productService, reviewService } from '../services/dataService';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -35,26 +27,35 @@ export function ProductDetail() {
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+    const controller = new AbortController();
+
     const loadProduct = async () => {
       if (!id) return;
-      const p = await fetchProductById(id);
-      if (p) {
-        setProduct(p);
-        if (p.sizes && p.sizes.length > 0) setSelectedSize(p.sizes[0]);
-        
-        if (analytics) {
-          logEvent(analytics, 'view_item', {
-            item_id: p.id,
-            item_name: p.name,
-            item_category: p.category,
-            price: p.price
-          });
+      try {
+        const p = await productService.getProductById(id);
+        if (mounted && p) {
+          setProduct(p);
+          if (p.sizes && p.sizes.length > 0) setSelectedSize(p.sizes[0]);
+          
+          if (analytics) {
+            logEvent(analytics, 'view_item', {
+              item_id: p.id,
+              item_name: p.name,
+              item_category: p.category,
+              price: p.price
+            });
+          }
         }
+      } catch (error) {
+        console.error('FAILED_TO_LOAD_PRODUCT:', error);
       }
     };
 
     loadProduct();
 
+    // Real-time reviews listener
+    let unsubscribeReviews: (() => void) | undefined;
     if (id) {
       const q = query(
         collection(db, 'reviews'),
@@ -63,15 +64,14 @@ export function ProductDetail() {
         orderBy('createdAt', 'desc')
       );
       
-      const unsubscribe = onSnapshot(q, (snapshot) => {
+      unsubscribeReviews = onSnapshot(q, (snapshot) => {
+        if (!mounted) return;
         const reviewsData = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         })) as Review[];
         setReviews(reviewsData);
       });
-
-      return () => unsubscribe();
     }
 
     const handleScroll = () => {
@@ -82,8 +82,13 @@ export function ProductDetail() {
         }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      mounted = false;
+      controller.abort();
+      if (unsubscribeReviews) unsubscribeReviews();
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [id]);
 
   const submitReview = async (e: React.FormEvent) => {
@@ -92,33 +97,20 @@ export function ProductDetail() {
 
     setIsSubmittingReview(true);
     
-    // Set a timeout to prevent indefinite hanging
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('REQUEST_TIMEOUT')), 10000)
-    );
-
     try {
-      const submissionPromise = addDoc(collection(db, 'reviews'), {
+      await reviewService.submitReview({
         productId: id,
         userName: reviewName,
         rating: reviewRating,
         comment: reviewComment,
-        status: 'pending',
-        createdAt: serverTimestamp()
       });
-
-      await Promise.race([submissionPromise, timeoutPromise]);
       
       setReviewSubmitted(true);
       setReviewName('');
       setReviewComment('');
     } catch (error: any) {
       console.error('Error submitting review:', error);
-      if (error.message === 'REQUEST_TIMEOUT') {
-        alert('PROTOCOL_TIMEOUT: UNABLE_TO_CONNECT_TO_CORE. CHECK_NETWORK_OR_DOMAIN_AUTH.');
-      } else {
-        alert(`FAILED_TO_SUBMIT_REVIEW_PROTOCOL: ${error.message || 'UNKNOWN_ERROR'}`);
-      }
+      alert(`FAILED_TO_SUBMIT_REVIEW_PROTOCOL: ${error.message || 'UNKNOWN_ERROR'}`);
     } finally {
       setIsSubmittingReview(false);
     }
@@ -171,23 +163,6 @@ export function ProductDetail() {
                     </div>
                 </div>
             </div>
-
-            {/* Color Selector (If multiple) */}
-            {product.colors && product.colors.length > 0 && (
-                <div className="space-y-4">
-                    <p className="text-technical text-[10px] font-black uppercase text-white/40">VARIANT // {product.colors[0]}</p>
-                    <div className="flex gap-3">
-                        {product.colors.map(color => (
-                            <button 
-                                key={color}
-                                className="w-8 h-8 rounded-full border border-white/20 p-0.5 hover:border-white transition-colors"
-                            >
-                                <div className="w-full h-full rounded-full bg-white" />
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
 
             {/* Technical Spec Sheet */}
             <div className="bg-white/5 text-white p-8 space-y-8 border border-white/10">
@@ -255,7 +230,7 @@ export function ProductDetail() {
                             <div className="w-full h-full border-2 border-black flex flex-col items-center justify-center gap-2">
                                 <div className="grid grid-cols-5 gap-1">
                                     {[...Array(25)].map((_, i) => (
-                                        <div key={i} className={`w-4 h-4 ${Math.random() > 0.5 ? 'bg-black' : 'bg-transparent'}`} />
+                                        <div key={i} className={`w-4 h-4 ${i % 3 === 0 ? 'bg-black' : 'bg-transparent'}`} />
                                     ))}
                                 </div>
                                 <p className="text-[6px] font-black text-black">UTOPIA APP</p>

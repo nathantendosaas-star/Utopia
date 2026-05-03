@@ -1,15 +1,36 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Link } from 'react-router-dom';
-import { products } from '../data/products';
-import { ArrowRight, Zap, MoveDown, Info, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Zap, Info, ShieldCheck } from 'lucide-react';
+import { productService } from '../services/dataService';
+import { Product } from '../types/schema';
 
 export function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const product = products[0];
+  const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 200]);
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
+
+  useEffect(() => {
+    let mounted = true;
+    productService.getAllProducts().then(products => {
+      if (mounted && products.length > 0) {
+        setFeaturedProduct(products[0]);
+      }
+    }).catch(err => {
+      console.error('HOME_FETCH_FAILED:', err);
+    });
+    return () => { mounted = false; };
+  }, []);
+
+  if (!featuredProduct) return (
+    <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="text-technical text-[10px] animate-pulse uppercase tracking-[0.4em] text-white">
+        BOOTING_SYSTEM...
+      </div>
+    </div>
+  );
 
   return (
     <div ref={containerRef} className="relative w-full bg-[var(--color-bg-primary)] overflow-hidden">
@@ -17,15 +38,23 @@ export function Home() {
       {/* 1. Cinematic Hero Section */}
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black">
         <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            className="w-full h-full object-cover grayscale brightness-[0.3] contrast-[1.2]"
-          >
-            <source src={product.video} type="video/mp4" />
-          </video>
+          {featuredProduct.video ? (
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+              className="w-full h-full object-cover grayscale brightness-[0.3] contrast-[1.2]"
+            >
+              <source src={featuredProduct.video} type="video/mp4" />
+            </video>
+          ) : (
+            <img 
+              src={featuredProduct.image} 
+              className="w-full h-full object-cover grayscale brightness-[0.2]" 
+              alt="Hero"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
         </motion.div>
 
@@ -111,7 +140,7 @@ export function Home() {
                     className="relative aspect-square max-w-md mx-auto"
                 >
                     <img 
-                        src={product.image} 
+                        src={featuredProduct.image} 
                         alt="The Signature Blueprint" 
                         className="w-full h-full object-contain grayscale brightness-[0.7] contrast-[1.2] opacity-80"
                     />
@@ -189,7 +218,7 @@ export function Home() {
                     whileInView={{ scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 1.5 }}
-                    src={product.images[5]} 
+                    src={featuredProduct.images[1] || featuredProduct.image} 
                     alt="Atmospheric" 
                     className="w-full h-full object-cover grayscale brightness-50"
                 />
@@ -208,7 +237,7 @@ export function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-              {product.images.slice(0, 3).map((img, i) => (
+              {featuredProduct.images.slice(0, 3).map((img, i) => (
                   <motion.div 
                     key={i}
                     initial={{ opacity: 0, y: 40 }}

@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Filter, ChevronDown, LayoutGrid, List } from 'lucide-react';
+import { Filter, ChevronDown } from 'lucide-react';
 import { useStore, SortOption } from '../context/StoreContext';
-import { Product, products as allProducts } from '../data/products';
+import { Product } from '../types/schema';
 import { ProductCard } from '../components/ProductCard';
 import { FilterDrawer } from '../components/FilterDrawer';
-import { fetchProducts } from '../lib/api';
+import { productService } from '../services/dataService';
+import { filterProducts, sortProducts } from '../lib/utils';
 
 export function Collection() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -14,16 +15,35 @@ export function Collection() {
   const { isLoading, setLoading, filters, setFilters, sort, setSort } = useStore();
 
   useEffect(() => {
-    setLoading(true);
-    // Fetch all products once to get categories
-    fetchProducts().then(allData => {
-      setAllFetchedProducts(allData);
-      // Then fetch filtered products
-      fetchProducts(filters, sort).then(filteredData => {
-        setProducts(filteredData);
-        setLoading(false);
-      });
-    });
+    let mounted = true;
+    const controller = new AbortController();
+
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const allData = await productService.getAllProducts();
+        if (!mounted) return;
+        
+        setAllFetchedProducts(allData);
+        
+        let result = [...allData];
+        result = filterProducts(result, filters);
+        result = sortProducts(result, sort);
+        
+        setProducts(result);
+      } catch (error) {
+        console.error('FAILED_TO_LOAD_COLLECTION:', error);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    loadData();
+
+    return () => {
+      mounted = false;
+      controller.abort();
+    };
   }, [filters, sort, setLoading]);
 
   const categories = useMemo(() => {

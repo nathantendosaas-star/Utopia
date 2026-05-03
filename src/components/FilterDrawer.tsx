@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronDown } from 'lucide-react';
-import { useStore, Filters } from '../context/StoreContext';
+import { useProduct } from '../context/ProductContext';
+import { Filters } from '../context/StoreContext';
 
 interface FilterDrawerProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ interface FilterDrawerProps {
 }
 
 export function FilterDrawer({ isOpen, onClose }: FilterDrawerProps) {
-  const { filters, setFilters } = useStore();
+  const { filters, setFilters } = useProduct();
 
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   const allColors = ['BLACK', 'VINTAGE WHITE', 'MIDNIGHT BLACK', 'CHARCOAL', 'GREY', 'NAVY'];

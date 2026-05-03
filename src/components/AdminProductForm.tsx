@@ -51,7 +51,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
     if (isUploading) return;
     onSave({
       ...formData,
-      id: product?.id || `ASSET-${Math.floor(Math.random() * 9000 + 1000)}`,
+      id: product?.id || `ASSET-${crypto.randomUUID().split('-')[0].toUpperCase()}`,
     } as Product);
   };
 

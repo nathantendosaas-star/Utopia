@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { MotionProvider } from './components/MotionProvider.tsx';
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 
 if (typeof window !== 'undefined') {
   window.history.scrollRestoration = 'manual';
@@ -10,8 +11,10 @@ if (typeof window !== 'undefined') {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MotionProvider>
-      <App />
-    </MotionProvider>
+    <ErrorBoundary>
+      <MotionProvider>
+        <App />
+      </MotionProvider>
+    </ErrorBoundary>
   </StrictMode>,
 );

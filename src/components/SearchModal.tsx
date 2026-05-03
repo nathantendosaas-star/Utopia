@@ -87,6 +87,20 @@ export function SearchModal() {
                       </div>
                       <div className="space-y-1">
                         <h3 className="font-display text-[11px] sm:text-[var(--text-body-base)] uppercase text-white truncate">[ {product.name} ]</h3>
+                        <p className="font-mono text-[9px] sm:text-[var(--text-micro)] text-[var(--color-text-secondary)]">{formatPrice(product.price, currency)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+se)] uppercase text-white truncate">[ {product.name} ]</h3>
                         <p className="font-mono text-[9px] sm:text-[var(--text-micro)] text-[var(--color-text-secondary)]">${product.price}</p>
                       </div>
                     </div>

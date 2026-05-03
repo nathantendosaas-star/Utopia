@@ -30,25 +30,13 @@ import { db, storage, auth, googleProvider } from '../lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { products as initialProducts, Product } from '../data/products';
+import { products as initialProducts } from '../data/products';
 import { AdminProductForm } from '../components/AdminProductForm';
+import { productService, reviewService } from '../services/dataService';
+import { Product, Review } from '../types/schema';
 
-// LIST OF AUTHORIZED EMAILS
-const AUTHORIZED_EMAILS = [
-  'joshuamusiiime20@gmail.com',
-  'goawyulc1@gmail.com',
-  'nathantendo.saas@gmail.com'
-];
-
-interface Review {
-  id: string;
-  userName: string;
-  rating: number;
-  comment: string;
-  status: 'pending' | 'approved';
-  createdAt: any;
-  productId: string;
-}
+// LIST OF AUTHORIZED EMAILS (FROM ENV)
+const AUTHORIZED_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
 
 interface AnalyticsData {
   uniqueVisitors: number;
@@ -75,7 +63,6 @@ const MOCK_ORDERS = [
 
 export function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [accessKey, setAccessKey] = useState('');
   const [activeTab, setActiveTab] = useState<'analytics' | 'products' | 'orders' | 'reviews' | 'uploads'>('analytics');
   const [products, setProducts] = useState<Product[]>([]);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
@@ -197,10 +184,7 @@ export function Admin() {
     setIsSeeding(true);
     try {
       for (const product of initialProducts) {
-        await setDoc(doc(db, 'products', product.id), {
-          ...product,
-          createdAt: serverTimestamp()
-        });
+        await productService.saveProduct(product as Product);
       }
       alert('DATABASE_SEED_PROTOCOL_COMPLETE');
     } catch (error) {
@@ -216,6 +200,9 @@ export function Admin() {
     if (!uploadFile) return;
     
     setIsUploading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
     try {
       const fileRef = ref(storage, `site_assets/${uploadCategory}/${Date.now()}_${uploadFile.name}`);
       const uploadResult = await uploadBytes(fileRef, uploadFile);
@@ -234,6 +221,7 @@ export function Admin() {
       console.error('Error uploading file:', error);
       alert('UPLOAD_PROTOCOL_FAILED');
     } finally {
+      clearTimeout(timeoutId);
       setIsUploading(false);
     }
   };
@@ -241,7 +229,7 @@ export function Admin() {
   const deleteProduct = async (id: string) => {
     if (window.confirm('ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_PRODUCT?')) {
       try {
-        await deleteDoc(doc(db, 'products', id));
+        await productService.deleteProduct(id);
       } catch (error) {
         console.error('Error deleting product:', error);
         alert('FAILED_TO_DELETE_ASSET');
@@ -256,15 +244,7 @@ export function Admin() {
 
   const handleSaveProduct = async (product: Product) => {
     try {
-      const productData = { ...product };
-      // Remove undefined fields for Firestore
-      Object.keys(productData).forEach(key => (productData as any)[key] === undefined && delete (productData as any)[key]);
-      
-      await setDoc(doc(db, 'products', product.id), {
-        ...productData,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-      
+      await productService.saveProduct(product);
       setIsFormOpen(false);
       setEditingProduct(undefined);
     } catch (error) {
@@ -275,8 +255,7 @@ export function Admin() {
 
   const approveReview = async (id: string) => {
     try {
-      const reviewRef = doc(db, 'reviews', id);
-      await updateDoc(reviewRef, { status: 'approved' });
+      await reviewService.updateReviewStatus(id, 'approved');
     } catch (error) {
       console.error('Error approving review:', error);
       alert('FAILED_TO_APPROVE_REVIEW');

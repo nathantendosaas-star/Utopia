@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Search, ShoppingBag, User, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useStore } from '../context/StoreContext';
+import { useUI } from '../context/UIContext';
+import { useCart } from '../context/CartContext';
 import { CartDrawer } from './CartDrawer';
 import { SearchModal } from './SearchModal';
 import { UserProfile } from './UserProfile';
@@ -13,7 +14,8 @@ import { NavigationDrawer } from './NavigationDrawer';
 export function Layout() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
-  const { cartCount, setCartOpen, setSearchOpen, setUserOpen, setNavOpen } = useStore();
+  const { setCartOpen, setSearchOpen, setUserOpen, setNavOpen } = useUI();
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {

@@ -1,12 +1,18 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Plus, Minus, Trash2, Zap } from 'lucide-react';
-import { useStore } from '../context/StoreContext';
+import { useCart } from '../context/CartContext';
+import { useUI } from '../context/UIContext';
+import { useProduct } from '../context/ProductContext';
+import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../lib/currency';
 import { products } from '../data/products';
 
 export function CartDrawer() {
-  const { isCartOpen, setCartOpen, cart, updateQuantity, removeFromCart, cartTotal, checkout, currency, addToCart } = useStore();
+  const { isCartOpen, setCartOpen } = useUI();
+  const { cart, updateQuantity, removeFromCart, cartTotal, addToCart } = useCart();
+  const { currency } = useProduct();
+  const { checkout } = useAuth();
 
   const FREE_SHIPPING_THRESHOLD = 150000;
   const shippingProgress = Math.min((cartTotal / FREE_SHIPPING_THRESHOLD) * 100, 100);

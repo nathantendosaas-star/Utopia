@@ -76,13 +76,13 @@ export function UserProfile() {
                               {order.items.map(item => (
                                 <div key={item.product.id} className="flex justify-between items-center">
                                   <span className="font-display text-[var(--text-body-sm)] uppercase">{item.quantity}x {item.product.name}</span>
-                                  <span className="font-mono text-[var(--text-micro)] text-[var(--color-text-secondary)]">${item.product.price * item.quantity}</span>
+                                  <span className="font-mono text-[var(--text-micro)] text-[var(--color-text-secondary)]">{formatPrice(item.product.price * item.quantity, currency)}</span>
                                 </div>
                               ))}
                             </div>
                             <div className="flex justify-between items-center pt-[var(--space-2)] border-t border-[var(--color-border-subtle)]">
                               <span className="font-mono text-[var(--text-micro)] uppercase tracking-[var(--tracking-widest)] text-[var(--color-text-secondary)]">Total</span>
-                              <span className="font-mono text-[var(--text-body-sm)]">${order.total.toFixed(2)}</span>
+                              <span className="font-mono text-[var(--text-body-sm)]">{formatPrice(order.total, currency)}</span>
                             </div>
                           </div>
                         ))}
@@ -94,6 +94,17 @@ export function UserProfile() {
                     <button onClick={logout} className="btn-secondary w-full justify-center">
                       DISCONNECT
                     </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+</button>
                   </div>
                 </>
               )}
