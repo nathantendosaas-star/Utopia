@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Info, ShieldCheck } from 'lucide-react';
 import { productService } from '../services/dataService';
 import { Product } from '../types/schema';
+import { products as staticProducts } from '../data/products';
 
 export function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -14,13 +15,27 @@ export function Home() {
 
   useEffect(() => {
     let mounted = true;
-    productService.getAllProducts().then(products => {
-      if (mounted && products.length > 0) {
-        setFeaturedProduct(products[0]);
+    
+    const loadFeatured = async () => {
+      try {
+        const products = await productService.getAllProducts();
+        if (mounted) {
+          if (products && products.length > 0) {
+            setFeaturedProduct(products[0]);
+          } else {
+            // Fallback to static data if database is empty
+            setFeaturedProduct(staticProducts[0] as Product);
+          }
+        }
+      } catch (err) {
+        console.error('HOME_FETCH_FAILED, FALLING_BACK:', err);
+        if (mounted) {
+          setFeaturedProduct(staticProducts[0] as Product);
+        }
       }
-    }).catch(err => {
-      console.error('HOME_FETCH_FAILED:', err);
-    });
+    };
+
+    loadFeatured();
     return () => { mounted = false; };
   }, []);
 

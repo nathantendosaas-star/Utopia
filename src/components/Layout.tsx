@@ -142,7 +142,15 @@ export function Layout() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
           >
-            <Outlet />
+            <Suspense fallback={
+              <div className="h-[60vh] flex items-center justify-center">
+                <div className="text-technical text-[10px] animate-pulse uppercase tracking-widest text-white/40">
+                  LOADING_ARCHIVE...
+                </div>
+              </div>
+            }>
+              <Outlet />
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </main>

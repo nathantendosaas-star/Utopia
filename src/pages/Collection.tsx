@@ -7,6 +7,7 @@ import { ProductCard } from '../components/ProductCard';
 import { FilterDrawer } from '../components/FilterDrawer';
 import { productService } from '../services/dataService';
 import { filterProducts, sortProducts } from '../lib/utils';
+import { products as staticProducts } from '../data/products';
 
 export function Collection() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -16,12 +17,17 @@ export function Collection() {
 
   useEffect(() => {
     let mounted = true;
-    const controller = new AbortController();
 
     const loadData = async () => {
       setLoading(true);
       try {
-        const allData = await productService.getAllProducts();
+        let allData = await productService.getAllProducts();
+        
+        // Fallback to static data if database is empty or failed
+        if (!allData || allData.length === 0) {
+            allData = staticProducts as Product[];
+        }
+
         if (!mounted) return;
         
         setAllFetchedProducts(allData);
@@ -32,7 +38,15 @@ export function Collection() {
         
         setProducts(result);
       } catch (error) {
-        console.error('FAILED_TO_LOAD_COLLECTION:', error);
+        console.error('FAILED_TO_LOAD_COLLECTION, FALLING_BACK:', error);
+        if (mounted) {
+            const allData = staticProducts as Product[];
+            setAllFetchedProducts(allData);
+            let result = [...allData];
+            result = filterProducts(result, filters);
+            result = sortProducts(result, sort);
+            setProducts(result);
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -42,7 +56,6 @@ export function Collection() {
 
     return () => {
       mounted = false;
-      controller.abort();
     };
   }, [filters, sort, setLoading]);
 
