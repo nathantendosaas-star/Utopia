@@ -35,7 +35,7 @@ import { AdminProductForm } from '../components/AdminProductForm';
 
 // LIST OF AUTHORIZED EMAILS
 const AUTHORIZED_EMAILS = [
-  'joshuamusiime@gmail.com',
+  'joshuamusiiime20@gmail.com',
   'goawyulc1@gmail.com',
   'nathantendo.saas@gmail.com'
 ];
