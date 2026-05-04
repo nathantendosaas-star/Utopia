@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Upload, Plus, Trash2, Database, Layers, Activity } from 'lucide-react';
-import { Product } from '../data/products';
+import { Product } from '../types/schema';
 import { storage } from '../lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 

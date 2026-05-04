@@ -24,7 +24,10 @@ import {
   Database,
   Lock,
   LogOut,
-  Chrome
+  Chrome,
+  Calendar,
+  CreditCard,
+  Clock
 } from 'lucide-react';
 import { db, storage, auth, googleProvider } from '../lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
@@ -32,8 +35,9 @@ import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, addD
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { products as initialProducts } from '../data/products';
 import { AdminProductForm } from '../components/AdminProductForm';
-import { productService, reviewService } from '../services/dataService';
-import { Product, Review } from '../types/schema';
+import { productService, reviewService, orderService } from '../services/dataService';
+import { Product, Review, Order } from '../types/schema';
+import { formatPrice } from '../lib/currency';
 
 // LIST OF AUTHORIZED EMAILS (FROM ENV)
 const AUTHORIZED_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
@@ -42,6 +46,8 @@ interface AnalyticsData {
   uniqueVisitors: number;
   productViews: number;
   topProducts: { name: string, hits: number }[];
+  totalOrders: number;
+  revenue: number;
 }
 
 export function Admin() {
@@ -54,10 +60,13 @@ export function Admin() {
   const [systemUptime, setSystemUptime] = useState('00:00:00');
   
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
     uniqueVisitors: 0,
     productViews: 0,
-    topProducts: []
+    topProducts: [],
+    totalOrders: 0,
+    revenue: 0
   });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
@@ -126,6 +135,25 @@ export function Admin() {
       console.error('Error listening to reviews:', error);
     });
 
+    // Listen to Orders
+    const ordersQuery = query(collection(db, 'orders'), orderBy('date', 'desc'));
+    const ordersUnsubscribe = onSnapshot(ordersQuery, (snapshot) => {
+      const ordersData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Order[];
+      setOrders(ordersData);
+      
+      const totalRevenue = ordersData.reduce((acc, order) => acc + order.total, 0);
+      setAnalyticsData(prev => ({
+        ...prev,
+        totalOrders: ordersData.length,
+        revenue: totalRevenue
+      }));
+    }, (error) => {
+      console.error('Error listening to orders:', error);
+    });
+
     // Listen to Analytics Counters
     const countersUnsubscribe = onSnapshot(doc(db, 'analytics', 'counters'), (snapshot) => {
       if (snapshot.exists()) {
@@ -155,6 +183,7 @@ export function Admin() {
     return () => {
       productsUnsubscribe();
       reviewsUnsubscribe();
+      ordersUnsubscribe();
       countersUnsubscribe();
       hitsUnsubscribe();
     };
@@ -266,6 +295,21 @@ export function Admin() {
       }
     }
   };
+
+  const deleteOrder = async (id: string) => {
+    if (window.confirm('ARE_YOU_SURE_YOU_WANT_TO_DELETE_THIS_ORDER?')) {
+      try {
+        await orderService.deleteOrder(id);
+      } catch (error) {
+        console.error('Error deleting order:', error);
+        alert('FAILED_TO_DELETE_ORDER');
+      }
+    }
+  };
+
+  const conversionRate = analyticsData.uniqueVisitors > 0 
+    ? ((analyticsData.totalOrders / analyticsData.uniqueVisitors) * 100).toFixed(1) 
+    : "0.0";
 
   if (isAuthLoading) {
     return (
@@ -444,7 +488,9 @@ export function Admin() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <StatCard title="UNIQUE_VISITORS" value={analyticsData.uniqueVisitors} icon={<Users className="text-green-500" />} change="+100%" />
                   <StatCard title="PRODUCT_VIEWS" value={analyticsData.productViews} icon={<Eye className="text-blue-500" />} change="+100%" />
-                  <StatCard title="CONVERSION_RATE" value="0.0%" icon={<TrendingUp className="text-purple-500" />} change="0%" />
+                  <StatCard title="CONVERSION_RATE" value={`${conversionRate}%`} icon={<TrendingUp className="text-purple-500" />} change="AUTO" />
+                  <StatCard title="TOTAL_ORDERS" value={analyticsData.totalOrders} icon={<ShoppingBag className="text-yellow-500" />} change="LIVE" />
+                  <StatCard title="TOTAL_REVENUE" value={formatPrice(analyticsData.revenue, 'UGX')} icon={<CreditCard className="text-emerald-500" />} change="LIVE" />
                   
                   <div className="col-span-full bg-white/5 border border-white/10 p-8 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -542,8 +588,55 @@ export function Admin() {
               {activeTab === 'orders' && (
                 <div className="space-y-8">
                   <h3 className="text-[11px] font-black uppercase tracking-widest text-white">// ORDER_LOGISTICS_FLOW</h3>
-                  <div className="py-20 text-center border border-dashed border-white/10 opacity-30">
-                    <p className="text-[10px] font-mono tracking-widest">NO_LIVE_ORDERS_FOUND_IN_BUFFER</p>
+                  <div className="grid grid-cols-1 gap-6">
+                    {orders.length > 0 ? orders.map((order) => (
+                      <div key={order.id} className="bg-white/5 border border-white/10 p-8 hover:border-white/20 transition-all group">
+                        <div className="flex flex-col lg:flex-row justify-between gap-8">
+                          <div className="space-y-6 flex-grow">
+                            <div className="flex flex-wrap items-center gap-4">
+                              <span className="text-xl font-black italic tracking-tighter uppercase text-white">{order.id}</span>
+                              <div className="flex items-center gap-2 text-[9px] font-mono opacity-40 uppercase tracking-widest">
+                                <Calendar size={10} />
+                                {new Date(order.date).toLocaleDateString()}
+                                <Clock size={10} className="ml-2" />
+                                {new Date(order.date).toLocaleTimeString()}
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              {order.items.map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-4 bg-white/2 p-3 border border-white/5">
+                                  <div className="w-12 h-12 flex-shrink-0 bg-black overflow-hidden border border-white/5">
+                                    <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover grayscale opacity-50" />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <p className="text-[10px] font-black uppercase tracking-tighter truncate text-white">{item.product.name}</p>
+                                    <p className="text-[8px] font-mono opacity-40 uppercase tracking-widest">QTY: {item.quantity} × {formatPrice(item.product.price, 'UGX')}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="lg:text-right flex flex-row lg:flex-col justify-between items-end lg:justify-center gap-4 border-t lg:border-t-0 lg:border-l border-white/5 pt-6 lg:pt-0 lg:pl-8 min-w-[200px]">
+                            <div>
+                              <p className="text-[9px] font-mono opacity-30 uppercase tracking-widest mb-1">TOTAL_PAYMENT</p>
+                              <p className="text-2xl font-black italic tracking-tighter text-white">{formatPrice(order.total, 'UGX')}</p>
+                            </div>
+                            <button 
+                              onClick={() => deleteOrder(order.id)}
+                              className="p-4 bg-red-500/5 hover:bg-red-500 text-red-500 hover:text-white transition-all border border-red-500/10"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )) : (
+                      <div className="py-20 text-center border border-dashed border-white/10 opacity-30">
+                        <p className="text-[10px] font-mono tracking-widest">NO_LIVE_ORDERS_FOUND_IN_BUFFER</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -638,7 +731,7 @@ export function Admin() {
                           type="file" 
                           id="file-input" 
                           className="hidden" 
-                          accept="image/*"
+                          accept="image/*,video/*"
                           onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
                         />
                         {uploadFile ? (
@@ -706,7 +799,7 @@ function TabButton({ active, onClick, Icon, label }: { active: boolean, onClick:
 }
 
 function StatCard({ title, value, icon, change }: { title: string, value: string | number, icon: React.ReactNode, change: string }) {
-  const isPositive = change.startsWith('+');
+  const isPositive = change.startsWith('+') || change === 'LIVE' || change === 'AUTO';
   return (
     <div className="bg-white/5 border border-white/10 p-8 relative group overflow-hidden">
       <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 -rotate-45 translate-x-12 -translate-y-12 group-hover:bg-white/10 transition-colors" />

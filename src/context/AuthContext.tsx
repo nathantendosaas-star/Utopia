@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useMemo } from 'react';
 import { User, Order, CartItem } from '../types/schema';
 import { useCart } from './CartContext';
+import { orderService } from '../services/dataService';
 
 interface AuthContextType {
   user: User | null;
   login: () => void;
   logout: () => void;
-  checkout: () => void;
+  checkout: () => Promise<void>;
   prestigePoints: number;
   prestigeRank: string;
 }
@@ -47,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
-  const checkout = () => {
+  const checkout = async () => {
     if (cart.length === 0) return;
 
     const currentUser = user || {
@@ -64,16 +65,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       total: cartTotal
     };
 
-    const earnedPoints = Math.floor(cartTotal * 0.05); // 5% point earn rate
+    try {
+      // Save to Firestore
+      await orderService.saveOrder(newOrder);
 
-    setUser({
-      ...currentUser,
-      orders: [newOrder, ...currentUser.orders],
-      prestigePoints: currentUser.prestigePoints + earnedPoints
-    });
-    
-    clearCart();
-    alert('ORDER_PROCESSED_SUCCESSFULLY');
+      const earnedPoints = Math.floor(cartTotal * 0.05); // 5% point earn rate
+
+      setUser({
+        ...currentUser,
+        orders: [newOrder, ...currentUser.orders],
+        prestigePoints: currentUser.prestigePoints + earnedPoints
+      });
+      
+      clearCart();
+      alert('ORDER_PROCESSED_SUCCESSFULLY');
+    } catch (error) {
+      console.error('Checkout Error:', error);
+      alert('CHECKOUT_PROTOCOL_FAILED');
+    }
   };
 
   const prestigePoints = user?.prestigePoints || 0;

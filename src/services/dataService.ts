@@ -13,7 +13,7 @@ import {
   updateDoc
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { Product, ProductSchema, Review, ReviewSchema } from '../types/schema';
+import { Product, ProductSchema, Review, ReviewSchema, Order, OrderSchema } from '../types/schema';
 
 class ProductService {
   private collectionName = 'products';
@@ -144,5 +144,46 @@ class ReviewService {
   }
 }
 
+class OrderService {
+  private collectionName = 'orders';
+
+  async getAllOrders(): Promise<Order[]> {
+    try {
+      const q = query(collection(db, this.collectionName), orderBy('date', 'desc'));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => OrderSchema.parse({
+        id: doc.id,
+        ...doc.data()
+      }));
+    } catch (error) {
+      console.error('FAILED_TO_FETCH_ORDERS:', error);
+      throw new Error('ORDER_RETRIEVAL_FAILURE');
+    }
+  }
+
+  async saveOrder(order: Order): Promise<void> {
+    try {
+      const docRef = doc(db, this.collectionName, order.id);
+      await setDoc(docRef, {
+        ...order,
+        createdAt: serverTimestamp()
+      });
+    } catch (error) {
+      console.error('FAILED_TO_SAVE_ORDER:', error);
+      throw new Error('ORDER_COMMIT_FAILURE');
+    }
+  }
+
+  async deleteOrder(id: string): Promise<void> {
+    try {
+      await deleteDoc(doc(db, this.collectionName, id));
+    } catch (error) {
+      console.error('FAILED_TO_DELETE_ORDER:', error);
+      throw new Error('ORDER_DELETION_FAILURE');
+    }
+  }
+}
+
 export const productService = new ProductService();
 export const reviewService = new ReviewService();
+export const orderService = new OrderService();
