@@ -74,8 +74,7 @@ export function Home() {
               playsInline
               preload="auto"
               poster={featuredProduct.image}
-              className="w-full h-full object-cover grayscale contrast-[1.1]"
-              style={{ filter: 'grayscale(1) brightness(6) contrast(1.1)' }}
+              className="w-full h-full object-cover grayscale brightness-[0.6] contrast-[1.1]"
             >
               <source src={featuredProduct.video} type="video/mp4" />
             </video>
