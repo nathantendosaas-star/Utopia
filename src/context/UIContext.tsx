@@ -34,14 +34,16 @@ export function UIProvider({ children }: { children: ReactNode }) {
     };
   }, [isCartOpen, isSearchOpen, isUserOpen, isNavOpen]);
 
+  const value = React.useMemo(() => ({
+    isCartOpen, setCartOpen,
+    isSearchOpen, setSearchOpen,
+    isUserOpen, setUserOpen,
+    isNavOpen, setNavOpen,
+    isLoading, setLoading
+  }), [isCartOpen, isSearchOpen, isUserOpen, isNavOpen, isLoading]);
+
   return (
-    <UIContext.Provider value={{
-      isCartOpen, setCartOpen,
-      isSearchOpen, setSearchOpen,
-      isUserOpen, setUserOpen,
-      isNavOpen, setNavOpen,
-      isLoading, setLoading
-    }}>
+    <UIContext.Provider value={value}>
       {children}
     </UIContext.Provider>
   );

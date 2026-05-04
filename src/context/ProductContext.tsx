@@ -36,13 +36,15 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [currency, setCurrency] = useState<'UGX' | 'USD' | 'GBP'>('UGX');
 
+  const value = useMemo(() => ({
+    filters, setFilters,
+    sort, setSort,
+    quickViewProduct, setQuickViewProduct,
+    currency, setCurrency
+  }), [filters, sort, quickViewProduct, currency]);
+
   return (
-    <ProductContext.Provider value={{
-      filters, setFilters,
-      sort, setSort,
-      quickViewProduct, setQuickViewProduct,
-      currency, setCurrency
-    }}>
+    <ProductContext.Provider value={value}>
       {children}
     </ProductContext.Provider>
   );

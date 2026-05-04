@@ -17,8 +17,12 @@ import { Product, ProductSchema, Review, ReviewSchema } from '../types/schema';
 
 class ProductService {
   private collectionName = 'products';
+  private cache: Product[] | null = null;
+  private individualCache: Map<string, Product> = new Map();
 
   async getAllProducts(): Promise<Product[]> {
+    if (this.cache) return this.cache;
+
     try {
       const colRef = collection(db, this.collectionName);
       const snapshot = await getDocs(colRef);
@@ -28,7 +32,9 @@ class ProductService {
       }));
       
       // Validate with Zod
-      return products.map(p => ProductSchema.parse(p));
+      const validatedProducts = products.map(p => ProductSchema.parse(p));
+      this.cache = validatedProducts;
+      return validatedProducts;
     } catch (error) {
       console.error('FAILED_TO_FETCH_PRODUCTS:', error);
       throw new Error('NETWORK_PROTOCOL_FAILURE');
@@ -36,15 +42,25 @@ class ProductService {
   }
 
   async getProductById(id: string): Promise<Product | null> {
+    if (this.individualCache.has(id)) return this.individualCache.get(id) || null;
+    
+    // Check if it's in the bulk cache first
+    if (this.cache) {
+      const found = this.cache.find(p => p.id === id);
+      if (found) return found;
+    }
+
     try {
       const docRef = doc(db, this.collectionName, id);
       const snapshot = await getDoc(docRef);
       if (!snapshot.exists()) return null;
       
-      return ProductSchema.parse({
+      const product = ProductSchema.parse({
         id: snapshot.id,
         ...snapshot.data()
       });
+      this.individualCache.set(id, product);
+      return product;
     } catch (error) {
       console.error(`FAILED_TO_FETCH_PRODUCT_${id}:`, error);
       throw new Error('ASSET_ACCESS_DENIED');
@@ -59,6 +75,10 @@ class ProductService {
         ...cleanData,
         updatedAt: serverTimestamp()
       }, { merge: true });
+      
+      // Invalidate cache
+      this.cache = null;
+      this.individualCache.delete(product.id);
     } catch (error) {
       console.error('FAILED_TO_SAVE_PRODUCT:', error);
       throw new Error('DATABASE_COMMIT_FAILURE');
@@ -68,6 +88,9 @@ class ProductService {
   async deleteProduct(id: string): Promise<void> {
     try {
       await deleteDoc(doc(db, this.collectionName, id));
+      // Invalidate cache
+      this.cache = null;
+      this.individualCache.delete(id);
     } catch (error) {
       console.error('FAILED_TO_DELETE_PRODUCT:', error);
       throw new Error('ASSET_DESTRUCTION_FAILURE');

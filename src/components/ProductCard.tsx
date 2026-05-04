@@ -40,6 +40,7 @@ export function ProductCard({ product, index }: { product: Product, index: numbe
         <img
           src={product.image}
           alt={product.name}
+          loading="lazy"
           className={`w-full h-full object-cover transition-all duration-700 contrast-[1.05] brightness-[0.95] group-hover:brightness-100 group-hover:scale-105 ${isHovered && product.secondaryImage ? 'opacity-0' : 'opacity-100'}`}
           style={{ filter: isHovered ? 'drop-shadow(0 0 20px rgba(255,255,255,0.2)) contrast(1.1)' : 'contrast(1.05) brightness(0.95)' }}
         />
@@ -49,6 +50,7 @@ export function ProductCard({ product, index }: { product: Product, index: numbe
           <img
             src={product.secondaryImage}
             alt={`${product.name} detail`}
+            loading="lazy"
             className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 contrast-[1.05] brightness-[0.95] group-hover:brightness-100 group-hover:scale-105 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
             style={{ filter: isHovered ? 'drop-shadow(0 0 20px rgba(255,255,255,0.2)) contrast(1.1)' : 'contrast(1.05) brightness(0.95)' }}
           />

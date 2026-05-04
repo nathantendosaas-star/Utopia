@@ -13,7 +13,9 @@ import { productService, reviewService } from '../services/dataService';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
+  // Find initial product from static data for instant render
+  const initialProduct = staticProducts.find(p => p.id === id) as Product | null;
+  const [product, setProduct] = useState<Product | null>(initialProduct);
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [scrolledPastCta, setScrolledPastCta] = useState(false);
   const { addToCart, currency } = useStore();
@@ -36,7 +38,7 @@ export function ProductDetail() {
         const p = await productService.getProductById(id);
         if (mounted && p) {
           setProduct(p);
-          if (p.sizes && p.sizes.length > 0) setSelectedSize(p.sizes[0]);
+          if (p.sizes && p.sizes.length > 0 && !selectedSize) setSelectedSize(p.sizes[0]);
           
           if (analytics) {
             logEvent(analytics, 'view_item', {
@@ -86,6 +88,11 @@ export function ProductDetail() {
     };
 
     loadProduct();
+
+    // Initial size selection if not already set
+    if (initialProduct && initialProduct.sizes && initialProduct.sizes.length > 0 && !selectedSize) {
+        setSelectedSize(initialProduct.sizes[0]);
+    }
 
     // Real-time reviews listener
     let unsubscribeReviews: (() => void) | undefined;

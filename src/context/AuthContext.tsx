@@ -84,10 +84,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return 'BRONZE';
   }, [prestigePoints]);
 
+  const value = useMemo(() => ({
+    user, login, logout, checkout, prestigePoints, prestigeRank
+  }), [user, login, logout, checkout, prestigePoints, prestigeRank]);
+
   return (
-    <AuthContext.Provider value={{
-      user, login, logout, checkout, prestigePoints, prestigeRank
-    }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

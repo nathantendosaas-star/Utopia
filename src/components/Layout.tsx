@@ -1,20 +1,25 @@
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Search, ShoppingBag, User, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useUI } from '../context/UIContext';
 import { useCart } from '../context/CartContext';
-import { CartDrawer } from './CartDrawer';
-import { SearchModal } from './SearchModal';
-import { UserProfile } from './UserProfile';
-import { QuickViewModal } from './QuickViewModal';
 import { Footer } from './Footer';
 import { NavigationDrawer } from './NavigationDrawer';
+
+// Lazy load heavy global UI components
+const CartDrawer = lazy(() => import('./CartDrawer').then(m => ({ default: m.CartDrawer })));
+const SearchModal = lazy(() => import('./SearchModal').then(m => ({ default: m.SearchModal })));
+const UserProfile = lazy(() => import('./UserProfile').then(m => ({ default: m.UserProfile })));
+const QuickViewModal = lazy(() => import('./QuickViewModal').then(m => ({ default: m.QuickViewModal })));
 
 export function Layout() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
-  const { setCartOpen, setSearchOpen, setUserOpen, setNavOpen } = useUI();
+  const { 
+    setCartOpen, setSearchOpen, setUserOpen, setNavOpen,
+    isCartOpen, isSearchOpen, isUserOpen, isQuickViewOpen 
+  } = useUI();
   const { cartCount } = useCart();
 
   useEffect(() => {
@@ -161,10 +166,12 @@ export function Layout() {
       <Footer />
       <NavigationDrawer />
 
-      <CartDrawer />
-      <SearchModal />
-      <UserProfile />
-      <QuickViewModal />
+      <Suspense fallback={null}>
+        {isCartOpen && <CartDrawer />}
+        {isSearchOpen && <SearchModal />}
+        {isUserOpen && <UserProfile />}
+        {isQuickViewOpen && <QuickViewModal />}
+      </Suspense>
     </div>
   );
 }

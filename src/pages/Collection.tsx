@@ -10,25 +10,21 @@ import { filterProducts, sortProducts } from '../lib/utils';
 import { products as staticProducts } from '../data/products';
 
 export function Collection() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [allFetchedProducts, setAllFetchedProducts] = useState<Product[]>(staticProducts as Product[]);
+  const [products, setProducts] = useState<Product[]>(staticProducts as Product[]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [allFetchedProducts, setAllFetchedProducts] = useState<Product[]>([]);
   const { isLoading, setLoading, filters, setFilters, sort, setSort } = useStore();
 
   useEffect(() => {
     let mounted = true;
 
     const loadData = async () => {
-      setLoading(true);
+      // Don't set global loading to true if we already have static data
+      // to avoid showing a skeleton/loader when we can show content.
       try {
-        let allData = await productService.getAllProducts();
+        const allData = await productService.getAllProducts();
         
-        // Fallback to static data if database is empty or failed
-        if (!allData || allData.length === 0) {
-            allData = staticProducts as Product[];
-        }
-
-        if (!mounted) return;
+        if (!mounted || !allData || allData.length === 0) return;
         
         setAllFetchedProducts(allData);
         
@@ -38,15 +34,7 @@ export function Collection() {
         
         setProducts(result);
       } catch (error) {
-        console.error('FAILED_TO_LOAD_COLLECTION, FALLING_BACK:', error);
-        if (mounted) {
-            const allData = staticProducts as Product[];
-            setAllFetchedProducts(allData);
-            let result = [...allData];
-            result = filterProducts(result, filters);
-            result = sortProducts(result, sort);
-            setProducts(result);
-        }
+        console.warn('COLLECTION_FETCH_SILENT_FAIL (Using Static Cache):', error);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -58,6 +46,14 @@ export function Collection() {
       mounted = false;
     };
   }, [filters, sort, setLoading]);
+
+  // Initial local filter/sort of static data
+  useEffect(() => {
+    let result = [...allFetchedProducts];
+    result = filterProducts(result, filters);
+    result = sortProducts(result, sort);
+    setProducts(result);
+  }, [filters, sort, allFetchedProducts]);
 
   const categories = useMemo(() => {
     const cats = allFetchedProducts.reduce((acc, p) => {

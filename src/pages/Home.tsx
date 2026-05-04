@@ -9,7 +9,8 @@ import { HomeSkeleton } from '../components/Skeleton';
 
 export function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
+  // Initialize with static data for instant load
+  const [featuredProduct, setFeaturedProduct] = useState<Product>(staticProducts[0] as Product);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 200]);
   const opacity = useTransform(scrollY, [0, 300], [1, 0]);
@@ -20,27 +21,17 @@ export function Home() {
     const loadFeatured = async () => {
       try {
         const products = await productService.getAllProducts();
-        if (mounted) {
-          if (products && products.length > 0) {
-            setFeaturedProduct(products[0]);
-          } else {
-            // Fallback to static data if database is empty
-            setFeaturedProduct(staticProducts[0] as Product);
-          }
+        if (mounted && products && products.length > 0) {
+          setFeaturedProduct(products[0]);
         }
       } catch (err) {
-        console.error('HOME_FETCH_FAILED, FALLING_BACK:', err);
-        if (mounted) {
-          setFeaturedProduct(staticProducts[0] as Product);
-        }
+        console.warn('HOME_FETCH_SILENT_FAIL (Using Static Cache):', err);
       }
     };
 
     loadFeatured();
     return () => { mounted = false; };
   }, []);
-
-  if (!featuredProduct) return <HomeSkeleton />;
 
   return (
     <div ref={containerRef} className="relative w-full bg-[var(--color-bg-primary)] overflow-hidden">
@@ -54,6 +45,8 @@ export function Home() {
               loop 
               muted 
               playsInline
+              preload="auto"
+              poster={featuredProduct.image}
               className="w-full h-full object-cover grayscale brightness-[0.6] contrast-[1.1]"
             >
               <source src={featuredProduct.video} type="video/mp4" />
@@ -63,6 +56,7 @@ export function Home() {
               src={featuredProduct.image} 
               className="w-full h-full object-cover grayscale brightness-[0.5]" 
               alt="Hero"
+              fetchPriority="high"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
