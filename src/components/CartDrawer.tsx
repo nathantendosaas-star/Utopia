@@ -7,6 +7,7 @@ import { useProduct } from '../context/ProductContext';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../lib/currency';
 import { products } from '../data/products';
+import { COUNTRY_CALLING_CODES, KAMPALA_DELIVERY_AREAS } from '../data/checkoutOptions';
 
 export function CartDrawer() {
   const { isCartOpen, setCartOpen } = useUI();
@@ -15,7 +16,8 @@ export function CartDrawer() {
   const { checkout } = useAuth();
   const [customer, setCustomer] = useState({
     name: '',
-    phone: '',
+    phoneCountryCode: '+256',
+    phoneNumber: '',
     deliveryArea: '',
     notes: '',
   });
@@ -33,11 +35,11 @@ export function CartDrawer() {
     try {
       await checkout({
         name: customer.name.trim(),
-        phone: customer.phone.trim(),
+        phone: `${customer.phoneCountryCode} ${customer.phoneNumber.trim()}`,
         deliveryArea: customer.deliveryArea.trim(),
         notes: customer.notes.trim() || undefined,
       });
-      setCustomer({ name: '', phone: '', deliveryArea: '', notes: '' });
+      setCustomer({ name: '', phoneCountryCode: '+256', phoneNumber: '', deliveryArea: '', notes: '' });
     } finally {
       setIsCheckingOut(false);
     }
@@ -179,22 +181,38 @@ export function CartDrawer() {
                     placeholder="FULL_NAME"
                     className="w-full bg-black border border-white/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-white"
                   />
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-3">
+                    <select
+                      required
+                      value={customer.phoneCountryCode}
+                      onChange={(event) => setCustomer(prev => ({ ...prev, phoneCountryCode: event.target.value }))}
+                      className="w-full bg-black border border-white/10 px-3 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-white"
+                    >
+                      {COUNTRY_CALLING_CODES.map((country) => (
+                        <option key={`${country.name}-${country.code}`} value={country.code}>
+                          {country.name} {country.code}
+                        </option>
+                      ))}
+                    </select>
                     <input
                       required
-                      value={customer.phone}
-                      onChange={(event) => setCustomer(prev => ({ ...prev, phone: event.target.value }))}
+                      value={customer.phoneNumber}
+                      onChange={(event) => setCustomer(prev => ({ ...prev, phoneNumber: event.target.value }))}
                       placeholder="PHONE_NUMBER"
                       className="w-full bg-black border border-white/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-white"
                     />
-                    <input
-                      required
-                      value={customer.deliveryArea}
-                      onChange={(event) => setCustomer(prev => ({ ...prev, deliveryArea: event.target.value }))}
-                      placeholder="DELIVERY_AREA"
-                      className="w-full bg-black border border-white/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-white"
-                    />
                   </div>
+                  <select
+                    required
+                    value={customer.deliveryArea}
+                    onChange={(event) => setCustomer(prev => ({ ...prev, deliveryArea: event.target.value }))}
+                    className="w-full bg-black border border-white/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-white"
+                  >
+                    <option value="" disabled>DELIVERY_AREA_IN_KAMPALA</option>
+                    {KAMPALA_DELIVERY_AREAS.map((area) => (
+                      <option key={area} value={area}>{area}</option>
+                    ))}
+                  </select>
                   <textarea
                     rows={2}
                     value={customer.notes}
