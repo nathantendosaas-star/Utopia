@@ -2,8 +2,7 @@ import React, { Suspense, useEffect, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { StoreProvider } from './context/StoreContext';
-import { analytics } from './lib/firebase';
-import { logEvent } from 'firebase/analytics';
+import { logAnalyticsEvent } from './lib/firebase';
 
 // Fully lazy load all pages to minimize initial bundle size
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
@@ -41,9 +40,7 @@ function PageLoader() {
 
 export default function App() {
   useEffect(() => {
-    if (analytics) {
-      logEvent(analytics, 'page_view');
-    }
+    logAnalyticsEvent('page_view');
   }, []);
 
   return (

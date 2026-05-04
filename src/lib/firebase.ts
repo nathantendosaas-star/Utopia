@@ -22,10 +22,24 @@ const googleProvider = new GoogleAuthProvider();
 
 // Analytics is only supported in some environments (client-side)
 let analytics: any = null;
-isSupported().then(yes => {
-  if (yes) {
-    analytics = getAnalytics(app);
-  }
-});
 
-export { db, storage, analytics, auth, googleProvider };
+const initAnalytics = async () => {
+  if (await isSupported()) {
+    analytics = getAnalytics(app);
+    return analytics;
+  }
+  return null;
+};
+
+const logAnalyticsEvent = async (name: string, params?: any) => {
+  try {
+    const instance = analytics || await initAnalytics();
+    if (instance) {
+      logEvent(instance, name, params);
+    }
+  } catch (err) {
+    // Silently fail analytics
+  }
+};
+
+export { db, storage, analytics, auth, googleProvider, logAnalyticsEvent };

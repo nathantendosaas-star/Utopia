@@ -6,6 +6,8 @@ import { productService } from '../services/dataService';
 import { Product } from '../types/schema';
 import { products as staticProducts } from '../data/products';
 import { HomeSkeleton } from '../components/Skeleton';
+import { db, logAnalyticsEvent } from '../lib/firebase';
+import { doc, increment, setDoc } from 'firebase/firestore';
 
 export function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -17,6 +19,31 @@ export function Home() {
 
   useEffect(() => {
     let mounted = true;
+    
+    // Log Page View
+    logAnalyticsEvent('page_view', { page_title: 'Home' });
+
+    // Track Analytics in Firestore (Non-blocking)
+    const trackAnalytics = async () => {
+      try {
+        const analyticsRef = doc(db, 'analytics', 'counters');
+        await setDoc(analyticsRef, { 
+          productViews: increment(1) 
+        }, { merge: true });
+
+        const visitorKey = 'utp_visitor_tracked';
+        if (!localStorage.getItem(visitorKey)) {
+          await setDoc(analyticsRef, { 
+            uniqueVisitors: increment(1) 
+          }, { merge: true });
+          localStorage.setItem(visitorKey, 'true');
+        }
+      } catch (err) {
+        console.warn('HOME_ANALYTICS_FAILED', err);
+      }
+    };
+
+    trackAnalytics();
     
     const loadFeatured = async () => {
       try {

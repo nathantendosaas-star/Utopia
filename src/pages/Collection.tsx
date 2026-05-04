@@ -8,6 +8,8 @@ import { FilterDrawer } from '../components/FilterDrawer';
 import { productService } from '../services/dataService';
 import { filterProducts, sortProducts } from '../lib/utils';
 import { products as staticProducts } from '../data/products';
+import { db, logAnalyticsEvent } from '../lib/firebase';
+import { doc, increment, setDoc } from 'firebase/firestore';
 
 export function Collection() {
   const [allFetchedProducts, setAllFetchedProducts] = useState<Product[]>(staticProducts as Product[]);
@@ -17,6 +19,31 @@ export function Collection() {
 
   useEffect(() => {
     let mounted = true;
+
+    // Log Page View
+    logAnalyticsEvent('page_view', { page_title: 'Collection' });
+
+    // Track Analytics in Firestore (Non-blocking)
+    const trackAnalytics = async () => {
+      try {
+        const analyticsRef = doc(db, 'analytics', 'counters');
+        await setDoc(analyticsRef, { 
+          productViews: increment(1) 
+        }, { merge: true });
+
+        const visitorKey = 'utp_visitor_tracked';
+        if (!localStorage.getItem(visitorKey)) {
+          await setDoc(analyticsRef, { 
+            uniqueVisitors: increment(1) 
+          }, { merge: true });
+          localStorage.setItem(visitorKey, 'true');
+        }
+      } catch (err) {
+        console.warn('COLLECTION_ANALYTICS_FAILED', err);
+      }
+    };
+
+    trackAnalytics();
 
     const loadData = async () => {
       // Don't set global loading to true if we already have static data

@@ -6,10 +6,10 @@ import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../lib/currency';
 import { Product, Review } from '../types/schema';
 import { Accordion } from '../components/Accordion';
-import { db, analytics } from '../lib/firebase';
+import { db, logAnalyticsEvent } from '../lib/firebase';
 import { collection, query, where, onSnapshot, orderBy, doc, increment, setDoc, serverTimestamp } from 'firebase/firestore';
-import { logEvent } from 'firebase/analytics';
 import { productService, reviewService } from '../services/dataService';
+import { products as staticProducts } from '../data/products';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -40,14 +40,13 @@ export function ProductDetail() {
           setProduct(p);
           if (p.sizes && p.sizes.length > 0 && !selectedSize) setSelectedSize(p.sizes[0]);
           
-          if (analytics) {
-            logEvent(analytics, 'view_item', {
-              item_id: p.id,
-              item_name: p.name,
-              item_category: p.category,
-              price: p.price
-            });
-          }
+          // Log Event
+          logAnalyticsEvent('view_item', {
+            item_id: p.id,
+            item_name: p.name,
+            item_category: p.category,
+            price: p.price
+          });
 
           // Update Live Analytics in Firestore (Non-blocking)
           const trackAnalytics = async () => {
@@ -182,8 +181,8 @@ export function ProductDetail() {
                         className="w-full aspect-[4/5] overflow-hidden border-b border-white/5"
                     >
                         <img 
-                            src={product.image} 
-                            alt={product.name} 
+                            src={img} 
+                            alt={`${product.name} ${index + 1}`} 
                             className="w-full h-full object-cover grayscale brightness-[0.9] hover:grayscale-0 hover:brightness-100 transition-all duration-1000"
                         />
                     </motion.div>
