@@ -164,6 +164,8 @@ export function ProductDetail() {
     </div>
   );
 
+  const galleryImages = product.images?.length ? product.images : [product.image];
+
   return (
     <div className="min-h-screen bg-[var(--color-bg-primary)] text-white">
       
@@ -172,7 +174,7 @@ export function ProductDetail() {
         {/* LEFT: Seamless Gallery (60%) */}
         <div className="lg:w-[60%] bg-black">
             <div className="flex flex-col">
-                {product.images.map((img, index) => (
+                {galleryImages.map((img, index) => (
                     <motion.div 
                         key={index}
                         initial={{ opacity: 0 }}

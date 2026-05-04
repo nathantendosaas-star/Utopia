@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const ImageUrlSchema = z.string().url().or(z.string().startsWith('/')).or(z.string().startsWith('data:image/'));
+
 export const ProductSpecSchema = z.object({
   gsm: z.string().optional(),
   composition: z.string().optional(),
@@ -12,9 +14,9 @@ export const ProductSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
   price: z.number().positive(),
-  image: z.string().url().or(z.string().startsWith('/')),
-  secondaryImage: z.string().url().or(z.string().startsWith('/')).optional(),
-  images: z.array(z.string()),
+  image: ImageUrlSchema,
+  secondaryImage: ImageUrlSchema.optional(),
+  images: z.array(ImageUrlSchema),
   video: z.string().optional(),
   category: z.string().optional(),
   badge: z.string().optional(),

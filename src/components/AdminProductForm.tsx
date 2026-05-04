@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Upload, Plus, Trash2, Database, Layers, Activity } from 'lucide-react';
 import { Product } from '../types/schema';
-import { storage } from '../lib/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { fileToFirestoreImage } from '../lib/localAsset';
 
 interface AdminProductFormProps {
   product?: Product;
@@ -34,13 +33,11 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
   const handleImageUpload = async (file: File) => {
     setIsUploading(true);
     try {
-      const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
-      const uploadResult = await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(uploadResult.ref);
-      setFormData(prev => ({ ...prev, image: url, images: [url, ...(prev.images || [])] }));
+      const url = await fileToFirestoreImage(file);
+      setFormData(prev => ({ ...prev, image: url, images: [] }));
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('UPLOAD_PROTOCOL_FAILED');
+      alert(error instanceof Error ? error.message : 'UPLOAD_PROTOCOL_FAILED');
     } finally {
       setIsUploading(false);
     }
@@ -184,6 +181,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                                 type="file" 
                                 id="product-image-upload" 
                                 className="hidden" 
+                                accept="image/*"
                                 onChange={e => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
                             />
                             <button 

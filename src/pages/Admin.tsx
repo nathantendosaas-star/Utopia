@@ -29,15 +29,15 @@ import {
   CreditCard,
   Clock
 } from 'lucide-react';
-import { db, storage, auth, googleProvider } from '../lib/firebase';
+import { db, auth, googleProvider } from '../lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { products as initialProducts } from '../data/products';
 import { AdminProductForm } from '../components/AdminProductForm';
 import { productService, reviewService, orderService } from '../services/dataService';
 import { Product, Review, Order } from '../types/schema';
 import { formatPrice } from '../lib/currency';
+import { fileToFirestoreImage } from '../lib/localAsset';
 
 // LIST OF AUTHORIZED EMAILS (FROM ENV)
 const AUTHORIZED_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
@@ -223,18 +223,17 @@ export function Admin() {
     if (!uploadFile) return;
     
     setIsUploading(true);
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
     try {
-      const fileRef = ref(storage, `site_assets/${uploadCategory}/${Date.now()}_${uploadFile.name}`);
-      const uploadResult = await uploadBytes(fileRef, uploadFile);
-      const downloadURL = await getDownloadURL(uploadResult.ref);
+      const dataUrl = await fileToFirestoreImage(uploadFile);
       
       await addDoc(collection(db, 'site_assets'), {
         name: uploadFile.name,
-        url: downloadURL,
+        url: dataUrl,
         category: uploadCategory,
+        source: 'firestore_data_url',
+        size: uploadFile.size,
+        type: uploadFile.type,
         createdAt: serverTimestamp()
       });
 
@@ -242,9 +241,8 @@ export function Admin() {
       setUploadFile(null);
     } catch (error) {
       console.error('Error uploading file:', error);
-      alert('UPLOAD_PROTOCOL_FAILED');
+      alert(error instanceof Error ? error.message : 'UPLOAD_PROTOCOL_FAILED');
     } finally {
-      clearTimeout(timeoutId);
       setIsUploading(false);
     }
   };
