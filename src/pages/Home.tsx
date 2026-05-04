@@ -5,6 +5,7 @@ import { ArrowRight, Zap, Info, ShieldCheck } from 'lucide-react';
 import { productService } from '../services/dataService';
 import { Product } from '../types/schema';
 import { products as staticProducts } from '../data/products';
+import { HomeSkeleton } from '../components/Skeleton';
 
 export function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -39,13 +40,7 @@ export function Home() {
     return () => { mounted = false; };
   }, []);
 
-  if (!featuredProduct) return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="text-technical text-[10px] animate-pulse uppercase tracking-[0.4em] text-white">
-        BOOTING_SYSTEM...
-      </div>
-    </div>
-  );
+  if (!featuredProduct) return <HomeSkeleton />;
 
   return (
     <div ref={containerRef} className="relative w-full bg-[var(--color-bg-primary)] overflow-hidden">
@@ -59,18 +54,18 @@ export function Home() {
               loop 
               muted 
               playsInline
-              className="w-full h-full object-cover grayscale brightness-[0.3] contrast-[1.2]"
+              className="w-full h-full object-cover grayscale brightness-[0.6] contrast-[1.1]"
             >
               <source src={featuredProduct.video} type="video/mp4" />
             </video>
           ) : (
             <img 
               src={featuredProduct.image} 
-              className="w-full h-full object-cover grayscale brightness-[0.2]" 
+              className="w-full h-full object-cover grayscale brightness-[0.5]" 
               alt="Hero"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
         </motion.div>
 
         <div className="relative z-10 w-full px-6 flex flex-col items-center text-center">
@@ -157,7 +152,7 @@ export function Home() {
                     <img 
                         src={featuredProduct.image} 
                         alt="The Signature Blueprint" 
-                        className="w-full h-full object-contain grayscale brightness-[0.7] contrast-[1.2] opacity-80"
+                        className="w-full h-full object-contain grayscale brightness-[0.9] contrast-[1.1] opacity-90"
                     />
                     {/* SVG Blueprint Lines */}
                     <div className="absolute inset-0 pointer-events-none opacity-20">
@@ -235,9 +230,9 @@ export function Home() {
                     transition={{ duration: 1.5 }}
                     src={featuredProduct.images[1] || featuredProduct.image} 
                     alt="Atmospheric" 
-                    className="w-full h-full object-cover grayscale brightness-50"
+                    className="w-full h-full object-cover grayscale brightness-[0.8]"
                 />
-                <div className="absolute inset-0 bg-black/40" />
+                <div className="absolute inset-0 bg-black/20" />
             </div>
         </div>
       </section>
@@ -261,7 +256,7 @@ export function Home() {
                     transition={{ delay: i * 0.2 }}
                     className="aspect-[4/5] bg-white/5 overflow-hidden border border-white/5"
                   >
-                      <img src={img} alt="Detail" className="w-full h-full object-cover grayscale brightness-[0.6] hover:brightness-100 transition-all duration-1000" />
+                      <img src={img} alt="Detail" className="w-full h-full object-cover grayscale brightness-[0.8] hover:brightness-100 transition-all duration-1000" />
                   </motion.div>
               ))}
           </div>

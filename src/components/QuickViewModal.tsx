@@ -51,7 +51,7 @@ export function QuickViewModal() {
                   <img 
                     src={quickViewProduct.image} 
                     alt={quickViewProduct.name} 
-                    className="w-full h-full object-contain grayscale brightness-[0.8] hover:brightness-100 transition-all duration-700"
+                    className="w-full h-full object-contain grayscale brightness-[0.95] hover:brightness-100 transition-all duration-700"
                   />
                 </div>
 

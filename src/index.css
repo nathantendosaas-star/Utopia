@@ -10,16 +10,16 @@
 @layer base {
   :root {
     /* UTOPIA UG SPEC — RESTRICTED ARCHIVE THEME */
-    --color-bg-primary:        #0a0a0b; /* Rich Black */
-    --color-bg-secondary:      #000000; 
-    --color-bg-tertiary:       #111111;
-    --color-surface-elevated:  #151515;
+    --color-bg-primary:        #121214; /* Slightly lighter Rich Black */
+    --color-bg-secondary:      #1a1a1c; 
+    --color-bg-tertiary:       #222224;
+    --color-surface-elevated:  #2a2a2c;
     --color-text-primary:      #FFFFFF; 
-    --color-text-secondary:    #A1A1A1;
-    --color-text-muted:        #666666;
+    --color-text-secondary:    #B1B1B1;
+    --color-text-muted:        #888888;
     --color-accent-primary:    #FFFFFF; 
-    --color-accent-hover:      #CCCCCC;
-    --color-border-subtle:     #333333;
+    --color-accent-hover:      #DDDDDD;
+    --color-border-subtle:     #3a3a3c;
     --color-border-strong:     #FFFFFF;
 
     /* TYPOGRAPHY — INDUSTRIAL MONO */
@@ -72,7 +72,7 @@
     height: 100%;
     pointer-events: none;
     z-index: 9998;
-    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.15) 100%);
   }
 
   /* Grit Texture Overlay (Enhanced) */
@@ -86,7 +86,7 @@
     pointer-events: none;
     z-index: 9999;
     background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-    opacity: 0.05;
+    opacity: 0.02;
     filter: contrast(170%) brightness(100%);
     mix-blend-mode: soft-light;
   }

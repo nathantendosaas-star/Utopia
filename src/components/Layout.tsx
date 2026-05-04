@@ -79,7 +79,7 @@ export function Layout() {
                                 <Link to="/shop" className="text-[11px] font-bold hover:translate-x-1 transition-transform uppercase">Accessories</Link>
                             </div>
                             <div className="flex-1 aspect-[16/9] bg-white/5 relative overflow-hidden">
-                                <img src="/hero-desktop.png" alt="Featured" className="w-full h-full object-cover grayscale brightness-50" />
+                                <img src="/hero-desktop.png" alt="Featured" className="w-full h-full object-cover grayscale brightness-[0.8]" />
                                 <div className="absolute inset-0 bg-black/40" />
                                 <div className="absolute bottom-4 left-4">
                                     <p className="text-white text-[10px] font-black uppercase tracking-widest">[ SS26_DROP_01 ]</p>
@@ -143,9 +143,12 @@ export function Layout() {
             transition={{ duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
           >
             <Suspense fallback={
-              <div className="h-[60vh] flex items-center justify-center">
-                <div className="text-technical text-[10px] animate-pulse uppercase tracking-widest text-white/40">
-                  LOADING_ARCHIVE...
+              <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
+                <div className="w-48 h-[2px] bg-white/5 overflow-hidden">
+                  <div className="w-full h-full bg-white/20 animate-[marquee_2s_linear_infinite]" />
+                </div>
+                <div className="text-technical text-[8px] animate-pulse uppercase tracking-[0.4em] text-white/20">
+                  RESOURCES_FETCH
                 </div>
               </div>
             }>

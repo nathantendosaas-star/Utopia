@@ -81,7 +81,7 @@ export function CartDrawer() {
                         {cart.map((item) => (
                         <div key={item.product.id} className="flex gap-4 sm:gap-6 group">
                             <div className="w-20 sm:w-24 aspect-[4/5] bg-white/5 overflow-hidden border border-white/10 shrink-0">
-                            <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover grayscale brightness-75 transition-all duration-500" />
+                            <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover grayscale brightness-[0.9] transition-all duration-500" />
                             </div>
                             <div className="flex-1 flex flex-col justify-between py-1">
                             <div className="flex flex-col gap-1.5 sm:gap-2">
@@ -114,7 +114,7 @@ export function CartDrawer() {
                             {products.slice(0, 4).filter(p => !cart.find(c => c.product.id === p.id)).map(p => (
                                 <div key={p.id} className="min-w-[120px] sm:min-w-[140px] flex flex-col gap-3 sm:gap-4 group cursor-pointer" onClick={() => addToCart(p)}>
                                     <div className="aspect-[4/5] bg-white/5 overflow-hidden border border-white/10 relative">
-                                        <img src={p.image} alt={p.name} className="w-full h-full object-cover grayscale brightness-50 group-hover:brightness-100 group-hover:scale-110 transition-transform duration-700" />
+                                        <img src={p.image} alt={p.name} className="w-full h-full object-cover grayscale brightness-[0.7] group-hover:brightness-100 group-hover:scale-110 transition-transform duration-700" />
                                         <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors" />
                                         <div className="absolute bottom-2 right-2 bg-white text-black p-1.5 sm:p-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 shadow-sm">
                                             <Plus size={12} strokeWidth={3} />

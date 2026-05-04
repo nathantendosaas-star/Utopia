@@ -117,8 +117,11 @@ export function ProductDetail() {
   };
 
   if (!product) return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-primary)]">
-      <p className="text-technical text-[10px] animate-pulse text-white font-[800]">SEARCHING ARCHIVE...</p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--color-bg-primary)] gap-4">
+      <div className="w-48 h-[2px] bg-white/5 overflow-hidden">
+        <div className="w-full h-full bg-white/20 animate-[marquee_2s_linear_infinite]" />
+      </div>
+      <p className="text-technical text-[8px] animate-pulse text-white/20 font-[800] uppercase tracking-[0.4em]">SEARCHING_ARCHIVE</p>
     </div>
   );
 
@@ -139,9 +142,9 @@ export function ProductDetail() {
                         className="w-full aspect-[4/5] overflow-hidden border-b border-white/5"
                     >
                         <img 
-                            src={img} 
-                            alt={`${product.name} view ${index + 1}`} 
-                            className="w-full h-full object-cover grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition-all duration-1000" 
+                            src={product.image} 
+                            alt={product.name} 
+                            className="w-full h-full object-cover grayscale brightness-[0.9] hover:grayscale-0 hover:brightness-100 transition-all duration-1000"
                         />
                     </motion.div>
                 ))}

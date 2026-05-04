@@ -275,9 +275,12 @@ export function Admin() {
 
   if (isAuthLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <p className="text-technical text-[10px] animate-pulse text-white font-black uppercase tracking-widest">
-          ESTABLISHING_SECURE_CONNECTION...
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--color-bg-primary)] gap-4">
+        <div className="w-48 h-[2px] bg-white/5 overflow-hidden">
+          <div className="w-full h-full bg-white/20 animate-[marquee_2s_linear_infinite]" />
+        </div>
+        <p className="text-technical text-[8px] animate-pulse text-white/20 font-black uppercase tracking-[0.4em]">
+          ESTABLISHING_SECURE_CONNECTION
         </p>
       </div>
     );
@@ -285,7 +288,7 @@ export function Admin() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black p-4">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-primary)] p-4">
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

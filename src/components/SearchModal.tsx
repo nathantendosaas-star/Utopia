@@ -83,7 +83,7 @@ export function SearchModal() {
                   {filteredProducts.map(product => (
                     <div key={product.id} className="group cursor-pointer flex flex-col gap-3 sm:gap-4">
                       <div className="relative aspect-[3/4] overflow-hidden border border-[var(--color-border-subtle)] bg-[#0a0a0b]">
-                        <img src={product.image} alt={product.name} className="w-full h-full object-cover grayscale brightness-75 group-hover:brightness-100 transition-all duration-700" />
+                        <img src={product.image} alt={product.name} className="w-full h-full object-cover grayscale brightness-[0.9] group-hover:brightness-100 transition-all duration-700" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
                           <button 
                             onClick={(e) => {

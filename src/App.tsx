@@ -29,12 +29,14 @@ const Admin = React.lazy(() => import('./pages/Admin').then(m => ({ default: m.A
 
 function PageLoader() {
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4">
-      <div className="text-technical text-[10px] animate-pulse uppercase tracking-[0.4em] text-white">
-        SYNCING_RESOURCES...
+    <div className="min-h-screen bg-[var(--color-bg-primary)] flex flex-col items-center justify-center gap-6">
+      <div className="relative w-48 h-[2px] bg-white/5 overflow-hidden">
+          <div className="absolute inset-0 bg-white/40 animate-[marquee_1.5s_linear_infinite]" />
       </div>
-      <div className="w-48 h-[1px] bg-white/10 overflow-hidden">
-          <div className="w-full h-full bg-white animate-[marquee_2s_linear_infinite]" />
+      <div className="flex gap-2">
+        <div className="w-2 h-2 bg-white/20 animate-pulse" />
+        <div className="w-2 h-2 bg-white/20 animate-pulse [animation-delay:0.2s]" />
+        <div className="w-2 h-2 bg-white/20 animate-pulse [animation-delay:0.4s]" />
       </div>
     </div>
   );
@@ -71,10 +73,7 @@ export default function App() {
               <Route path="prestige" element={<Prestige />} />
               <Route path="support" element={<Support />} />
               
-              {/* Protected Admin Routes */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="adminforutopiaug" element={<Admin />} />
-              </Route>
+              <Route path="adminforutopiaug" element={<Admin />} />
             </Route>
           </Routes>
         </Suspense>
