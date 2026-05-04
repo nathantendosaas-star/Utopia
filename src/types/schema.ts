@@ -41,11 +41,23 @@ export const OrderItemSchema = z.object({
   quantity: z.number().int().positive(),
 });
 
+export const OrderStatusSchema = z.enum(['whatsapp_pending', 'confirmed', 'fulfilled', 'cancelled']);
+
+export const OrderCustomerSchema = z.object({
+  name: z.string().min(1),
+  phone: z.string().min(1),
+  deliveryArea: z.string().min(1),
+  notes: z.string().optional(),
+});
+
 export const OrderSchema = z.object({
   id: z.string(),
   date: z.string(),
   items: z.array(OrderItemSchema),
   total: z.number().nonnegative(),
+  status: OrderStatusSchema.optional(),
+  customer: OrderCustomerSchema.optional(),
+  channel: z.enum(['whatsapp']).optional(),
 });
 
 export const UserSchema = z.object({
@@ -58,6 +70,8 @@ export const UserSchema = z.object({
 export type Product = z.infer<typeof ProductSchema>;
 export type Review = z.infer<typeof ReviewSchema>;
 export type Order = z.infer<typeof OrderSchema>;
+export type OrderStatus = z.infer<typeof OrderStatusSchema>;
+export type OrderCustomer = z.infer<typeof OrderCustomerSchema>;
 export type CartItem = z.infer<typeof OrderItemSchema>;
 export type User = z.infer<typeof UserSchema>;
 export type ProductSpecs = z.infer<typeof ProductSpecSchema>;

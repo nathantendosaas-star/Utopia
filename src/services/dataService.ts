@@ -13,7 +13,7 @@ import {
   updateDoc
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { Product, ProductSchema, Review, ReviewSchema, Order, OrderSchema } from '../types/schema';
+import { Product, ProductSchema, Review, ReviewSchema, Order, OrderSchema, OrderStatus } from '../types/schema';
 
 class ProductService {
   private collectionName = 'products';
@@ -180,6 +180,15 @@ class OrderService {
     } catch (error) {
       console.error('FAILED_TO_DELETE_ORDER:', error);
       throw new Error('ORDER_DELETION_FAILURE');
+    }
+  }
+
+  async updateOrderStatus(id: string, status: OrderStatus): Promise<void> {
+    try {
+      await updateDoc(doc(db, this.collectionName, id), { status });
+    } catch (error) {
+      console.error('FAILED_TO_UPDATE_ORDER_STATUS:', error);
+      throw new Error('ORDER_STATUS_SYNC_FAILURE');
     }
   }
 }

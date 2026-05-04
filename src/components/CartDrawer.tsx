@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Plus, Minus, Trash2, Zap } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -13,10 +13,35 @@ export function CartDrawer() {
   const { cart, updateQuantity, removeFromCart, cartTotal, addToCart } = useCart();
   const { currency } = useProduct();
   const { checkout } = useAuth();
+  const [customer, setCustomer] = useState({
+    name: '',
+    phone: '',
+    deliveryArea: '',
+    notes: '',
+  });
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const FREE_SHIPPING_THRESHOLD = 150000;
   const shippingProgress = Math.min((cartTotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
   const remainingForFreeShipping = Math.max(FREE_SHIPPING_THRESHOLD - cartTotal, 0);
+
+  const handleCheckout = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (cart.length === 0 || isCheckingOut) return;
+
+    setIsCheckingOut(true);
+    try {
+      await checkout({
+        name: customer.name.trim(),
+        phone: customer.phone.trim(),
+        deliveryArea: customer.deliveryArea.trim(),
+        notes: customer.notes.trim() || undefined,
+      });
+      setCustomer({ name: '', phone: '', deliveryArea: '', notes: '' });
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -134,7 +159,7 @@ export function CartDrawer() {
 
             {/* Footer */}
             {cart.length > 0 && (
-              <div className="p-6 sm:p-8 border-t border-white/5 bg-[var(--color-bg-primary)] flex flex-col gap-4 sm:gap-6">
+              <form onSubmit={handleCheckout} className="p-6 sm:p-8 border-t border-white/5 bg-[var(--color-bg-primary)] flex flex-col gap-4 sm:gap-5">
                 <div className="flex flex-col gap-3 sm:gap-4">
                   <div className="flex justify-between items-center text-technical text-[9px] sm:text-[10px]">
                     <span className="text-gray-500 font-medium tracking-widest uppercase">// TOTAL_PAYABLE</span>
@@ -145,14 +170,51 @@ export function CartDrawer() {
                     <span className="font-[900] text-white">+{Math.floor(cartTotal * 1.5)}</span>
                   </div>
                 </div>
+
+                <div className="grid grid-cols-1 gap-3">
+                  <input
+                    required
+                    value={customer.name}
+                    onChange={(event) => setCustomer(prev => ({ ...prev, name: event.target.value }))}
+                    placeholder="FULL_NAME"
+                    className="w-full bg-black border border-white/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-white"
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input
+                      required
+                      value={customer.phone}
+                      onChange={(event) => setCustomer(prev => ({ ...prev, phone: event.target.value }))}
+                      placeholder="PHONE_NUMBER"
+                      className="w-full bg-black border border-white/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-white"
+                    />
+                    <input
+                      required
+                      value={customer.deliveryArea}
+                      onChange={(event) => setCustomer(prev => ({ ...prev, deliveryArea: event.target.value }))}
+                      placeholder="DELIVERY_AREA"
+                      className="w-full bg-black border border-white/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-white"
+                    />
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={customer.notes}
+                    onChange={(event) => setCustomer(prev => ({ ...prev, notes: event.target.value }))}
+                    placeholder="DELIVERY_NOTES_OPTIONAL"
+                    className="w-full bg-black border border-white/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-white resize-none"
+                  />
+                </div>
                 
                 <button 
-                  onClick={checkout}
+                  type="submit"
+                  disabled={isCheckingOut}
                   className="btn-primary w-full py-4 sm:py-5 flex items-center justify-center gap-3 !bg-white !text-black border-white text-[10px] sm:text-[11px]"
                 >
-                  [ INITIATE_CHECKOUT ] <Zap size={14} className="fill-black" />
+                  {isCheckingOut ? '[ SAVING_ORDER... ]' : '[ CHECKOUT_ON_WHATSAPP ]'} <Zap size={14} className="fill-black" />
                 </button>
-              </div>
+                <p className="text-[8px] font-mono text-white/25 uppercase tracking-widest leading-relaxed">
+                  OPENS_THE_NATIVE_WHATSAPP_APP_AFTER_ORDER_LOG_IS_SAVED.
+                </p>
+              </form>
             )}
           </motion.div>
         </>

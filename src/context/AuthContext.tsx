@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useMemo } from 'react';
-import { User, Order, CartItem } from '../types/schema';
+import { User, Order, OrderCustomer } from '../types/schema';
 import { useCart } from './CartContext';
 import { orderService } from '../services/dataService';
+import { buildWhatsAppAppUrl } from '../lib/whatsapp';
 
 interface AuthContextType {
   user: User | null;
   login: () => void;
   logout: () => void;
-  checkout: () => Promise<void>;
+  checkout: (customer: OrderCustomer) => Promise<void>;
   prestigePoints: number;
   prestigeRank: string;
 }
@@ -48,11 +49,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
-  const checkout = async () => {
+  const checkout = async (customer: OrderCustomer) => {
     if (cart.length === 0) return;
 
     const currentUser = user || {
-      name: "Guest User",
+      name: customer.name || "Guest User",
       email: "guest@utopia199x.com",
       orders: [],
       prestigePoints: 0
@@ -62,11 +63,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       id: `ORD-${crypto.randomUUID().split('-')[0].toUpperCase()}`,
       date: new Date().toISOString(),
       items: [...cart],
-      total: cartTotal
+      total: cartTotal,
+      status: 'whatsapp_pending',
+      customer,
+      channel: 'whatsapp',
     };
 
     try {
-      // Save to Firestore
       await orderService.saveOrder(newOrder);
 
       const earnedPoints = Math.floor(cartTotal * 0.05); // 5% point earn rate
@@ -76,12 +79,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         orders: [newOrder, ...currentUser.orders],
         prestigePoints: currentUser.prestigePoints + earnedPoints
       });
-      
+
+      window.location.href = buildWhatsAppAppUrl(newOrder);
       clearCart();
-      alert('ORDER_PROCESSED_SUCCESSFULLY');
     } catch (error) {
       console.error('Checkout Error:', error);
       alert('CHECKOUT_PROTOCOL_FAILED');
+      throw error;
     }
   };
 

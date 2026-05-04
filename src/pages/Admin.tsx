@@ -27,7 +27,9 @@ import {
   Chrome,
   Calendar,
   CreditCard,
-  Clock
+  Clock,
+  Send,
+  Phone
 } from 'lucide-react';
 import { db, auth, googleProvider } from '../lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
@@ -35,9 +37,10 @@ import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, addD
 import { products as initialProducts } from '../data/products';
 import { AdminProductForm } from '../components/AdminProductForm';
 import { productService, reviewService, orderService } from '../services/dataService';
-import { Product, Review, Order } from '../types/schema';
+import { Product, Review, Order, OrderStatus } from '../types/schema';
 import { formatPrice } from '../lib/currency';
 import { fileToFirestoreImage } from '../lib/localAsset';
+import { buildWhatsAppAppUrl } from '../lib/whatsapp';
 
 // LIST OF AUTHORIZED EMAILS (FROM ENV)
 const AUTHORIZED_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
@@ -52,7 +55,7 @@ interface AnalyticsData {
 
 export function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'analytics' | 'products' | 'orders' | 'reviews' | 'uploads'>('analytics');
+  const [activeTab, setActiveTab] = useState<'analytics' | 'products' | 'orders' | 'reviews' | 'uploads'>('orders');
   const [products, setProducts] = useState<Product[]>([]);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadCategory, setUploadCategory] = useState('shop');
@@ -305,9 +308,25 @@ export function Admin() {
     }
   };
 
+  const updateOrderStatus = async (id: string, status: OrderStatus) => {
+    try {
+      await orderService.updateOrderStatus(id, status);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      alert('FAILED_TO_UPDATE_ORDER_STATUS');
+    }
+  };
+
+  const reopenWhatsApp = (order: Order) => {
+    window.location.href = buildWhatsAppAppUrl(order);
+  };
+
   const conversionRate = analyticsData.uniqueVisitors > 0 
     ? ((analyticsData.totalOrders / analyticsData.uniqueVisitors) * 100).toFixed(1) 
     : "0.0";
+  const pendingOrders = orders.filter(order => (order.status || 'whatsapp_pending') === 'whatsapp_pending');
+  const todayOrders = orders.filter(order => new Date(order.date).toDateString() === new Date().toDateString());
+  const statusOptions: OrderStatus[] = ['whatsapp_pending', 'confirmed', 'fulfilled', 'cancelled'];
 
   if (isAuthLoading) {
     return (
@@ -397,11 +416,11 @@ export function Admin() {
               </span>
             </motion.div>
             <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic text-white mb-2 leading-none">
-              ADMIN_CORE
+              POS_TERMINAL
             </h1>
             <div className="flex flex-wrap items-center gap-6">
               <p className="text-technical text-[10px] opacity-60 font-mono tracking-widest">
-                TERMINAL_v1.05_AUTH // {new Date().toLocaleDateString()}
+                LIVE_SALES_TERMINAL_v2.00 // {new Date().toLocaleDateString()}
               </p>
               <div className="flex items-center gap-4">
                 <button 
@@ -444,7 +463,7 @@ export function Admin() {
             active={activeTab === 'analytics'} 
             onClick={() => setActiveTab('analytics')}
             Icon={BarChart3}
-            label="ANALYTICS"
+            label="DASHBOARD"
           />
           <TabButton 
             active={activeTab === 'products'} 
@@ -456,7 +475,7 @@ export function Admin() {
             active={activeTab === 'orders'} 
             onClick={() => setActiveTab('orders')}
             Icon={ShoppingBag}
-            label="ORDERS"
+            label="POS_ORDERS"
           />
           <TabButton 
             active={activeTab === 'reviews'} 
@@ -585,14 +604,33 @@ export function Admin() {
 
               {activeTab === 'orders' && (
                 <div className="space-y-8">
-                  <h3 className="text-[11px] font-black uppercase tracking-widest text-white">// ORDER_LOGISTICS_FLOW</h3>
-                  <div className="grid grid-cols-1 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <StatCard title="TODAY_ORDERS" value={todayOrders.length} icon={<Calendar className="text-blue-500" />} change="LIVE" />
+                    <StatCard title="WHATSAPP_PENDING" value={pendingOrders.length} icon={<Phone className="text-green-500" />} change="QUEUE" />
+                    <StatCard title="TOTAL_REVENUE" value={formatPrice(analyticsData.revenue, 'UGX')} icon={<CreditCard className="text-emerald-500" />} change="LIVE" />
+                    <StatCard title="CONVERSION_RATE" value={`${conversionRate}%`} icon={<TrendingUp className="text-yellow-500" />} change="AUTO" />
+                  </div>
+
+                  <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-white/10 pb-6">
+                    <div>
+                      <p className="text-[9px] font-mono opacity-40 uppercase tracking-[0.3em] mb-2">LIVE_ORDER_QUEUE</p>
+                      <h3 className="text-3xl sm:text-5xl font-black italic uppercase tracking-tighter text-white">SALES_DESK</h3>
+                    </div>
+                    <p className="text-[10px] font-mono text-white/40 uppercase tracking-widest">
+                      {pendingOrders.length} WHATSAPP_PENDING // {orders.length} TOTAL_LOGS
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4">
                     {orders.length > 0 ? orders.map((order) => (
-                      <div key={order.id} className="bg-white/5 border border-white/10 p-8 hover:border-white/20 transition-all group">
+                      <div key={order.id} className="bg-white/5 border border-white/10 p-6 sm:p-8 hover:border-white/20 transition-all group">
                         <div className="flex flex-col lg:flex-row justify-between gap-8">
                           <div className="space-y-6 flex-grow">
                             <div className="flex flex-wrap items-center gap-4">
                               <span className="text-xl font-black italic tracking-tighter uppercase text-white">{order.id}</span>
+                              <span className={`text-[8px] font-black px-2 py-1 border uppercase tracking-widest ${getOrderStatusClass(order.status)}`}>
+                                {order.status || 'whatsapp_pending'}
+                              </span>
                               <div className="flex items-center gap-2 text-[9px] font-mono opacity-40 uppercase tracking-widest">
                                 <Calendar size={10} />
                                 {new Date(order.date).toLocaleDateString()}
@@ -600,6 +638,28 @@ export function Admin() {
                                 {new Date(order.date).toLocaleTimeString()}
                               </div>
                             </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              <div className="bg-black/30 border border-white/5 p-4">
+                                <p className="text-[8px] font-mono opacity-30 uppercase tracking-widest mb-1">CUSTOMER</p>
+                                <p className="text-[11px] font-black uppercase text-white">{order.customer?.name || 'GUEST USER'}</p>
+                              </div>
+                              <div className="bg-black/30 border border-white/5 p-4">
+                                <p className="text-[8px] font-mono opacity-30 uppercase tracking-widest mb-1">PHONE</p>
+                                <p className="text-[11px] font-black uppercase text-white">{order.customer?.phone || 'NOT PROVIDED'}</p>
+                              </div>
+                              <div className="bg-black/30 border border-white/5 p-4">
+                                <p className="text-[8px] font-mono opacity-30 uppercase tracking-widest mb-1">DELIVERY</p>
+                                <p className="text-[11px] font-black uppercase text-white">{order.customer?.deliveryArea || 'NOT PROVIDED'}</p>
+                              </div>
+                            </div>
+
+                            {order.customer?.notes && (
+                              <div className="bg-white/[0.03] border border-white/5 p-4">
+                                <p className="text-[8px] font-mono opacity-30 uppercase tracking-widest mb-1">DELIVERY_NOTES</p>
+                                <p className="text-[11px] font-mono text-white/60 uppercase">{order.customer.notes}</p>
+                              </div>
+                            )}
                             
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               {order.items.map((item, idx) => (
@@ -621,12 +681,31 @@ export function Admin() {
                               <p className="text-[9px] font-mono opacity-30 uppercase tracking-widest mb-1">TOTAL_PAYMENT</p>
                               <p className="text-2xl font-black italic tracking-tighter text-white">{formatPrice(order.total, 'UGX')}</p>
                             </div>
-                            <button 
-                              onClick={() => deleteOrder(order.id)}
-                              className="p-4 bg-red-500/5 hover:bg-red-500 text-red-500 hover:text-white transition-all border border-red-500/10"
-                            >
-                              <Trash2 size={18} />
-                            </button>
+                            <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 w-full">
+                              <button
+                                onClick={() => reopenWhatsApp(order)}
+                                className="py-3 px-4 bg-green-500/10 hover:bg-green-500 text-green-500 hover:text-black transition-all border border-green-500/20 text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                              >
+                                <Send size={13} />
+                                WHATSAPP
+                              </button>
+                              <select
+                                value={order.status || 'whatsapp_pending'}
+                                onChange={(event) => updateOrderStatus(order.id, event.target.value as OrderStatus)}
+                                className="bg-black border border-white/10 px-3 py-3 text-[9px] font-black uppercase tracking-widest text-white outline-none focus:border-white"
+                              >
+                                {statusOptions.map(status => (
+                                  <option key={status} value={status}>{status}</option>
+                                ))}
+                              </select>
+                              <button 
+                                onClick={() => deleteOrder(order.id)}
+                                className="col-span-2 lg:col-span-1 py-3 px-4 bg-red-500/5 hover:bg-red-500 text-red-500 hover:text-white transition-all border border-red-500/10 text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                              >
+                                <Trash2 size={13} />
+                                DELETE
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -818,4 +897,18 @@ function StatCard({ title, value, icon, change }: { title: string, value: string
       <p className="text-4xl font-black italic tracking-tighter uppercase leading-none text-white">{value}</p>
     </div>
   );
+}
+
+function getOrderStatusClass(status?: OrderStatus) {
+  switch (status || 'whatsapp_pending') {
+    case 'confirmed':
+      return 'border-blue-500/40 text-blue-500 bg-blue-500/5';
+    case 'fulfilled':
+      return 'border-green-500/40 text-green-500 bg-green-500/5';
+    case 'cancelled':
+      return 'border-red-500/40 text-red-500 bg-red-500/5';
+    case 'whatsapp_pending':
+    default:
+      return 'border-yellow-500/40 text-yellow-500 bg-yellow-500/5';
+  }
 }
