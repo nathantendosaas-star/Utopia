@@ -26,12 +26,12 @@ export function Retail() {
             </section>
 
             <section className="border border-gray-100 p-12 bg-black text-white">
-              <h2 className="font-bold uppercase tracking-widest mb-4 text-2xl">Global Stockists</h2>
-              <p className="text-gray-400 mb-8">Selected partners carrying the series.</p>
+              <h2 className="font-bold uppercase tracking-widest mb-4 text-2xl">Digital Portal</h2>
+              <p className="text-gray-400 mb-8">Access the collection exclusively through our digital laboratory.</p>
               <ul className="space-y-4 font-bold uppercase tracking-widest text-sm">
-                <li>Coming Soon — Tokyo</li>
-                <li>Coming Soon — New York</li>
-                <li>Coming Soon — London</li>
+                <li>Worldwide Shipping Active</li>
+                <li>Digital Archive Accessible</li>
+                <li>Kampala Local Pickup Available</li>
               </ul>
             </section>
           </div>
@@ -39,7 +39,7 @@ export function Retail() {
           <div className="mt-24">
              <h2 className="text-black font-bold uppercase tracking-widest mb-8">Wholesale Inquiries</h2>
              <p className="text-gray-500 mb-4">Interested in carrying UTOPIA UG in your store?</p>
-             <p className="font-mono text-black">Email: wholesale@utopiaug.com</p>
+             <p className="font-mono text-black">Email: joshuamusiime20@gmail.com</p>
           </div>
         </motion.div>
       </div>

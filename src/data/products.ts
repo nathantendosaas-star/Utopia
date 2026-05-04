@@ -51,8 +51,8 @@ export const products: Product[] = [
   },
   { 
     id: '2', 
-    name: "UTOPIA ARCHIVE T-SHIRT", 
-    price: 45000, 
+    name: "UTOPIA SIGNATURE T-SHIRT", 
+    price: 40000, 
     image: "/shirt-3.jpg", 
     secondaryImage: "/shirt-4.jpg",
     images: ["/shirt-3.jpg", "/shirt-4.jpg"],
@@ -65,16 +65,16 @@ export const products: Product[] = [
       composition: "100% ORGANIC COTTON",
       fit: "BOX CUT",
     },
-    description: "A piece from our archive collection, featuring a heavier weight fabric and a boxier fit inspired by 90s streetwear."
+    description: "The Utopia Signature T-Shirt in premium cotton is crafted from luxury medium weight fabric. It has an oversized fit, with a ribbed crewneck collar. The t-shirt features our signature Utopia branding to the chest and back. Engineered for the streets of Kampala, refined for the world."
   },
   { 
     id: '3', 
-    name: "UTOPIA CORE OVERSIZED HOODIE", 
-    price: 85000, 
+    name: "UTOPIA SIGNATURE T-SHIRT", 
+    price: 40000, 
     image: "/hero-img.jpg", 
     secondaryImage: "/shirt-1.jpg",
     images: ["/hero-img.jpg", "/shirt-1.jpg"],
-    category: "OUTERWEAR",
+    category: "SHIRTS",
     badge: "NEW SEASON",
     colors: ["MIDNIGHT BLACK"],
     sizes: ["M", "L", "XL"],
@@ -83,28 +83,28 @@ export const products: Product[] = [
       composition: "80% COTTON, 20% POLYESTER",
       fit: "HEAVY OVERSIZED",
     },
-    description: "The ultimate comfort piece. Heavyweight fleece-back jersey, dropped shoulders, and a double-layered hood."
+    description: "The Utopia Signature T-Shirt in premium cotton is crafted from luxury medium weight fabric. It has an oversized fit, with a ribbed crewneck collar. The t-shirt features our signature Utopia branding to the chest and back. Engineered for the streets of Kampala, refined for the world."
   },
   { 
     id: '4', 
-    name: "UTOPIA GRAPHIC LS T-SHIRT", 
-    price: 55000, 
+    name: "UTOPIA SIGNATURE T-SHIRT", 
+    price: 40000, 
     image: "/shirt-2.jpg", 
     secondaryImage: "/shirt-3.jpg",
     images: ["/shirt-2.jpg", "/shirt-3.jpg"],
     category: "SHIRTS",
     colors: ["CHARCOAL"],
     sizes: ["S", "M", "L", "XL"],
-    description: "Long sleeve graphic tee with screen-printed artwork on the sleeves and back."
+    description: "The Utopia Signature T-Shirt in premium cotton is crafted from luxury medium weight fabric. It has an oversized fit, with a ribbed crewneck collar. The t-shirt features our signature Utopia branding to the chest and back. Engineered for the streets of Kampala, refined for the world."
   },
   { 
     id: '6', 
-    name: "UTOPIA ESSENTIAL BEANIE", 
-    price: 20000, 
+    name: "UTOPIA SIGNATURE T-SHIRT", 
+    price: 40000, 
     image: "/shirt-4.jpg", 
     images: ["/shirt-4.jpg"],
-    category: "ACCESSORIES",
+    category: "SHIRTS",
     colors: ["BLACK", "GREY", "NAVY"],
-    description: "Soft-touch ribbed knit beanie with woven brand label."
+    description: "The Utopia Signature T-Shirt in premium cotton is crafted from luxury medium weight fabric. It has an oversized fit, with a ribbed crewneck collar. The t-shirt features our signature Utopia branding to the chest and back. Engineered for the streets of Kampala, refined for the world."
   }
 ];

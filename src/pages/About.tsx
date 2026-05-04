@@ -76,7 +76,7 @@ export function About() {
                 Our ethos, <span className="font-mono text-[var(--text-micro)] text-[var(--color-text-primary)] tracking-[var(--tracking-widest)] uppercase">"NO WASTED POTENTIAL"</span>, is the standard. Every cut, every stitch, every drop is a refusal to settle for the mediocre. 
               </p>
               <p>
-                Sourcing from the archives of Tokyo utility and New York energy, we bridge the gap. In a world of noise, we choose raw, deconstructed silence.
+                Sourcing from the rich heritage of industrial utility and raw urban energy, we bridge the gap. In a world of noise, we choose raw, deconstructed silence.
               </p>
             </div>
 
@@ -88,7 +88,7 @@ export function About() {
                 </div>
                 <div>
                   <h4 className="text-[var(--color-text-secondary)] mb-[var(--space-2)]">LOCATION</h4>
-                  <p className="text-[var(--color-text-primary)]">GLOBAL</p>
+                  <p className="text-[var(--color-text-primary)]">KAMPALA</p>
                 </div>
               </div>
             </div>

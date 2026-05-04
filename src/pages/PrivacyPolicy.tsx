@@ -25,7 +25,7 @@ export function PrivacyPolicy() {
           <section className="space-y-4">
             <h2 className="text-xl font-black uppercase text-black tracking-tight border-b border-black pb-2">02 // Usage Protocols</h2>
             <p>
-              Your data is utilized strictly for logistics, verification of technical authenticity, and communication regarding "The Signature" series drops. We do not sell or lease your identity to third-party entities.
+              Your data is utilized strictly for logistics and communication regarding "The Signature" series drops. We do not sell or lease your identity to third-party entities.
             </p>
           </section>
 

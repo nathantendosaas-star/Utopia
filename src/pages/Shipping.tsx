@@ -23,7 +23,7 @@ export function Shipping() {
 
             <section>
               <h2 className="text-black font-bold uppercase tracking-widest mb-4">International</h2>
-              <p>We ship globally via DHL Express. Delivery typically takes 5-10 business days depending on location.</p>
+              <p>We ship globally. Delivery typically takes 5-10 business days depending on location.</p>
               <p className="mt-2 font-mono text-xs">Rates: Calculated at checkout based on weight and destination.</p>
             </section>
 

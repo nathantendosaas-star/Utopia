@@ -63,19 +63,11 @@ export function Contact() {
             className="space-y-16"
           >
             <div>
-              <h3 className="text-sm font-sans text-[var(--text)] opacity-60 mb-4 uppercase tracking-widest">Headquarters</h3>
-              <p className="font-sans text-lg leading-relaxed">
-                Utopia UG<br />
-                123 Design District<br />
-                Global City, 00000
-              </p>
-            </div>
-            
-            <div>
               <h3 className="text-sm font-sans text-[var(--text)] opacity-60 mb-4 uppercase tracking-widest">Direct Contact</h3>
               <p className="font-sans text-lg leading-relaxed">
-                info@utopiaug.com<br />
-                +1 (555) 123-4567
+                joshuamusiime20@gmail.com<br />
+                +256 788 185518<br />
+                Kampala, Uganda
               </p>
             </div>
 

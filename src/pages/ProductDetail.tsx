@@ -263,47 +263,19 @@ export function ProductDetail() {
                 )}
             </div>
 
-            {/* Add to Bag / App Exclusive Gate */}
+            {/* Add to Bag */}
             <div className="space-y-4">
-                {product.badge === 'LIMITED' ? (
-                    <div className="bg-white/5 text-white p-10 flex flex-col items-center text-center gap-8 border border-white/10">
-                        <div className="w-48 h-48 bg-white p-4 flex items-center justify-center">
-                            {/* Mock QR Code */}
-                            <div className="w-full h-full border-2 border-black flex flex-col items-center justify-center gap-2">
-                                <div className="grid grid-cols-5 gap-1">
-                                    {[...Array(25)].map((_, i) => (
-                                        <div key={i} className={`w-4 h-4 ${i % 3 === 0 ? 'bg-black' : 'bg-transparent'}`} />
-                                    ))}
-                                </div>
-                                <p className="text-[6px] font-black text-black">UTOPIA APP</p>
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <h3 className="text-xl font-black uppercase tracking-tighter">[ APP_EXCLUSIVE_DROP ]</h3>
-                            <p className="text-[10px] text-white/40 uppercase tracking-widest leading-relaxed">
-                                SCAN TO DOWNLOAD THE UTOPIA APP AND ACCESS THIS PIECE. 
-                                SERIALIZED DROPS ARE EXCLUSIVE TO OUR MOBILE ECOSYSTEM.
-                            </p>
-                        </div>
-                        <button className="w-full py-4 border border-white/20 text-[10px] font-black uppercase tracking-widest cursor-not-allowed opacity-50">
-                            LOCKED_ARCHIVE
-                        </button>
-                    </div>
-                ) : (
-                    <>
-                        <button 
-                            id="main-cta-btn"
-                            onClick={() => addToCart(product)}
-                            className="btn-primary w-full py-8 flex items-center justify-center gap-4 text-sm !bg-white !text-black border-white"
-                        >
-                            [ ADD_TO_WARDROBE ] <Zap size={18} className="fill-black" />
-                        </button>
-                        <div className="flex items-center justify-center gap-3 text-white/60 py-4 border border-white/10 bg-white/2">
-                            <Star size={14} className="fill-white/40" />
-                            <span className="text-technical text-[9px] font-black uppercase tracking-widest">Earn {Math.floor(product.price * 1.5)} Prestige Points</span>
-                        </div>
-                    </>
-                )}
+                <button 
+                    id="main-cta-btn"
+                    onClick={() => addToCart(product)}
+                    className="btn-primary w-full py-8 flex items-center justify-center gap-4 text-sm !bg-white !text-black border-white"
+                >
+                    [ ADD_TO_WARDROBE ] <Zap size={18} className="fill-black" />
+                </button>
+                <div className="flex items-center justify-center gap-3 text-white/60 py-4 border border-white/10 bg-white/2">
+                    <Star size={14} className="fill-white/40" />
+                    <span className="text-technical text-[9px] font-black uppercase tracking-widest">Earn {Math.floor(product.price * 1.5)} Prestige Points</span>
+                </div>
             </div>
 
             {/* Info Accordions */}
@@ -317,10 +289,6 @@ export function ProductDetail() {
                             {product.specs.fit && <li>— {product.specs.fit}</li>}
                         </ul>
                     )}
-                </Accordion>
-                <Accordion title="SHIPPING & RETURNS">
-                    <p className="text-white/60 leading-relaxed">Global Express shipping via DHL Worldwide. 2-4 day delivery window for most international orders. Domestic shipping within Uganda takes 1-2 business days.</p>
-                    <p className="mt-4 text-white/60 leading-relaxed">Returns accepted within 14 days of delivery for unworn items in original packaging.</p>
                 </Accordion>
                 <Accordion title="SUSTAINABILITY">
                     <p className="text-white/60 leading-relaxed">Ethically sourced materials. Crafted with a focus on longevity and minimal environmental impact in our Kampala laboratory.</p>
@@ -431,24 +399,6 @@ export function ProductDetail() {
                             NO_APPROVED_LOGS_FOUND_IN_BUFFER
                         </p>
                     )}
-                </div>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-12">
-                <div className="flex gap-4 items-start">
-                    <Truck size={20} className="shrink-0 text-white/40" />
-                    <div>
-                        <p className="text-technical text-[9px] mb-1 font-black uppercase text-white/60">GLOBAL EXPRESS</p>
-                        <p className="text-white/40 text-[11px] leading-tight">DHL Worldwide 2-4 day delivery.</p>
-                    </div>
-                </div>
-                <div className="flex gap-4 items-start">
-                    <ShieldCheck size={20} className="shrink-0 text-white/40" />
-                    <div>
-                        <p className="text-technical text-[9px] mb-1 font-black uppercase tracking-widest text-white/60">AUTHENTICITY</p>
-                        <p className="text-white/40 text-[11px] leading-tight">Serialized lab verification.</p>
-                    </div>
                 </div>
             </div>
 

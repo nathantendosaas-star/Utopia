@@ -32,14 +32,14 @@ export function TermsConditions() {
           <section className="space-y-4">
             <h2 className="text-xl font-black uppercase text-black tracking-tight border-b border-black pb-2">03 // Production Variance</h2>
             <p>
-              Given the "serialized" nature of our production, minor variances in fabric texture and finish may occur. These are not defects but markers of industrial authenticity.
+              Given the "serialized" nature of our production, minor variances in fabric texture and finish may occur. These are markers of our unique production process.
             </p>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-xl font-black uppercase text-black tracking-tight border-b border-black pb-2">04 // Logistics</h2>
             <p>
-              Utopia Lab coordinates global express shipping. Liability transfers to the logistics partner once the piece has cleared our Kampala verification center.
+              Utopia Lab coordinates worldwide shipping. Liability transfers to the logistics partner once the piece has cleared our Kampala verification center.
             </p>
           </section>
         </div>

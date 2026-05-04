@@ -23,7 +23,7 @@ export function Returns() {
             <section>
               <h2 className="text-black font-bold uppercase tracking-widest mb-4">Process</h2>
               <p>To initiate a return, please contact our support team with your order number and the reason for the return.</p>
-              <p className="mt-2 font-mono text-xs">Email: returns@utopiaug.com</p>
+              <p className="mt-2 font-mono text-xs">Email: joshuamusiime20@gmail.com</p>
             </section>
 
             <section>

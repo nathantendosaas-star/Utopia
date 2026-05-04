@@ -9,7 +9,7 @@ export function Support() {
       category: 'ORDERS & SHIPPING',
       icon: <Truck size={20} />,
       items: [
-        { q: 'How long does shipping take?', a: 'Domestic orders within Kampala typically arrive in 1-2 business days. International orders via DHL Express take 3-7 business days depending on customs.' },
+        { q: 'How long does shipping take?', a: 'Domestic orders within Kampala typically arrive in 1-2 business days. International orders typically take 3-7 business days depending on customs.' },
         { q: 'Can I track my order?', a: 'Yes. Once dispatched, you will receive a technical log (tracking number) via email to monitor your shipment in real-time.' },
         { q: 'Do you ship to my country?', a: 'We ship to over 150 countries worldwide. Shipping rates are calculated at checkout based on location and parcel weight.' }
       ]
@@ -19,7 +19,7 @@ export function Support() {
       icon: <RefreshCw size={20} />,
       items: [
         { q: 'What is your return policy?', a: 'Items must be returned within 14 days of receipt in original, unworn condition with all technical tags attached.' },
-        { q: 'How do I start a return?', a: 'Contact our lab support team at returns@utopiaug.com with your order identifier to initiate the process.' }
+        { q: 'How do I start a return?', a: 'Contact our lab support team at joshuamusiime20@gmail.com with your order identifier to initiate the process.' }
       ]
     },
     {
@@ -48,14 +48,14 @@ export function Support() {
                 <Mail size={32} strokeWidth={1} />
                 <div>
                     <h3 className="text-technical text-[10px] font-black mb-2">EMAIL US</h3>
-                    <p className="text-sm font-medium">support@utopiaug.com</p>
+                    <p className="text-sm font-medium">joshuamusiime20@gmail.com</p>
                 </div>
             </div>
             <div className="p-10 border border-gray-100 flex flex-col items-center text-center gap-6 group hover:bg-black hover:text-white transition-all cursor-pointer">
                 <MessageCircle size={32} strokeWidth={1} />
                 <div>
                     <h3 className="text-technical text-[10px] font-black mb-2">WHATSAPP</h3>
-                    <p className="text-sm font-medium">+256 7XX XXX XXX</p>
+                    <p className="text-sm font-medium">+256 788 185518</p>
                 </div>
             </div>
             <div className="p-10 border border-gray-100 flex flex-col items-center text-center gap-6 group hover:bg-black hover:text-white transition-all cursor-pointer">

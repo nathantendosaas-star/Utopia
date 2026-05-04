@@ -9,9 +9,9 @@ export function Prestige() {
 
   const ranks = [
     { name: 'BRONZE', points: '0+', icon: <Shield size={24} />, perks: ['Standard Access', 'Standard Shipping'] },
-    { name: 'SILVER', points: '1,000+', icon: <Zap size={24} />, perks: ['Priority Support', 'Early Access to Archive Drops'] },
-    { name: 'GOLD', points: '5,000+', icon: <Star size={24} />, perks: ['Free Express Shipping', 'Exclusive Colorway Access'] },
-    { name: 'PLATINUM', points: '10,000+', icon: <Crown size={24} />, perks: ['1-on-1 Concierge', 'Complimentary Seasonal Gifts'] },
+    { name: 'SILVER', points: '1,000+', icon: <Zap size={24} />, perks: ['Priority Support', 'Early Access to New Drops'] },
+    { name: 'GOLD', points: '5,000+', icon: <Star size={24} />, perks: ['Free Shipping', 'Exclusive Content Access'] },
+    { name: 'PLATINUM', points: '10,000+', icon: <Crown size={24} />, perks: ['Personalized Assistance', 'Seasonal Rewards'] },
   ];
 
   return (

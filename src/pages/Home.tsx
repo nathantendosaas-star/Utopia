@@ -228,20 +228,6 @@ export function Home() {
                 >
                     NOT_A<br />LABEL.<br />A_UNIFORM.
                 </motion.h2>
-                <div className="flex flex-col sm:flex-row gap-8 sm:gap-12">
-                    <div className="space-y-4 sm:space-y-6">
-                        <Info className="text-white/40" size={28} />
-                        <p className="text-white/30 text-technical text-[10px] sm:text-xs leading-relaxed max-w-[200px] uppercase">
-                            [ ENGINEERED_FOR_THE_VOID_BETWEEN_THE_CONCRETE_AND_THE_CLOUDS ]
-                        </p>
-                    </div>
-                    <div className="space-y-4 sm:space-y-6">
-                        <ShieldCheck className="text-white/40" size={28} />
-                        <p className="text-white/30 text-technical text-[10px] sm:text-xs leading-relaxed max-w-[200px] uppercase">
-                            [ SERIALIZED_PRODUCTION // LIMITED_TO_100_PIECES_PER_DROP ]
-                        </p>
-                    </div>
-                </div>
             </div>
             <div className="relative aspect-[3/4] overflow-hidden border border-white/10 mt-12 lg:mt-0">
                 <motion.img 
