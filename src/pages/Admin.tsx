@@ -41,25 +41,8 @@ const AUTHORIZED_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
 interface AnalyticsData {
   uniqueVisitors: number;
   productViews: number;
-  topProducts: { name: string, views: number }[];
+  topProducts: { name: string, hits: number }[];
 }
-
-// Mock data for initial UI build
-const MOCK_ANALYTICS = {
-  uniqueVisitors: 1248,
-  productViews: 5620,
-  topProducts: [
-    { name: 'THE_SIGNATURE_TEE', views: 842 },
-    { name: 'ARCHIVE_SWEATPANTS', views: 615 },
-    { name: 'VINTAGE_TOTE', views: 428 }
-  ]
-};
-
-const MOCK_ORDERS = [
-  { id: 'ORD-8921', customer: 'JOEL_M', total: 120000, status: 'processing', date: '2026-05-02' },
-  { id: 'ORD-7742', customer: 'SARAH_K', total: 45000, status: 'shipped', date: '2026-05-01' },
-  { id: 'ORD-6610', customer: 'ALEX_W', total: 85000, status: 'delivered', date: '2026-04-30' },
-];
 
 export function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -143,26 +126,37 @@ export function Admin() {
       console.error('Error listening to reviews:', error);
     });
 
-    // Listen to Analytics
-    const analyticsUnsubscribe = onSnapshot(collection(db, 'analytics'), (snapshot) => {
-      const data: any = {};
-      snapshot.forEach(doc => {
-        data[doc.id] = doc.data();
-      });
+    // Listen to Analytics Counters
+    const countersUnsubscribe = onSnapshot(doc(db, 'analytics', 'counters'), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        setAnalyticsData(prev => ({
+          ...prev,
+          uniqueVisitors: data.uniqueVisitors || 0,
+          productViews: data.productViews || 0
+        }));
+      }
+    });
+
+    // Listen to Product Hits for Top Products
+    const hitsQuery = query(collection(db, 'product_hits'), orderBy('hits', 'desc'));
+    const hitsUnsubscribe = onSnapshot(hitsQuery, (snapshot) => {
+      const hitsData = snapshot.docs.map(doc => ({
+        name: doc.data().name,
+        hits: doc.data().hits
+      })).slice(0, 5);
       
-      setAnalyticsData({
-        uniqueVisitors: data.counters?.uniqueVisitors || 0,
-        productViews: data.counters?.productViews || 0,
-        topProducts: data.top_products?.list || []
-      });
-    }, (error) => {
-      console.error('Error listening to analytics:', error);
+      setAnalyticsData(prev => ({
+        ...prev,
+        topProducts: hitsData
+      }));
     });
 
     return () => {
       productsUnsubscribe();
       reviewsUnsubscribe();
-      analyticsUnsubscribe();
+      countersUnsubscribe();
+      hitsUnsubscribe();
     };
   }, [isAuthenticated]);
 
@@ -448,9 +442,9 @@ export function Admin() {
             >
               {activeTab === 'analytics' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <StatCard title="UNIQUE_VISITORS" value={analyticsData.uniqueVisitors || MOCK_ANALYTICS.uniqueVisitors} icon={<Users className="text-green-500" />} change="+12%" />
-                  <StatCard title="PRODUCT_VIEWS" value={analyticsData.productViews || MOCK_ANALYTICS.productViews} icon={<Eye className="text-blue-500" />} change="+4.2%" />
-                  <StatCard title="CONVERSION_RATE" value="3.2%" icon={<TrendingUp className="text-purple-500" />} change="-0.5%" />
+                  <StatCard title="UNIQUE_VISITORS" value={analyticsData.uniqueVisitors} icon={<Users className="text-green-500" />} change="+100%" />
+                  <StatCard title="PRODUCT_VIEWS" value={analyticsData.productViews} icon={<Eye className="text-blue-500" />} change="+100%" />
+                  <StatCard title="CONVERSION_RATE" value="0.0%" icon={<TrendingUp className="text-purple-500" />} change="0%" />
                   
                   <div className="col-span-full bg-white/5 border border-white/10 p-8 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -460,15 +454,19 @@ export function Admin() {
                       <Activity size={14} /> // TOP_PERFORMING_PRODUCTS
                     </h3>
                     <div className="space-y-6">
-                      {(analyticsData.topProducts.length > 0 ? analyticsData.topProducts : MOCK_ANALYTICS.topProducts).map((p, i) => (
-                        <div key={i} className="flex justify-between items-end border-b border-white/5 pb-2 hover:border-white/20 transition-colors group/item">
-                          <div>
-                            <span className="text-[9px] font-mono opacity-30 mr-4">0{i+1}</span>
-                            <span className="text-sm font-black uppercase tracking-tighter group-hover/item:text-white transition-colors">{p.name}</span>
+                      {analyticsData.topProducts.length > 0 ? (
+                        analyticsData.topProducts.map((p, i) => (
+                          <div key={i} className="flex justify-between items-end border-b border-white/5 pb-2 hover:border-white/20 transition-colors group/item">
+                            <div>
+                              <span className="text-[9px] font-mono opacity-30 mr-4">0{i+1}</span>
+                              <span className="text-sm font-black uppercase tracking-tighter group-hover/item:text-white transition-colors">{p.name}</span>
+                            </div>
+                            <span className="text-[10px] font-mono text-white/40">{p.hits} VIEWS</span>
                           </div>
-                          <span className="text-[10px] font-mono text-white/40">{p.views} VIEWS</span>
-                        </div>
-                      ))}
+                        ))
+                      ) : (
+                        <p className="text-[10px] font-mono opacity-20 uppercase tracking-widest py-10 text-center">NO_DATA_COLLECTED_YET</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -544,42 +542,8 @@ export function Admin() {
               {activeTab === 'orders' && (
                 <div className="space-y-8">
                   <h3 className="text-[11px] font-black uppercase tracking-widest text-white">// ORDER_LOGISTICS_FLOW</h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse min-w-[800px]">
-                      <thead>
-                        <tr className="text-left border-b border-white/20">
-                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest">ORDER_ID</th>
-                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest">CUSTOMER_ID</th>
-                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest">TIMESTAMP</th>
-                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest">VALUE_UGX</th>
-                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest">STATUS_CODE</th>
-                          <th className="py-6 text-[10px] font-mono opacity-40 uppercase tracking-widest text-right">PROTOCOL</th>
-                        </tr>
-                      </thead>
-                      <tbody className="font-mono">
-                        {MOCK_ORDERS.map((order) => (
-                          <tr key={order.id} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors group">
-                            <td className="py-6 text-xs font-bold text-white tracking-widest">{order.id}</td>
-                            <td className="py-6 text-xs uppercase opacity-80">{order.customer}</td>
-                            <td className="py-6 text-[10px] opacity-40 uppercase">{order.date}</td>
-                            <td className="py-6 text-xs font-black italic">{order.total.toLocaleString()}</td>
-                            <td className="py-6">
-                              <span className={`text-[9px] font-black px-2 py-1 uppercase tracking-widest border
-                                ${order.status === 'delivered' ? 'border-green-500/40 text-green-500 bg-green-500/5' : 
-                                  order.status === 'processing' ? 'border-blue-500/40 text-blue-500 bg-blue-500/5' : 
-                                  'border-yellow-500/40 text-yellow-500 bg-yellow-500/5'}`}>
-                                {order.status}
-                              </span>
-                            </td>
-                            <td className="py-6 text-right">
-                              <button className="text-[10px] font-black hover:bg-white hover:text-black px-4 py-2 border border-white/10 transition-all uppercase tracking-widest">
-                                [ VIEW_DATAPACK ]
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <div className="py-20 text-center border border-dashed border-white/10 opacity-30">
+                    <p className="text-[10px] font-mono tracking-widest">NO_LIVE_ORDERS_FOUND_IN_BUFFER</p>
                   </div>
                 </div>
               )}

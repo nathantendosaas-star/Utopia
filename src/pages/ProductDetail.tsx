@@ -7,7 +7,7 @@ import { formatPrice } from '../lib/currency';
 import { Product, Review } from '../types/schema';
 import { Accordion } from '../components/Accordion';
 import { db, analytics } from '../lib/firebase';
-import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy, doc, increment, setDoc, serverTimestamp } from 'firebase/firestore';
 import { logEvent } from 'firebase/analytics';
 import { productService, reviewService } from '../services/dataService';
 
@@ -46,6 +46,33 @@ export function ProductDetail() {
               price: p.price
             });
           }
+
+          // Update Live Analytics in Firestore
+          const analyticsRef = doc(db, 'analytics', 'counters');
+          await setDoc(analyticsRef, { 
+            productViews: increment(1) 
+          }, { merge: true });
+
+          // Track unique visitors (simple implementation using localStorage)
+          const visitorKey = 'utp_visitor_tracked';
+          if (!localStorage.getItem(visitorKey)) {
+            await setDoc(analyticsRef, { 
+              uniqueVisitors: increment(1) 
+            }, { merge: true });
+            localStorage.setItem(visitorKey, 'true');
+          }
+
+          // Track top products
+          const productAnalyticsRef = doc(db, 'analytics', 'top_products');
+          // This is a simplified version, in a real app you might use a cloud function
+          // but for this prototype we'll update a list or a separate subcollection.
+          // Let's store individual product hits.
+          const hitsRef = doc(db, 'product_hits', p.id);
+          await setDoc(hitsRef, {
+            name: p.name,
+            hits: increment(1),
+            lastViewed: serverTimestamp()
+          }, { merge: true });
         }
       } catch (error) {
         console.error('FAILED_TO_LOAD_PRODUCT:', error);
