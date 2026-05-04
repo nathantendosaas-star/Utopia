@@ -185,6 +185,9 @@ export function ProductDetail() {
                         <img 
                             src={img} 
                             alt={`${product.name} ${index + 1}`} 
+                            loading={index === 0 ? 'eager' : 'lazy'}
+                            fetchPriority={index === 0 ? 'high' : 'low'}
+                            decoding="async"
                             className="w-full h-full object-cover grayscale brightness-[0.9] hover:grayscale-0 hover:brightness-100 transition-all duration-1000"
                         />
                     </motion.div>

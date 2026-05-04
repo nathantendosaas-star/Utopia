@@ -3,24 +3,23 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { StoreProvider } from './context/StoreContext';
 import { logAnalyticsEvent } from './lib/firebase';
+import { Home } from './pages/Home';
+import { Collection } from './pages/Collection';
+import { ProductDetail } from './pages/ProductDetail';
+import { TheSignature } from './pages/TheSignature';
+import { About } from './pages/About';
+import { Archives } from './pages/Archives';
+import { Contact } from './pages/Contact';
+import { Shipping } from './pages/Shipping';
+import { Returns } from './pages/Returns';
+import { SizeGuide } from './pages/SizeGuide';
+import { Philosophy } from './pages/Philosophy';
+import { Retail } from './pages/Retail';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { TermsConditions } from './pages/TermsConditions';
+import { Prestige } from './pages/Prestige';
+import { Support } from './pages/Support';
 
-// Fully lazy load all pages to minimize initial bundle size
-const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
-const Collection = lazy(() => import('./pages/Collection').then(m => ({ default: m.Collection })));
-const ProductDetail = lazy(() => import('./pages/ProductDetail').then(m => ({ default: m.ProductDetail })));
-const TheSignature = lazy(() => import('./pages/TheSignature').then(m => ({ default: m.TheSignature })));
-const About = lazy(() => import('./pages/About').then(m => ({ default: m.About })));
-const Archives = lazy(() => import('./pages/Archives').then(m => ({ default: m.Archives })));
-const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
-const Shipping = lazy(() => import('./pages/Shipping').then(m => ({ default: m.Shipping })));
-const Returns = lazy(() => import('./pages/Returns').then(m => ({ default: m.Returns })));
-const SizeGuide = lazy(() => import('./pages/SizeGuide').then(m => ({ default: m.SizeGuide })));
-const Philosophy = lazy(() => import('./pages/Philosophy').then(m => ({ default: m.Philosophy })));
-const Retail = lazy(() => import('./pages/Retail').then(m => ({ default: m.Retail })));
-const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
-const TermsConditions = lazy(() => import('./pages/TermsConditions').then(m => ({ default: m.TermsConditions })));
-const Prestige = lazy(() => import('./pages/Prestige').then(m => ({ default: m.Prestige })));
-const Support = lazy(() => import('./pages/Support').then(m => ({ default: m.Support })));
 const Admin = lazy(() => import('./pages/Admin').then(m => ({ default: m.Admin })));
 
 function PageLoader() {

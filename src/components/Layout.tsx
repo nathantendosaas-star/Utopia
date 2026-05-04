@@ -1,7 +1,6 @@
 import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Search, ShoppingBag, User, Menu } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { useUI } from '../context/UIContext';
 import { useCart } from '../context/CartContext';
 import { Footer } from './Footer';
@@ -139,28 +138,18 @@ export function Layout() {
       </header>
 
       <main className="relative z-10">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
-          >
-            <Suspense fallback={
-              <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-                <div className="w-48 h-[2px] bg-white/5 overflow-hidden">
-                  <div className="w-full h-full bg-white/20 animate-[marquee_2s_linear_infinite]" />
-                </div>
-                <div className="text-technical text-[8px] animate-pulse uppercase tracking-[0.4em] text-white/20">
-                  RESOURCES_FETCH
-                </div>
-              </div>
-            }>
-              <Outlet />
-            </Suspense>
-          </motion.div>
-        </AnimatePresence>
+        <Suspense fallback={
+          <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
+            <div className="w-48 h-[2px] bg-white/5 overflow-hidden">
+              <div className="w-full h-full bg-white/20 animate-[marquee_2s_linear_infinite]" />
+            </div>
+            <div className="text-technical text-[8px] animate-pulse uppercase tracking-[0.4em] text-white/20">
+              RESOURCES_FETCH
+            </div>
+          </div>
+        }>
+          <Outlet />
+        </Suspense>
       </main>
 
       <Footer />

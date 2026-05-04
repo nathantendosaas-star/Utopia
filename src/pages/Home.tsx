@@ -74,7 +74,8 @@ export function Home() {
               playsInline
               preload="auto"
               poster={featuredProduct.image}
-              className="w-full h-full object-cover grayscale brightness-[0.6] contrast-[1.1]"
+              className="w-full h-full object-cover grayscale contrast-[1.1]"
+              style={{ filter: 'grayscale(1) brightness(6) contrast(1.1)' }}
             >
               <source src={featuredProduct.video} type="video/mp4" />
             </video>
@@ -84,17 +85,15 @@ export function Home() {
               className="w-full h-full object-cover grayscale brightness-[0.5]" 
               alt="Hero"
               fetchPriority="high"
+              loading="eager"
+              decoding="async"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
         </motion.div>
 
         <div className="relative z-10 w-full px-6 flex flex-col items-center text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-          >
+          <div>
             <div className="flex items-center justify-center gap-3 mb-8">
                 <span className="w-12 h-px bg-white/10" />
                 <p className="text-technical text-white/40 tracking-[0.5em] uppercase">SS26 // ARCHIVE_DROP_001</p>
@@ -117,18 +116,15 @@ export function Home() {
                 [ ACCESS_DROP ] <Zap size={14} className="fill-black" />
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
+        <div
           className="absolute bottom-10 left-10 z-10 text-white/20 flex flex-col gap-1"
         >
           <span className="text-technical text-[10px]">LOC: 0.3476° N, 32.5825° E</span>
           <span className="text-technical text-[10px]">VER: SS26.001.ARCHIVE</span>
-        </motion.div>
+        </div>
       </section>
 
       {/* 2. The Blueprint — Technical Callouts */}

@@ -12,13 +12,14 @@ export function ProductCard({ product, index }: { product: Product, index: numbe
   const { addToCart } = useCart();
   const { currency } = useProduct();
   const navigate = useNavigate();
+  const isPriorityImage = index < 4;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={isPriorityImage ? false : { opacity: 0, y: 20 }}
+      whileInView={isPriorityImage ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.05 }}
+      transition={isPriorityImage ? undefined : { duration: 0.6, delay: index * 0.05 }}
       className="group flex flex-col gap-5 cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -40,7 +41,9 @@ export function ProductCard({ product, index }: { product: Product, index: numbe
         <img
           src={product.image}
           alt={product.name}
-          loading="lazy"
+          loading={isPriorityImage ? 'eager' : 'lazy'}
+          fetchPriority={index === 0 ? 'high' : isPriorityImage ? 'auto' : 'low'}
+          decoding="async"
           className={`w-full h-full object-cover transition-all duration-700 contrast-[1.05] brightness-[0.95] group-hover:brightness-100 group-hover:scale-105 ${isHovered && product.secondaryImage ? 'opacity-0' : 'opacity-100'}`}
           style={{ filter: isHovered ? 'drop-shadow(0 0 20px rgba(255,255,255,0.2)) contrast(1.1)' : 'contrast(1.05) brightness(0.95)' }}
         />
@@ -51,6 +54,8 @@ export function ProductCard({ product, index }: { product: Product, index: numbe
             src={product.secondaryImage}
             alt={`${product.name} detail`}
             loading="lazy"
+            fetchPriority="low"
+            decoding="async"
             className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 contrast-[1.05] brightness-[0.95] group-hover:brightness-100 group-hover:scale-105 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
             style={{ filter: isHovered ? 'drop-shadow(0 0 20px rgba(255,255,255,0.2)) contrast(1.1)' : 'contrast(1.05) brightness(0.95)' }}
           />
