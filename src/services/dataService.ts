@@ -26,13 +26,26 @@ class ProductService {
     try {
       const colRef = collection(db, this.collectionName);
       const snapshot = await getDocs(colRef);
-      const products = snapshot.docs.map(doc => ({
+      const firestoreProducts = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as Product[];
+      
+      const firestoreIds = new Set(firestoreProducts.map(p => p.id));
+      
+      // Merge Firestore products with static products
+      // Firestore products take precedence if IDs match
+      const { products: staticProducts } = await import('../data/products');
+      const mergedProducts = [...firestoreProducts];
+      
+      staticProducts.forEach(p => {
+        if (!firestoreIds.has(p.id)) {
+          mergedProducts.push(p as Product);
+        }
+      });
       
       // Validate with Zod
-      const validatedProducts = products.map(p => ProductSchema.parse(p));
+      const validatedProducts = mergedProducts.map(p => ProductSchema.parse(p));
       this.cache = validatedProducts;
       return validatedProducts;
     } catch (error) {

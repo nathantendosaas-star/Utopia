@@ -34,7 +34,12 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
     setIsUploading(true);
     try {
       const url = await fileToFirestoreImage(file);
-      setFormData(prev => ({ ...prev, image: url, images: [] }));
+      // Set both the primary image and add it to the images gallery
+      setFormData(prev => ({ 
+        ...prev, 
+        image: url, 
+        images: prev.images && prev.images.length > 0 ? [url, ...prev.images] : [url] 
+      }));
     } catch (error) {
       console.error('Error uploading image:', error);
       alert(error instanceof Error ? error.message : 'UPLOAD_PROTOCOL_FAILED');
@@ -46,8 +51,15 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isUploading) return;
+
+    // Ensure images array has at least the primary image if it's empty
+    const finalImages = formData.images && formData.images.length > 0 
+      ? formData.images 
+      : (formData.image ? [formData.image] : []);
+
     onSave({
       ...formData,
+      images: finalImages,
       id: product?.id || `ASSET-${crypto.randomUUID().split('-')[0].toUpperCase()}`,
     } as Product);
   };
