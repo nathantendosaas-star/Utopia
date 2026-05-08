@@ -117,11 +117,29 @@ export function Admin() {
 
     // Listen to Products
     const productsUnsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const productsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Product[];
-      setProducts(productsData);
+      const firestoreProducts = snapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        .filter((p: any) => !p.isDeleted) as Product[];
+      
+      const firestoreIds = new Set(firestoreProducts.map(p => p.id));
+      const deletedIds = new Set(
+        snapshot.docs
+          .filter(doc => (doc.data() as any).isDeleted)
+          .map(doc => doc.id)
+      );
+      
+      // Merge with static products
+      const mergedProducts = [...firestoreProducts];
+      initialProducts.forEach(p => {
+        if (!firestoreIds.has(p.id) && !deletedIds.has(p.id)) {
+          mergedProducts.push(p as Product);
+        }
+      });
+      
+      setProducts(mergedProducts);
     }, (error) => {
       console.error('Error listening to products:', error);
     });

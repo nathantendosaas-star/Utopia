@@ -30,22 +30,37 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
   );
   const [isUploading, setIsUploading] = useState(false);
 
-  const handleImageUpload = async (file: File) => {
+  const handleImageUpload = async (file: File, target: 'primary' | 'secondary' | 'gallery') => {
     setIsUploading(true);
     try {
       const url = await fileToFirestoreImage(file);
-      // Set both the primary image and add it to the images gallery
-      setFormData(prev => ({ 
-        ...prev, 
-        image: url, 
-        images: prev.images && prev.images.length > 0 ? [url, ...prev.images] : [url] 
-      }));
+      if (target === 'primary') {
+        setFormData(prev => ({ 
+          ...prev, 
+          image: url, 
+          images: prev.images && prev.images.length > 0 ? (prev.images.includes(url) ? prev.images : [url, ...prev.images]) : [url] 
+        }));
+      } else if (target === 'secondary') {
+        setFormData(prev => ({ ...prev, secondaryImage: url }));
+      } else if (target === 'gallery') {
+        setFormData(prev => ({ 
+          ...prev, 
+          images: prev.images ? [...prev.images, url] : [url] 
+        }));
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
       alert(error instanceof Error ? error.message : 'UPLOAD_PROTOCOL_FAILED');
     } finally {
       setIsUploading(false);
     }
+  };
+
+  const removeGalleryImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images?.filter((_, i) => i !== index)
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -208,14 +223,81 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                     </div>
                     <div>
                         <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-widest">SECONDARY_ASSET_URI</label>
-                        <input 
-                            type="text" 
-                            className="w-full bg-white/5 border border-white/10 p-4 text-sm font-mono opacity-80 focus:border-white outline-none transition-all"
-                            value={formData.secondaryImage}
-                            onChange={e => setFormData({...formData, secondaryImage: e.target.value})}
-                            placeholder="/path/to/secondary.jpg"
-                        />
+                        <div className="flex gap-2">
+                            <input 
+                                type="text" 
+                                readOnly
+                                className="flex-grow bg-white/5 border border-white/10 p-4 text-sm font-mono opacity-80 focus:border-white outline-none transition-all"
+                                value={formData.secondaryImage}
+                                placeholder="UPLOAD_OR_INPUT_URI..."
+                            />
+                            <input 
+                                type="file" 
+                                id="secondary-image-upload" 
+                                className="hidden" 
+                                accept="image/*"
+                                onChange={e => e.target.files?.[0] && handleImageUpload(e.target.files[0], 'secondary')}
+                            />
+                            <button 
+                                type="button" 
+                                onClick={() => document.getElementById('secondary-image-upload')?.click()}
+                                disabled={isUploading}
+                                className="bg-white text-black px-6 hover:bg-black hover:text-white transition-all border border-white disabled:opacity-50"
+                            >
+                                <Upload size={18} />
+                            </button>
+                        </div>
                     </div>
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 border-l-2 border-white/20 pl-4">
+                        03_IMAGE_GALLERY
+                    </h3>
+                    <button 
+                        type="button"
+                        onClick={() => document.getElementById('gallery-upload')?.click()}
+                        className="text-[9px] font-bold border border-white/20 px-4 py-2 hover:bg-white hover:text-black transition-all flex items-center gap-2"
+                    >
+                        <Plus size={12} /> [ ADD_TO_GALLERY ]
+                    </button>
+                    <input 
+                        type="file" 
+                        id="gallery-upload" 
+                        className="hidden" 
+                        multiple
+                        accept="image/*"
+                        onChange={e => {
+                            if (e.target.files) {
+                                Array.from(e.target.files).forEach(file => handleImageUpload(file, 'gallery'));
+                            }
+                        }}
+                    />
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {formData.images?.map((img, idx) => (
+                        <div key={idx} className="relative aspect-square bg-white/5 border border-white/10 group">
+                            <img src={img} alt="" className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all" />
+                            <button 
+                                type="button"
+                                onClick={() => removeGalleryImage(idx)}
+                                className="absolute top-2 right-2 p-1.5 bg-black/80 text-white/40 hover:text-red-500 transition-colors"
+                            >
+                                <X size={12} />
+                            </button>
+                            <div className="absolute bottom-0 left-0 w-full bg-black/60 p-1 text-[8px] font-mono text-center opacity-40">
+                                {idx === 0 ? 'PRIMARY' : `IMG_0${idx}`}
+                            </div>
+                        </div>
+                    ))}
+                    {(!formData.images || formData.images.length === 0) && (
+                        <div className="col-span-full py-12 border border-dashed border-white/5 text-center">
+                            <p className="text-technical text-[9px] opacity-20 uppercase tracking-widest">GALLERY_IS_EMPTY</p>
+                        </div>
+                    )}
                 </div>
               </section>
             </div>
@@ -224,7 +306,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
             <div className="lg:col-span-5 space-y-10">
               <section className="space-y-6 bg-white/[0.02] border border-white/5 p-8">
                 <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 border-l-2 border-white/20 pl-4 mb-10 flex items-center gap-2">
-                  <Layers size={14} /> 03_TECH_SPECS
+                  <Layers size={14} /> 04_TECH_SPECS
                 </h3>
 
                 <div className="space-y-8">

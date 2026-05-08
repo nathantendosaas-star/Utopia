@@ -26,12 +26,19 @@ class ProductService {
     try {
       const colRef = collection(db, this.collectionName);
       const snapshot = await getDocs(colRef);
-      const firestoreProducts = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Product[];
+      const firestoreProducts = snapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        .filter((p: any) => !p.isDeleted) as Product[];
       
       const firestoreIds = new Set(firestoreProducts.map(p => p.id));
+      const deletedIds = new Set(
+        snapshot.docs
+          .filter(doc => doc.data().isDeleted)
+          .map(doc => doc.id)
+      );
       
       // Merge Firestore products with static products
       // Firestore products take precedence if IDs match
@@ -39,7 +46,7 @@ class ProductService {
       const mergedProducts = [...firestoreProducts];
       
       staticProducts.forEach(p => {
-        if (!firestoreIds.has(p.id)) {
+        if (!firestoreIds.has(p.id) && !deletedIds.has(p.id)) {
           mergedProducts.push(p as Product);
         }
       });
@@ -66,7 +73,13 @@ class ProductService {
     try {
       const docRef = doc(db, this.collectionName, id);
       const snapshot = await getDoc(docRef);
-      if (!snapshot.exists()) return null;
+      if (!snapshot.exists() || snapshot.data()?.isDeleted) {
+        // Fallback to static if not in firestore or not marked as deleted
+        const { products: staticProducts } = await import('../data/products');
+        const staticProd = staticProducts.find(p => p.id === id);
+        if (staticProd && !snapshot.data()?.isDeleted) return staticProd as Product;
+        return null;
+      }
       
       const product = ProductSchema.parse({
         id: snapshot.id,
@@ -86,6 +99,7 @@ class ProductService {
       const cleanData = ProductSchema.parse(product);
       await setDoc(docRef, {
         ...cleanData,
+        isDeleted: false,
         updatedAt: serverTimestamp()
       }, { merge: true });
       
@@ -100,7 +114,12 @@ class ProductService {
 
   async deleteProduct(id: string): Promise<void> {
     try {
-      await deleteDoc(doc(db, this.collectionName, id));
+      const docRef = doc(db, this.collectionName, id);
+      await setDoc(docRef, {
+        isDeleted: true,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      
       // Invalidate cache
       this.cache = null;
       this.individualCache.delete(id);
