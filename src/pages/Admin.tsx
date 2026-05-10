@@ -21,7 +21,6 @@ import {
   Activity,
   Terminal,
   LucideIcon,
-  Database,
   Lock,
   LogOut,
   Chrome,
@@ -73,7 +72,6 @@ export function Admin() {
   });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
-  const [isSeeding, setIsSeeding] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
@@ -221,23 +219,6 @@ export function Admin() {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  const seedDatabase = async () => {
-    if (!window.confirm('INITIATE_DATABASE_SEED_PROTOCOL? THIS_WILL_OVERWRITE_EXISTING_DATA.')) return;
-    
-    setIsSeeding(true);
-    try {
-      for (const product of initialProducts) {
-        await productService.saveProduct(product as Product);
-      }
-      alert('DATABASE_SEED_PROTOCOL_COMPLETE');
-    } catch (error) {
-      console.error('Error seeding database:', error);
-      alert('SEED_PROTOCOL_FAILED');
-    } finally {
-      setIsSeeding(false);
-    }
-  };
 
   const handleFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -441,14 +422,6 @@ export function Admin() {
                 LIVE_SALES_TERMINAL_v2.00 // {new Date().toLocaleDateString()}
               </p>
               <div className="flex items-center gap-4">
-                <button 
-                  onClick={seedDatabase}
-                  disabled={isSeeding}
-                  className="text-[9px] font-mono text-blue-500 hover:text-white transition-colors flex items-center gap-2 uppercase tracking-widest"
-                >
-                  <Database size={10} />
-                  {isSeeding ? '[ SEEDING... ]' : '[ SEED_DATABASE ]'}
-                </button>
                 <button 
                   onClick={handleLogout}
                   className="text-[9px] font-mono text-red-500 hover:text-white transition-colors flex items-center gap-2 uppercase tracking-widest"
