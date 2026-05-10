@@ -37,6 +37,7 @@ import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, addD
 import { products as initialProducts } from '../data/products';
 import { AdminProductForm } from '../components/AdminProductForm';
 import { productService, reviewService, orderService } from '../services/dataService';
+import { isAuthorized } from '../lib/security';
 import { Product, Review, Order, OrderStatus } from '../types/schema';
 import { formatPrice } from '../lib/currency';
 import { fileToFirestoreImage } from '../lib/localAsset';
@@ -252,6 +253,11 @@ export function Admin() {
   const handleFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!uploadFile) return;
+    
+    if (!isAuthorized(currentUser?.email || null)) {
+      alert('UNAUTHORIZED_ACCESS_PROTOCOL_BREACH');
+      return;
+    }
     
     setIsUploading(true);
 

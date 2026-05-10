@@ -12,8 +12,15 @@ import {
   deleteDoc,
   updateDoc
 } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { db, auth } from '../lib/firebase';
 import { Product, ProductSchema, Review, ReviewSchema, Order, OrderSchema, OrderStatus } from '../types/schema';
+import { isAuthorized } from '../lib/security';
+
+const checkAuth = () => {
+  if (!isAuthorized(auth.currentUser?.email || null)) {
+    throw new Error('UNAUTHORIZED_ACCESS_PROTOCOL_BREACH');
+  }
+};
 
 class ProductService {
   private collectionName = 'products';
@@ -94,6 +101,7 @@ class ProductService {
   }
 
   async saveProduct(product: Product): Promise<void> {
+    checkAuth();
     try {
       const docRef = doc(db, this.collectionName, product.id);
       const cleanData = ProductSchema.parse(product);
@@ -113,6 +121,7 @@ class ProductService {
   }
 
   async deleteProduct(id: string): Promise<void> {
+    checkAuth();
     try {
       const docRef = doc(db, this.collectionName, id);
       await setDoc(docRef, {
@@ -154,8 +163,9 @@ class ReviewService {
 
   async submitReview(review: Omit<Review, 'id' | 'status' | 'createdAt'>): Promise<void> {
     try {
+      const cleanReview = ReviewSchema.omit({ id: true, status: true, createdAt: true }).parse(review);
       await addDoc(collection(db, this.collectionName), {
-        ...review,
+        ...cleanReview,
         status: 'pending',
         createdAt: serverTimestamp()
       });
@@ -166,6 +176,7 @@ class ReviewService {
   }
 
   async updateReviewStatus(id: string, status: 'approved' | 'pending'): Promise<void> {
+    checkAuth();
     try {
       const docRef = doc(db, this.collectionName, id);
       await updateDoc(docRef, { status });
@@ -180,6 +191,7 @@ class OrderService {
   private collectionName = 'orders';
 
   async getAllOrders(): Promise<Order[]> {
+    checkAuth();
     try {
       const q = query(collection(db, this.collectionName), orderBy('date', 'desc'));
       const snapshot = await getDocs(q);
@@ -196,8 +208,9 @@ class OrderService {
   async saveOrder(order: Order): Promise<void> {
     try {
       const docRef = doc(db, this.collectionName, order.id);
+      const cleanOrder = OrderSchema.parse(order);
       await setDoc(docRef, {
-        ...order,
+        ...cleanOrder,
         createdAt: serverTimestamp()
       });
     } catch (error) {
@@ -207,6 +220,7 @@ class OrderService {
   }
 
   async deleteOrder(id: string): Promise<void> {
+    checkAuth();
     try {
       await deleteDoc(doc(db, this.collectionName, id));
     } catch (error) {
@@ -216,6 +230,7 @@ class OrderService {
   }
 
   async updateOrderStatus(id: string, status: OrderStatus): Promise<void> {
+    checkAuth();
     try {
       await updateDoc(doc(db, this.collectionName, id), { status });
     } catch (error) {
