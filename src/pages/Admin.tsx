@@ -32,7 +32,7 @@ import {
   Settings
 } from 'lucide-react';
 import { db, auth, googleProvider } from '../lib/firebase';
-import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { signInWithPopup, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { products as initialProducts } from '../data/products';
 import { AdminProductForm } from '../components/AdminProductForm';
@@ -60,7 +60,11 @@ export function Admin() {
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadCategory, setUploadCategory] = useState('shop');
   const [isUploading, setIsUploading] = useState(false);
-  const [systemUptime, setSystemUptime] = useState('00:00:00');
+  
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [loginMode, setLoginMode] = useState<'google' | 'credentials'>('google');
   
   const [reviews, setReviews] = useState<Review[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -91,15 +95,51 @@ export function Admin() {
   }, []);
 
   const handleGoogleLogin = async () => {
+    setAuthError('');
     try {
       const result = await signInWithPopup(auth, googleProvider);
       if (!AUTHORIZED_EMAILS.includes(result.user.email || '')) {
         await signOut(auth);
-        alert('ACCESS_DENIED // UNAUTHORIZED_USER_LOG');
+        setAuthError('ACCESS_DENIED // UNAUTHORIZED_USER_LOG');
       }
     } catch (error) {
       console.error('Login Error:', error);
-      alert('LOGIN_PROTOCOL_FAILED');
+      setAuthError('LOGIN_PROTOCOL_FAILED');
+    }
+  };
+
+  const validatePassword = (pass: string) => {
+    const rules = {
+      length: pass.length >= 10,
+      upper: /[A-Z]/.test(pass),
+      lower: /[a-z]/.test(pass),
+      number: /[0-9]/.test(pass),
+      special: /[@$!%*?&]/.test(pass)
+    };
+    return rules;
+  };
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError('');
+    
+    const rules = validatePassword(loginPassword);
+    if (!Object.values(rules).every(Boolean)) {
+      setAuthError('PASSWORD_REQUIREMENTS_NOT_MET');
+      return;
+    }
+
+    try {
+      const result = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      if (!AUTHORIZED_EMAILS.includes(result.user.email || '')) {
+        await signOut(auth);
+        setAuthError('ACCESS_DENIED // UNAUTHORIZED_USER_LOG');
+      }
+    } catch (error: any) {
+      console.error('Login Error:', error);
+      setAuthError(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' 
+        ? 'INVALID_CREDENTIALS' 
+        : 'LOGIN_PROTOCOL_FAILED');
     }
   };
 
@@ -208,18 +248,6 @@ export function Admin() {
       hitsUnsubscribe();
     };
   }, [isAuthenticated]);
-
-  useEffect(() => {
-    const start = Date.now();
-    const interval = setInterval(() => {
-      const diff = Date.now() - start;
-      const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
-      const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
-      const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-      setSystemUptime(`${h}:${m}:${s}`);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -342,16 +370,18 @@ export function Admin() {
   }
 
   if (!isAuthenticated) {
+    const passRules = validatePassword(loginPassword);
+    
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-primary)] p-4">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-primary)] p-4 font-mono">
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-md bg-white/5 border border-white/10 p-12 space-y-10 text-center"
+          className="w-full max-w-lg bg-white/5 border border-white/10 p-8 sm:p-12 space-y-10"
         >
-          <div className="flex flex-col items-center gap-6">
+          <div className="flex flex-col items-center gap-6 text-center">
             <div className="p-5 border border-white/10 relative">
-              <Lock size={40} className="text-white" />
+              <Lock size={32} className="text-white" />
               <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
@@ -360,25 +390,125 @@ export function Admin() {
             </div>
             <div className="space-y-2">
               <h1 className="text-3xl font-black italic tracking-tighter uppercase leading-none">SECURE_GATEWAY</h1>
-              <p className="text-[10px] font-mono opacity-40 uppercase tracking-[0.3em]">
+              <p className="text-[9px] opacity-40 uppercase tracking-[0.4em]">
                 RESTRICTED_ACCESS // UTOPIA_ADMIN_CORE
               </p>
             </div>
           </div>
-          
-          <div className="space-y-4 pt-6">
+
+          <div className="flex border-b border-white/10">
             <button 
-              onClick={handleGoogleLogin}
-              className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-white border border-white transition-all flex items-center justify-center gap-4 group"
+              onClick={() => { setLoginMode('google'); setAuthError(''); }}
+              className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${loginMode === 'google' ? 'text-white border-b-2 border-white' : 'text-white/30 hover:text-white/60'}`}
             >
-              <Chrome size={18} className="transition-transform group-hover:rotate-12" />
-              [ SIGN_IN_WITH_GOOGLE ]
+              GOOGLE_SSO
             </button>
-            <p className="text-[8px] font-mono opacity-20 uppercase tracking-widest">
-              IDENTITY_VERIFICATION_REQUIRED_FOR_ROOT_ACCESS
-            </p>
+            <button 
+              onClick={() => { setLoginMode('credentials'); setAuthError(''); }}
+              className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${loginMode === 'credentials' ? 'text-white border-b-2 border-white' : 'text-white/30 hover:text-white/60'}`}
+            >
+              ADMIN_CREDENTIALS
+            </button>
           </div>
+          
+          <AnimatePresence mode="wait">
+            {loginMode === 'google' ? (
+              <motion.div 
+                key="google"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="space-y-6 pt-4"
+              >
+                <button 
+                  onClick={handleGoogleLogin}
+                  className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-white border border-white transition-all flex items-center justify-center gap-4 group"
+                >
+                  <Chrome size={18} className="transition-transform group-hover:rotate-12" />
+                  [ SIGN_IN_WITH_GOOGLE ]
+                </button>
+                <p className="text-[8px] opacity-20 uppercase tracking-widest text-center">
+                  IDENTITY_VERIFICATION_REQUIRED_FOR_ROOT_ACCESS
+                </p>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="email"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-8 pt-4"
+              >
+                <form onSubmit={handleEmailLogin} className="space-y-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-[9px] opacity-30 uppercase tracking-widest mb-2">ADMIN_EMAIL</label>
+                      <input 
+                        type="email"
+                        required
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 p-4 text-sm outline-none focus:border-white/40 transition-colors uppercase"
+                        placeholder="ENTER_EMAIL_ADDRESS"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9px] opacity-30 uppercase tracking-widest mb-2">ADMIN_PASSWORD</label>
+                      <input 
+                        type="password"
+                        required
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 p-4 text-sm outline-none focus:border-white/40 transition-colors"
+                        placeholder="••••••••••••"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-white/2 p-6 border border-white/5 space-y-4">
+                    <p className="text-[8px] opacity-30 uppercase tracking-widest border-b border-white/5 pb-2">SECURE_PASSWORD_REQUIREMENTS</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+                      <RuleItem met={passRules.length} text="MIN_10_CHARACTERS" />
+                      <RuleItem met={passRules.upper} text="UPPERCASE_LETTER" />
+                      <RuleItem met={passRules.lower} text="LOWERCASE_LETTER" />
+                      <RuleItem met={passRules.number} text="NUMERIC_VALUE" />
+                      <RuleItem met={passRules.special} text="SPECIAL_CHARACTER" />
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit"
+                    className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-white border border-white transition-all"
+                  >
+                    [ EXECUTE_LOGIN_SEQUENCE ]
+                  </button>
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {authError && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black text-center uppercase tracking-widest"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <XCircle size={14} />
+                {authError}
+              </div>
+            </motion.div>
+          )}
         </motion.div>
+      </div>
+    );
+  }
+
+  function RuleItem({ met, text }: { met: boolean, text: string }) {
+    return (
+      <div className={`flex items-center gap-2 text-[8px] font-black tracking-widest transition-opacity ${met ? 'text-green-500' : 'opacity-20'}`}>
+        {met ? <CheckCircle2 size={10} /> : <div className="w-2.5 h-2.5 border border-white/20 rounded-full" />}
+        {text}
       </div>
     );
   }
@@ -473,10 +603,6 @@ export function Admin() {
           </div>
 
           <div className="flex gap-8 text-right">
-            <div>
-              <p className="text-[8px] opacity-30 uppercase tracking-widest mb-1">UPTIME</p>
-              <p className="text-lg font-black italic tracking-tighter text-white">{systemUptime}</p>
-            </div>
             <div className="hidden lg:block">
               <p className="text-[8px] opacity-30 uppercase tracking-widest mb-1">STATUS</p>
               <div className="flex items-center gap-2 text-green-500">
@@ -875,18 +1001,6 @@ export function Admin() {
                             [ TERMINATE_SESSION ]
                           </button>
                         </div>
-                      </div>
-                   </div>
-
-                   <div className="bg-white/5 border border-white/10 p-10">
-                      <h3 className="text-[11px] font-black uppercase tracking-widest border-b border-white/10 pb-4 flex items-center gap-3 mb-8">
-                        <Terminal size={14} /> // SYSTEM_INFO
-                      </h3>
-                      <div className="space-y-4 font-mono text-[10px] opacity-40">
-                         <p>NODE_ENV: PRODUCTION</p>
-                         <p>OS_ARCHITECTURE: LINUX_X86_64</p>
-                         <p>FIREBASE_SDK: v12.12.1</p>
-                         <p>BUILD_VERSION: 2.0.0-STABLE</p>
                       </div>
                    </div>
                 </div>
