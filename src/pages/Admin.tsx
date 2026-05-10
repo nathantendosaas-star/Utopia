@@ -28,7 +28,8 @@ import {
   CreditCard,
   Clock,
   Send,
-  Phone
+  Phone,
+  Settings
 } from 'lucide-react';
 import { db, auth, googleProvider } from '../lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
@@ -54,7 +55,7 @@ interface AnalyticsData {
 
 export function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'analytics' | 'products' | 'orders' | 'reviews' | 'uploads'>('orders');
+  const [activeTab, setActiveTab] = useState<'analytics' | 'products' | 'orders' | 'reviews' | 'uploads' | 'settings'>('analytics');
   const [products, setProducts] = useState<Product[]>([]);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadCategory, setUploadCategory] = useState('shop');
@@ -383,7 +384,7 @@ export function Admin() {
   }
 
   return (
-    <div className="min-h-screen pt-32 pb-20 px-4 sm:px-6 lg:px-10 max-w-[1600px] mx-auto bg-[var(--color-bg-primary)]">
+    <div className="min-h-screen flex bg-[var(--color-bg-primary)] text-white font-mono selection:bg-white selection:text-black">
       {isFormOpen && (
         <AdminProductForm 
           product={editingProduct} 
@@ -396,94 +397,98 @@ export function Admin() {
       )}
 
       {/* Decorative Scanner Line */}
-      <div className="scanner-line opacity-20" />
+      <div className="scanner-line opacity-10" />
 
-      <div className="flex flex-col gap-10">
-        
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-10">
-          <div className="flex-grow">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-3 mb-4"
-            >
-              <Shield size={14} className="text-white/40" />
-              <span className="text-technical text-[9px] opacity-40">SECURE_ENVIRONMENT // ROOT_ACCESS</span>
-              <span className="text-technical text-[9px] text-green-500 font-bold ml-4 uppercase tracking-widest bg-green-500/5 px-2 py-0.5 border border-green-500/20">
-                ACTIVE_USER: {currentUser?.email}
-              </span>
-            </motion.div>
-            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic text-white mb-2 leading-none">
-              POS_TERMINAL
-            </h1>
-            <div className="flex flex-wrap items-center gap-6">
-              <p className="text-technical text-[10px] opacity-60 font-mono tracking-widest">
-                LIVE_SALES_TERMINAL_v2.00 // {new Date().toLocaleDateString()}
-              </p>
-              <div className="flex items-center gap-4">
-                <button 
-                  onClick={handleLogout}
-                  className="text-[9px] font-mono text-red-500 hover:text-white transition-colors flex items-center gap-2 uppercase tracking-widest"
-                >
-                  <LogOut size={10} />
-                  [ TERMINATE_SESSION ]
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex gap-8 text-right font-mono">
-            <div className="hidden sm:block">
-              <p className="text-[9px] opacity-30 uppercase tracking-widest mb-1">SYSTEM_UPTIME</p>
-              <p className="text-xl font-black italic tracking-tighter text-white">{systemUptime}</p>
-            </div>
-            <div>
-              <p className="text-[9px] opacity-30 uppercase tracking-widest mb-1">STATUS</p>
-              <div className="flex items-center gap-2 text-green-500">
-                <Activity size={12} className="animate-pulse" />
-                <p className="text-xl font-black italic tracking-tighter">ONLINE</p>
-              </div>
-            </div>
-          </div>
+      {/* Sidebar Navigation */}
+      <aside className="w-64 border-r border-white/10 flex flex-col fixed h-screen z-50 bg-[var(--color-bg-primary)]">
+        <div className="p-8 border-b border-white/10">
+          <h2 className="text-xl font-black italic tracking-tighter uppercase leading-none glitch-text">UTOPIA_CORE</h2>
+          <p className="text-[8px] opacity-30 tracking-[0.3em] mt-2 uppercase">ADMIN_TERMINAL_v2.0</p>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide border-b border-white/5">
-          <TabButton 
+        <nav className="flex-grow py-8 px-4 space-y-2">
+          <SidebarLink 
             active={activeTab === 'analytics'} 
             onClick={() => setActiveTab('analytics')}
             Icon={BarChart3}
             label="DASHBOARD"
           />
-          <TabButton 
-            active={activeTab === 'products'} 
-            onClick={() => setActiveTab('products')}
-            Icon={Package}
-            label="PRODUCTS"
-          />
-          <TabButton 
+          <SidebarLink 
             active={activeTab === 'orders'} 
             onClick={() => setActiveTab('orders')}
             Icon={ShoppingBag}
             label="POS_ORDERS"
           />
-          <TabButton 
+          <SidebarLink 
+            active={activeTab === 'products'} 
+            onClick={() => setActiveTab('products')}
+            Icon={Package}
+            label="PRODUCTS"
+          />
+          <SidebarLink 
             active={activeTab === 'reviews'} 
             onClick={() => setActiveTab('reviews')}
             Icon={MessageSquare}
             label="REVIEWS"
           />
-          <TabButton 
+          <SidebarLink 
             active={activeTab === 'uploads'} 
             onClick={() => setActiveTab('uploads')}
             Icon={Upload}
             label="FILE_UPLOAD"
           />
-        </div>
+          <SidebarLink 
+            active={activeTab === 'settings'} 
+            onClick={() => setActiveTab('settings')}
+            Icon={Settings}
+            label="SETTINGS"
+          />
+        </nav>
 
-        {/* Content Area */}
-        <div className="min-h-[500px]">
+        <div className="p-6 border-t border-white/10 bg-white/[0.02]">
+           <div className="flex items-center gap-3 mb-4">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-[9px] font-bold uppercase tracking-widest text-green-500">SYSTEM_ONLINE</span>
+           </div>
+           <p className="text-[8px] opacity-40 uppercase tracking-widest truncate">{currentUser?.email}</p>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 ml-64 min-h-screen flex flex-col">
+        {/* Top Header */}
+        <header className="h-24 border-b border-white/10 flex items-center justify-between px-10 bg-[var(--color-bg-primary)]/50 backdrop-blur-md sticky top-0 z-40">
+          <div>
+            <h1 className="text-3xl font-black italic tracking-tighter uppercase text-white">
+              {activeTab === 'analytics' && 'DASHBOARD_OVERVIEW'}
+              {activeTab === 'orders' && 'SALES_TERMINAL'}
+              {activeTab === 'products' && 'INVENTORY_CORE'}
+              {activeTab === 'reviews' && 'FEEDBACK_MODERATION'}
+              {activeTab === 'uploads' && 'MEDIA_DISPATCH'}
+              {activeTab === 'settings' && 'SYSTEM_SETTINGS'}
+            </h1>
+            <p className="text-[9px] opacity-40 uppercase tracking-widest mt-1">
+              SECURE_LAYER // {activeTab.toUpperCase()}_PROTOCOL
+            </p>
+          </div>
+
+          <div className="flex gap-8 text-right">
+            <div>
+              <p className="text-[8px] opacity-30 uppercase tracking-widest mb-1">UPTIME</p>
+              <p className="text-lg font-black italic tracking-tighter text-white">{systemUptime}</p>
+            </div>
+            <div className="hidden lg:block">
+              <p className="text-[8px] opacity-30 uppercase tracking-widest mb-1">STATUS</p>
+              <div className="flex items-center gap-2 text-green-500">
+                <Activity size={12} className="animate-pulse" />
+                <p className="text-lg font-black italic tracking-tighter uppercase">ONLINE</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Section */}
+        <div className="p-10 flex-grow">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -493,7 +498,7 @@ export function Admin() {
               transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
             >
               {activeTab === 'analytics' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                   <StatCard title="UNIQUE_VISITORS" value={analyticsData.uniqueVisitors} icon={<Users className="text-green-500" />} change="+100%" />
                   <StatCard title="PRODUCT_VIEWS" value={analyticsData.productViews} icon={<Eye className="text-blue-500" />} change="+100%" />
                   <StatCard title="CONVERSION_RATE" value={`${conversionRate}%`} icon={<TrendingUp className="text-purple-500" />} change="AUTO" />
@@ -836,32 +841,85 @@ export function Admin() {
                   </div>
                 </div>
               )}
+
+              {activeTab === 'settings' && (
+                <div className="max-w-2xl space-y-8">
+                   <div className="bg-white/5 border border-white/10 p-10 space-y-10">
+                      <h3 className="text-[11px] font-black uppercase tracking-widest border-b border-white/10 pb-4 flex items-center gap-3">
+                        <Shield size={14} /> // AUTHENTICATION_PROFILE
+                      </h3>
+
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                           <div className="bg-black/30 p-4 border border-white/5">
+                              <p className="text-[8px] opacity-30 uppercase mb-2">ACTIVE_USER</p>
+                              <p className="text-sm font-black uppercase text-white truncate">{currentUser?.email}</p>
+                           </div>
+                           <div className="bg-black/30 p-4 border border-white/5">
+                              <p className="text-[8px] opacity-30 uppercase mb-2">ACCESS_LEVEL</p>
+                              <p className="text-sm font-black uppercase text-green-500">ROOT_ADMIN</p>
+                           </div>
+                        </div>
+
+                        <div className="bg-red-500/5 border border-red-500/10 p-8 space-y-6">
+                           <div>
+                              <h4 className="text-[10px] font-black uppercase text-red-500 mb-2">DANGER_ZONE</h4>
+                              <p className="text-[9px] opacity-40 uppercase tracking-widest">TERMINATE_ALL_ACTIVE_SESSIONS_AND_LOGOUT_FROM_THIS_TERMINAL</p>
+                           </div>
+                           
+                           <button 
+                            onClick={handleLogout}
+                            className="w-full py-4 bg-red-500 text-white text-[10px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-red-500 border border-red-500 transition-all flex items-center justify-center gap-4"
+                          >
+                            <LogOut size={16} />
+                            [ TERMINATE_SESSION ]
+                          </button>
+                        </div>
+                      </div>
+                   </div>
+
+                   <div className="bg-white/5 border border-white/10 p-10">
+                      <h3 className="text-[11px] font-black uppercase tracking-widest border-b border-white/10 pb-4 flex items-center gap-3 mb-8">
+                        <Terminal size={14} /> // SYSTEM_INFO
+                      </h3>
+                      <div className="space-y-4 font-mono text-[10px] opacity-40">
+                         <p>NODE_ENV: PRODUCTION</p>
+                         <p>OS_ARCHITECTURE: LINUX_X86_64</p>
+                         <p>FIREBASE_SDK: v12.12.1</p>
+                         <p>BUILD_VERSION: 2.0.0-STABLE</p>
+                      </div>
+                   </div>
+                </div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
 
-function TabButton({ active, onClick, Icon, label }: { active: boolean, onClick: () => void, Icon: LucideIcon, label: string }) {
+function SidebarLink({ active, onClick, Icon, label }: { active: boolean, onClick: () => void, Icon: LucideIcon, label: string }) {
   return (
     <button 
       onClick={onClick}
-      className={`relative flex items-center gap-3 px-8 py-5 text-[10px] font-black tracking-[0.2em] transition-all flex-shrink-0 group
+      className={`relative w-full flex items-center gap-4 px-6 py-4 text-[10px] font-black tracking-[0.2em] transition-all group overflow-hidden
         ${active ? 'text-black' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
     >
       {active && (
         <motion.div 
           layoutId="activeTab"
           className="absolute inset-0 bg-white"
-          transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+          transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
         />
       )}
-      <span className="relative z-10 flex items-center gap-2">
-        <Icon size={14} />
+      <span className="relative z-10 flex items-center gap-3">
+        <Icon size={16} />
         {label}
       </span>
+      {!active && (
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-white group-hover:h-4 transition-all duration-300" />
+      )}
     </button>
   );
 }
