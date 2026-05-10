@@ -630,90 +630,100 @@ export function Admin() {
               transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
             >
               {activeTab === 'analytics' && (
-                <div className="space-y-10">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <StatCard 
-                      title="TOTAL_REVENUE" 
-                      value={formatPrice(analyticsData.revenue, 'UGX')} 
-                      icon={<CreditCard size={20} />} 
-                      change="LIVE" 
-                      colorClass="text-emerald-500"
-                    />
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                     <StatCard 
                       title="UNIQUE_VISITORS" 
                       value={analyticsData.uniqueVisitors} 
-                      icon={<Users size={20} />} 
+                      icon={<Users size={18} />} 
+                      change="+100%" 
+                      colorClass="text-green-500"
+                    />
+                    <StatCard 
+                      title="PRODUCT_VIEWS" 
+                      value={analyticsData.productViews} 
+                      icon={<Eye size={18} />} 
                       change="+100%" 
                       colorClass="text-blue-500"
                     />
                     <StatCard 
+                      title="CONVERSION_RATE" 
+                      value={`${conversionRate}%`} 
+                      icon={<TrendingUp size={18} />} 
+                      change="AUTO" 
+                      colorClass="text-purple-500"
+                    />
+                    <StatCard 
                       title="TOTAL_ORDERS" 
                       value={analyticsData.totalOrders} 
-                      icon={<ShoppingBag size={20} />} 
+                      icon={<ShoppingBag size={18} />} 
                       change="LIVE" 
                       colorClass="text-yellow-500"
                     />
                     <StatCard 
-                      title="CONVERSION_RATE" 
-                      value={`${conversionRate}%`} 
-                      icon={<TrendingUp size={20} />} 
-                      change="AUTO" 
-                      colorClass="text-purple-500"
+                      title="TOTAL_REVENUE" 
+                      value={formatPrice(analyticsData.revenue, 'UGX')} 
+                      icon={<CreditCard size={18} />} 
+                      change="LIVE" 
+                      colorClass="text-emerald-500"
                     />
                   </div>
                   
-                  <div className="bg-white/5 border border-white/10 relative overflow-hidden group">
-                    <div className="p-8 border-b border-white/10 flex items-center justify-between">
-                      <h3 className="text-[11px] font-black uppercase tracking-widest flex items-center gap-3">
-                        <Activity size={14} className="text-white/40" /> // PERFORMANCE_METRICS
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                    <div className="lg:col-span-8 bg-white/[0.03] border border-white/10 p-8 relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 p-4 opacity-10">
+                        <Terminal size={120} />
+                      </div>
+                      <h3 className="text-[11px] font-black uppercase mb-10 tracking-widest border-b border-white/10 pb-4 flex items-center gap-3">
+                        <Activity size={14} className="text-white/40" /> // TOP_PERFORMING_PRODUCTS
                       </h3>
-                      <div className="flex gap-2">
-                        <div className="w-2 h-2 bg-white/10 rounded-full" />
-                        <div className="w-2 h-2 bg-white/10 rounded-full" />
-                        <div className="w-2 h-2 bg-white/10 rounded-full" />
+                      <div className="space-y-6">
+                        {analyticsData.topProducts.length > 0 ? (
+                          analyticsData.topProducts.map((p, i) => (
+                            <div key={i} className="flex justify-between items-end border-b border-white/5 pb-3 hover:border-white/20 transition-colors group/item">
+                              <div className="flex items-center gap-4">
+                                <span className="text-[10px] font-mono opacity-20">0{i+1}</span>
+                                <span className="text-sm font-black uppercase tracking-tighter group-hover/item:text-white transition-colors">{p.name}</span>
+                              </div>
+                              <div className="text-right">
+                                <span className="text-sm font-black text-white italic tracking-tighter">{p.hits}</span>
+                                <span className="text-[8px] font-mono text-white/20 ml-2 uppercase">VIEWS</span>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-[10px] font-mono opacity-20 uppercase tracking-widest py-10 text-center">NO_DATA_COLLECTED_YET</p>
+                        )}
                       </div>
                     </div>
-                    
-                    <div className="p-10">
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <div className="space-y-8">
-                          <h4 className="text-[10px] font-black uppercase tracking-widest text-white/40">TOP_PERFORMING_ASSETS</h4>
-                          <div className="space-y-6">
-                            {analyticsData.topProducts.length > 0 ? (
-                              analyticsData.topProducts.map((p, i) => (
-                                <div key={i} className="flex justify-between items-end border-b border-white/5 pb-3 hover:border-white/20 transition-colors group/item">
-                                  <div className="flex items-center gap-4">
-                                    <span className="text-[10px] font-mono opacity-20">0{i+1}</span>
-                                    <span className="text-sm font-black uppercase tracking-tighter group-hover/item:text-white transition-colors">{p.name}</span>
-                                  </div>
-                                  <div className="text-right">
-                                    <span className="text-sm font-black text-white italic tracking-tighter">{p.hits}</span>
-                                    <span className="text-[8px] font-mono text-white/20 ml-2 uppercase">VIEWS</span>
-                                  </div>
-                                </div>
-                              ))
-                            ) : (
-                              <p className="text-[10px] font-mono opacity-20 uppercase tracking-widest py-10 text-center">NO_DATA_COLLECTED_YET</p>
-                            )}
-                          </div>
-                        </div>
 
-                        <div className="bg-white/[0.02] border border-white/5 p-8 flex flex-col justify-center items-center text-center gap-6 relative">
-                           <div className="absolute top-0 right-0 p-4 opacity-5">
-                              <Terminal size={100} />
-                           </div>
-                           <div className="w-20 h-20 border border-white/10 flex items-center justify-center rounded-full">
-                              <Eye size={32} className="text-white/20" />
-                           </div>
-                           <div>
-                              <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">TOTAL_PRODUCT_EXPOSURE</p>
-                              <p className="text-5xl font-black italic tracking-tighter text-white">{analyticsData.productViews}</p>
-                           </div>
-                           <p className="text-[9px] font-mono opacity-20 uppercase max-w-[200px]">
-                              REAL_TIME_AGGREGATED_VIEWS_ACROSS_ALL_DEPLOYED_ASSETS
-                           </p>
-                        </div>
-                      </div>
+                    <div className="lg:col-span-4 bg-white/[0.03] border border-white/10 p-8 flex flex-col justify-center items-center text-center gap-8 relative overflow-hidden">
+                       <div className="absolute top-0 right-0 p-4 flex gap-1 opacity-20">
+                          <div className="w-1 h-1 bg-white rounded-full" />
+                          <div className="w-1 h-1 bg-white rounded-full" />
+                          <div className="w-1 h-1 bg-white rounded-full" />
+                       </div>
+                       
+                       <div className="relative">
+                          <div className="w-48 h-48 border border-white/5 rounded-full flex items-center justify-center relative">
+                             <motion.div 
+                               animate={{ rotate: 360 }}
+                               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                               className="absolute inset-0 border-2 border-dashed border-white/10 rounded-full"
+                             />
+                             <div className="w-40 h-48 flex flex-col items-center justify-center">
+                                <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">AGGREGATED_EXPOSURE</p>
+                                <p className="text-5xl font-black italic tracking-tighter text-white">{analyticsData.productViews}</p>
+                             </div>
+                          </div>
+                       </div>
+
+                       <div className="space-y-1">
+                          <h4 className="text-[11px] font-black uppercase tracking-widest text-white">TOTAL_PRODUCT_EXPOSURE</h4>
+                          <p className="text-[9px] font-mono opacity-20 uppercase max-w-[200px] leading-relaxed mx-auto">
+                            REAL_TIME_DATA_STREAM_FROM_ACTIVE_ASSETS
+                          </p>
+                       </div>
                     </div>
                   </div>
                 </div>
