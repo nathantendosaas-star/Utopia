@@ -630,34 +630,90 @@ export function Admin() {
               transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
             >
               {activeTab === 'analytics' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-                  <StatCard title="UNIQUE_VISITORS" value={analyticsData.uniqueVisitors} icon={<Users className="text-green-500" />} change="+100%" />
-                  <StatCard title="PRODUCT_VIEWS" value={analyticsData.productViews} icon={<Eye className="text-blue-500" />} change="+100%" />
-                  <StatCard title="CONVERSION_RATE" value={`${conversionRate}%`} icon={<TrendingUp className="text-purple-500" />} change="AUTO" />
-                  <StatCard title="TOTAL_ORDERS" value={analyticsData.totalOrders} icon={<ShoppingBag className="text-yellow-500" />} change="LIVE" />
-                  <StatCard title="TOTAL_REVENUE" value={formatPrice(analyticsData.revenue, 'UGX')} icon={<CreditCard className="text-emerald-500" />} change="LIVE" />
+                <div className="space-y-10">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <StatCard 
+                      title="TOTAL_REVENUE" 
+                      value={formatPrice(analyticsData.revenue, 'UGX')} 
+                      icon={<CreditCard size={20} />} 
+                      change="LIVE" 
+                      colorClass="text-emerald-500"
+                    />
+                    <StatCard 
+                      title="UNIQUE_VISITORS" 
+                      value={analyticsData.uniqueVisitors} 
+                      icon={<Users size={20} />} 
+                      change="+100%" 
+                      colorClass="text-blue-500"
+                    />
+                    <StatCard 
+                      title="TOTAL_ORDERS" 
+                      value={analyticsData.totalOrders} 
+                      icon={<ShoppingBag size={20} />} 
+                      change="LIVE" 
+                      colorClass="text-yellow-500"
+                    />
+                    <StatCard 
+                      title="CONVERSION_RATE" 
+                      value={`${conversionRate}%`} 
+                      icon={<TrendingUp size={20} />} 
+                      change="AUTO" 
+                      colorClass="text-purple-500"
+                    />
+                  </div>
                   
-                  <div className="col-span-full bg-white/5 border border-white/10 p-8 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                      <Terminal size={120} />
+                  <div className="bg-white/5 border border-white/10 relative overflow-hidden group">
+                    <div className="p-8 border-b border-white/10 flex items-center justify-between">
+                      <h3 className="text-[11px] font-black uppercase tracking-widest flex items-center gap-3">
+                        <Activity size={14} className="text-white/40" /> // PERFORMANCE_METRICS
+                      </h3>
+                      <div className="flex gap-2">
+                        <div className="w-2 h-2 bg-white/10 rounded-full" />
+                        <div className="w-2 h-2 bg-white/10 rounded-full" />
+                        <div className="w-2 h-2 bg-white/10 rounded-full" />
+                      </div>
                     </div>
-                    <h3 className="text-[11px] font-black uppercase mb-8 tracking-widest border-b border-white/10 pb-4 flex items-center gap-3">
-                      <Activity size={14} /> // TOP_PERFORMING_PRODUCTS
-                    </h3>
-                    <div className="space-y-6">
-                      {analyticsData.topProducts.length > 0 ? (
-                        analyticsData.topProducts.map((p, i) => (
-                          <div key={i} className="flex justify-between items-end border-b border-white/5 pb-2 hover:border-white/20 transition-colors group/item">
-                            <div>
-                              <span className="text-[9px] font-mono opacity-30 mr-4">0{i+1}</span>
-                              <span className="text-sm font-black uppercase tracking-tighter group-hover/item:text-white transition-colors">{p.name}</span>
-                            </div>
-                            <span className="text-[10px] font-mono text-white/40">{p.hits} VIEWS</span>
+                    
+                    <div className="p-10">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div className="space-y-8">
+                          <h4 className="text-[10px] font-black uppercase tracking-widest text-white/40">TOP_PERFORMING_ASSETS</h4>
+                          <div className="space-y-6">
+                            {analyticsData.topProducts.length > 0 ? (
+                              analyticsData.topProducts.map((p, i) => (
+                                <div key={i} className="flex justify-between items-end border-b border-white/5 pb-3 hover:border-white/20 transition-colors group/item">
+                                  <div className="flex items-center gap-4">
+                                    <span className="text-[10px] font-mono opacity-20">0{i+1}</span>
+                                    <span className="text-sm font-black uppercase tracking-tighter group-hover/item:text-white transition-colors">{p.name}</span>
+                                  </div>
+                                  <div className="text-right">
+                                    <span className="text-sm font-black text-white italic tracking-tighter">{p.hits}</span>
+                                    <span className="text-[8px] font-mono text-white/20 ml-2 uppercase">VIEWS</span>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-[10px] font-mono opacity-20 uppercase tracking-widest py-10 text-center">NO_DATA_COLLECTED_YET</p>
+                            )}
                           </div>
-                        ))
-                      ) : (
-                        <p className="text-[10px] font-mono opacity-20 uppercase tracking-widest py-10 text-center">NO_DATA_COLLECTED_YET</p>
-                      )}
+                        </div>
+
+                        <div className="bg-white/[0.02] border border-white/5 p-8 flex flex-col justify-center items-center text-center gap-6 relative">
+                           <div className="absolute top-0 right-0 p-4 opacity-5">
+                              <Terminal size={100} />
+                           </div>
+                           <div className="w-20 h-20 border border-white/10 flex items-center justify-center rounded-full">
+                              <Eye size={32} className="text-white/20" />
+                           </div>
+                           <div>
+                              <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">TOTAL_PRODUCT_EXPOSURE</p>
+                              <p className="text-5xl font-black italic tracking-tighter text-white">{analyticsData.productViews}</p>
+                           </div>
+                           <p className="text-[9px] font-mono opacity-20 uppercase max-w-[200px]">
+                              REAL_TIME_AGGREGATED_VIEWS_ACROSS_ALL_DEPLOYED_ASSETS
+                           </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1044,26 +1100,23 @@ function SidebarLink({ active, onClick, Icon, label }: { active: boolean, onClic
   );
 }
 
-function StatCard({ title, value, icon, change }: { title: string, value: string | number, icon: React.ReactNode, change: string }) {
+function StatCard({ title, value, icon, change, colorClass = "text-white" }: { title: string, value: string | number, icon: React.ReactNode, change: string, colorClass?: string }) {
   const isPositive = change.startsWith('+') || change === 'LIVE' || change === 'AUTO';
   return (
-    <div className="bg-white/5 border border-white/10 p-8 relative group overflow-hidden">
-      <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 -rotate-45 translate-x-12 -translate-y-12 group-hover:bg-white/10 transition-colors" />
-      <div className="flex justify-between items-start mb-6">
-        <div>
-          <h4 className="text-[9px] font-mono opacity-30 tracking-[0.2em] uppercase mb-1">{title}</h4>
-          <div className="flex items-center gap-2">
-            <span className={`text-[9px] font-mono ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-              {change}
-            </span>
-            <div className="w-10 h-[1px] bg-white/10" />
-          </div>
+    <div className="bg-white/[0.03] border border-white/10 p-6 relative group hover:bg-white/[0.05] transition-all">
+      <div className="flex justify-between items-start mb-4">
+        <div className={`p-2 bg-white/5 border border-white/5 rounded-sm ${colorClass}`}>
+          {icon}
         </div>
-        <div className="p-2 border border-white/5">
-            {icon}
+        <div className={`text-[10px] font-black font-mono px-2 py-0.5 rounded-full ${isPositive ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'}`}>
+          {change}
         </div>
       </div>
-      <p className="text-4xl font-black italic tracking-tighter uppercase leading-none text-white">{value}</p>
+      <div className="space-y-1">
+        <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{title}</p>
+        <p className="text-3xl font-black italic tracking-tighter text-white uppercase">{value}</p>
+      </div>
+      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
     </div>
   );
 }
