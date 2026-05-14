@@ -383,10 +383,10 @@ export function Admin() {
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-lg bg-white/5 border border-white/10 p-8 sm:p-12 space-y-10"
+          className="w-full max-w-lg bg-white/5 border border-white/10 p-8 sm:p-12 space-y-10 rounded-2xl"
         >
           <div className="flex flex-col items-center gap-6 text-center">
-            <div className="p-5 border border-white/10 relative">
+            <div className="p-5 border border-white/10 relative rounded-xl">
               <Lock size={32} className="text-white" />
               <motion.div 
                 animate={{ rotate: 360 }}
@@ -428,7 +428,7 @@ export function Admin() {
               >
                 <button 
                   onClick={handleGoogleLogin}
-                  className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-white border border-white transition-all flex items-center justify-center gap-4 group"
+                  className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-white border border-white transition-all flex items-center justify-center gap-4 group rounded-xl"
                 >
                   <Chrome size={18} className="transition-transform group-hover:rotate-12" />
                   [ SIGN_IN_WITH_GOOGLE ]
@@ -454,7 +454,7 @@ export function Admin() {
                         required
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 p-4 text-sm outline-none focus:border-white/40 transition-colors uppercase"
+                        className="w-full bg-white/5 border border-white/10 p-4 text-sm outline-none focus:border-white/40 transition-colors uppercase rounded-lg"
                         placeholder="ENTER_EMAIL_ADDRESS"
                       />
                     </div>
@@ -465,13 +465,13 @@ export function Admin() {
                         required
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 p-4 text-sm outline-none focus:border-white/40 transition-colors"
+                        className="w-full bg-white/5 border border-white/10 p-4 text-sm outline-none focus:border-white/40 transition-colors rounded-lg"
                         placeholder="••••••••••••"
                       />
                     </div>
                   </div>
 
-                  <div className="bg-white/2 p-6 border border-white/5 space-y-4">
+                  <div className="bg-white/2 p-6 border border-white/5 space-y-4 rounded-xl">
                     <p className="text-[8px] opacity-30 uppercase tracking-widest border-b border-white/5 pb-2">SECURE_PASSWORD_REQUIREMENTS</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
                       <RuleItem met={passRules.length} text="MIN_10_CHARACTERS" />
@@ -484,7 +484,7 @@ export function Admin() {
 
                   <button 
                     type="submit"
-                    className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-white border border-white transition-all"
+                    className="w-full py-5 bg-white text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-white border border-white transition-all rounded-xl"
                   >
                     [ EXECUTE_LOGIN_SEQUENCE ]
                   </button>
@@ -497,7 +497,7 @@ export function Admin() {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black text-center uppercase tracking-widest"
+              className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black text-center uppercase tracking-widest rounded-lg"
             >
               <div className="flex items-center justify-center gap-2">
                 <XCircle size={14} />
@@ -536,80 +536,119 @@ export function Admin() {
       <div className="scanner-line opacity-10" />
 
       {/* Sidebar Navigation */}
-      <aside className="w-64 border-r border-white/10 flex flex-col fixed h-screen z-50 bg-[var(--color-bg-primary)]">
-        <div className="p-8 border-b border-white/10">
-          <h2 className="text-xl font-black italic tracking-tighter uppercase leading-none glitch-text">UTOPIA_CORE</h2>
-          <p className="text-[8px] opacity-30 tracking-[0.3em] mt-2 uppercase">ADMIN_TERMINAL_v2.0</p>
-        </div>
+      <AnimatePresence>
+        {(isSidebarOpen || window.innerWidth >= 1024) && (
+          <>
+            {/* Mobile Overlay */}
+            {isSidebarOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsSidebarOpen(false)}
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+              />
+            )}
+            
+            <motion.aside 
+              initial={{ x: -260 }}
+              animate={{ x: 0 }}
+              exit={{ x: -260 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className={`w-64 border-r border-white/10 flex flex-col fixed h-screen z-50 bg-[var(--color-bg-primary)] lg:translate-x-0 ${!isSidebarOpen && 'hidden lg:flex'}`}
+            >
+              <div className="p-8 border-b border-white/10 flex justify-between items-center">
+                <div>
+                  <h2 className="text-xl font-black italic tracking-tighter uppercase leading-none glitch-text">UTOPIA_CORE</h2>
+                  <p className="text-[8px] opacity-30 tracking-[0.3em] mt-2 uppercase">ADMIN_TERMINAL_v2.0</p>
+                </div>
+                <button 
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="p-2 hover:bg-white/5 rounded-lg lg:hidden"
+                >
+                  <X size={20} />
+                </button>
+              </div>
 
-        <nav className="flex-grow py-8 px-4 space-y-2">
-          <SidebarLink 
-            active={activeTab === 'analytics'} 
-            onClick={() => setActiveTab('analytics')}
-            Icon={BarChart3}
-            label="DASHBOARD"
-          />
-          <SidebarLink 
-            active={activeTab === 'orders'} 
-            onClick={() => setActiveTab('orders')}
-            Icon={ShoppingBag}
-            label="POS_ORDERS"
-          />
-          <SidebarLink 
-            active={activeTab === 'products'} 
-            onClick={() => setActiveTab('products')}
-            Icon={Package}
-            label="PRODUCTS"
-          />
-          <SidebarLink 
-            active={activeTab === 'reviews'} 
-            onClick={() => setActiveTab('reviews')}
-            Icon={MessageSquare}
-            label="REVIEWS"
-          />
-          <SidebarLink 
-            active={activeTab === 'uploads'} 
-            onClick={() => setActiveTab('uploads')}
-            Icon={Upload}
-            label="FILE_UPLOAD"
-          />
-          <SidebarLink 
-            active={activeTab === 'settings'} 
-            onClick={() => setActiveTab('settings')}
-            Icon={Settings}
-            label="SETTINGS"
-          />
-        </nav>
+              <nav className="flex-grow py-8 px-4 space-y-2 overflow-y-auto">
+                <SidebarLink 
+                  active={activeTab === 'analytics'} 
+                  onClick={() => { setActiveTab('analytics'); setIsSidebarOpen(false); }}
+                  Icon={BarChart3}
+                  label="DASHBOARD"
+                />
+                <SidebarLink 
+                  active={activeTab === 'orders'} 
+                  onClick={() => { setActiveTab('orders'); setIsSidebarOpen(false); }}
+                  Icon={ShoppingBag}
+                  label="POS_ORDERS"
+                />
+                <SidebarLink 
+                  active={activeTab === 'products'} 
+                  onClick={() => { setActiveTab('products'); setIsSidebarOpen(false); }}
+                  Icon={Package}
+                  label="PRODUCTS"
+                />
+                <SidebarLink 
+                  active={activeTab === 'reviews'} 
+                  onClick={() => { setActiveTab('reviews'); setIsSidebarOpen(false); }}
+                  Icon={MessageSquare}
+                  label="REVIEWS"
+                />
+                <SidebarLink 
+                  active={activeTab === 'uploads'} 
+                  onClick={() => { setActiveTab('uploads'); setIsSidebarOpen(false); }}
+                  Icon={Upload}
+                  label="FILE_UPLOAD"
+                />
+                <SidebarLink 
+                  active={activeTab === 'settings'} 
+                  onClick={() => { setActiveTab('settings'); setIsSidebarOpen(false); }}
+                  Icon={Settings}
+                  label="SETTINGS"
+                />
+              </nav>
 
-        <div className="p-6 border-t border-white/10 bg-white/[0.02]">
-           <div className="flex items-center gap-3 mb-4">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-[9px] font-bold uppercase tracking-widest text-green-500">SYSTEM_ONLINE</span>
-           </div>
-           <p className="text-[8px] opacity-40 uppercase tracking-widest truncate">{currentUser?.email}</p>
-        </div>
-      </aside>
+              <div className="p-6 border-t border-white/10 bg-white/[0.02]">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-green-500">SYSTEM_ONLINE</span>
+                </div>
+                <p className="text-[8px] opacity-40 uppercase tracking-widest truncate">{currentUser?.email}</p>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Main Content Area */}
-      <main className="flex-1 ml-64 min-h-screen flex flex-col">
+      <main className="flex-1 lg:ml-64 min-h-screen flex flex-col w-full">
         {/* Top Header */}
-        <header className="h-24 border-b border-white/10 flex items-center justify-between px-10 bg-[var(--color-bg-primary)]/50 backdrop-blur-md sticky top-0 z-40">
-          <div>
-            <h1 className="text-3xl font-black italic tracking-tighter uppercase text-white">
-              {activeTab === 'analytics' && 'DASHBOARD_OVERVIEW'}
-              {activeTab === 'orders' && 'SALES_TERMINAL'}
-              {activeTab === 'products' && 'INVENTORY_CORE'}
-              {activeTab === 'reviews' && 'FEEDBACK_MODERATION'}
-              {activeTab === 'uploads' && 'MEDIA_DISPATCH'}
-              {activeTab === 'settings' && 'SYSTEM_SETTINGS'}
-            </h1>
-            <p className="text-[9px] opacity-40 uppercase tracking-widest mt-1">
-              SECURE_LAYER // {activeTab.toUpperCase()}_PROTOCOL
-            </p>
+        <header className="h-24 border-b border-white/10 flex items-center justify-between px-6 sm:px-10 bg-[var(--color-bg-primary)]/50 backdrop-blur-md sticky top-0 z-40">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsSidebarOpen(true)}
+              className="p-3 bg-white/5 border border-white/10 rounded-xl lg:hidden hover:bg-white/10 transition-colors"
+            >
+              <Menu size={20} />
+            </button>
+            <div>
+              <h1 className="text-xl sm:text-3xl font-black italic tracking-tighter uppercase text-white truncate max-w-[200px] sm:max-w-none">
+                {activeTab === 'analytics' && 'DASHBOARD_OVERVIEW'}
+                {activeTab === 'orders' && 'SALES_TERMINAL'}
+                {activeTab === 'products' && 'INVENTORY_CORE'}
+                {activeTab === 'reviews' && 'FEEDBACK_MODERATION'}
+                {activeTab === 'uploads' && 'MEDIA_DISPATCH'}
+                {activeTab === 'settings' && 'SYSTEM_SETTINGS'}
+              </h1>
+              <p className="text-[9px] opacity-40 uppercase tracking-widest mt-1 hidden sm:block">
+                SECURE_LAYER // {activeTab.toUpperCase()}_PROTOCOL
+              </p>
+            </div>
           </div>
 
           <div className="flex gap-8 text-right">
-            <div className="hidden lg:block">
+            <div className="hidden sm:block">
               <p className="text-[8px] opacity-30 uppercase tracking-widest mb-1">STATUS</p>
               <div className="flex items-center gap-2 text-green-500">
                 <Activity size={12} className="animate-pulse" />
@@ -620,7 +659,7 @@ export function Admin() {
         </header>
 
         {/* Content Section */}
-        <div className="p-10 flex-grow">
+        <div className="p-4 sm:p-10 flex-grow w-full overflow-x-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -917,9 +956,9 @@ export function Admin() {
                   <h3 className="text-[11px] font-black uppercase tracking-widest text-white">// USER_FEEDBACK_MODERATION</h3>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {reviews.length > 0 ? reviews.map((review) => (
-                      <div key={review.id} className="bg-white/5 border border-white/10 p-8 flex flex-col justify-between gap-6 hover:border-white/20 transition-colors">
+                      <div key={review.id} className="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-2xl flex flex-col justify-between gap-6 hover:border-white/20 transition-colors">
                         <div>
-                          <div className="flex justify-between items-start mb-6">
+                          <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
                             <div className="flex items-center gap-3">
                               <span className="text-[9px] font-mono opacity-30 uppercase">
                                 {review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString() : 'JUST_NOW'}
@@ -930,32 +969,32 @@ export function Admin() {
                                 ))}
                               </div>
                             </div>
-                            <span className={`text-[8px] font-black px-1.5 py-0.5 border ${review.status === 'approved' ? 'border-green-500/40 text-green-500' : 'border-yellow-500/40 text-yellow-500'} uppercase tracking-widest`}>
+                            <span className={`text-[8px] font-black px-1.5 py-0.5 border rounded-full ${review.status === 'approved' ? 'border-green-500/40 text-green-500' : 'border-yellow-500/40 text-yellow-500'} uppercase tracking-widest`}>
                               {review.status}
                             </span>
                           </div>
                           <p className="text-sm font-black uppercase mb-4 tracking-tighter text-white">{review.userName}</p>
-                          <p className="text-[13px] opacity-60 font-mono italic leading-relaxed">"{review.comment}"</p>
+                          <p className="text-[13px] opacity-60 font-mono italic leading-relaxed break-words">"{review.comment}"</p>
                         </div>
                         <div className="flex gap-3 pt-6 border-t border-white/5">
                           {review.status === 'pending' && (
                             <button 
                               onClick={() => approveReview(review.id)}
-                              className="flex-grow py-3 border border-green-500/30 text-green-500 hover:bg-green-500 hover:text-black text-[10px] font-black uppercase tracking-widest transition-all"
+                              className="flex-grow py-3 border border-green-500/30 text-green-500 hover:bg-green-500 hover:text-black text-[10px] font-black uppercase tracking-widest transition-all rounded-lg"
                             >
                               APPROVE_LOG
                             </button>
                           )}
                           <button 
                             onClick={() => deleteReview(review.id)}
-                            className="flex-grow py-3 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white text-[10px] font-black uppercase tracking-widest transition-all"
+                            className="flex-grow py-3 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white text-[10px] font-black uppercase tracking-widest transition-all rounded-lg"
                           >
                             DISCARD_ASSET
                           </button>
                         </div>
                       </div>
                     )) : (
-                      <div className="col-span-full py-20 text-center border border-dashed border-white/10 opacity-30">
+                      <div className="col-span-full py-20 text-center border border-dashed border-white/10 rounded-2xl opacity-30">
                         <p className="text-[10px] font-mono tracking-widest">NO_REVIEWS_FOUND_IN_BUFFER</p>
                       </div>
                     )}
@@ -964,8 +1003,8 @@ export function Admin() {
               )}
 
               {activeTab === 'uploads' && (
-                <div className="max-w-3xl mx-auto py-12">
-                   <div className="bg-white/5 border border-white/10 p-10 relative overflow-hidden">
+                <div className="max-w-3xl mx-auto py-6 sm:py-12">
+                   <div className="bg-white/5 border border-white/10 p-6 sm:p-10 rounded-2xl relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-white opacity-20" />
                     <h3 className="text-[11px] font-black uppercase mb-12 tracking-widest border-b border-white/10 pb-4 flex items-center gap-3">
                       <Upload size={14} /> // MEDIA_DISPATCH_PROTOCOL
@@ -976,7 +1015,7 @@ export function Admin() {
                         <div>
                           <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-[0.2em]">DESTINATION_LAYER</label>
                           <select 
-                            className="w-full bg-black border border-white/10 p-4 text-[12px] font-black uppercase tracking-widest focus:border-white transition-colors outline-none cursor-pointer"
+                            className="w-full bg-black border border-white/10 p-4 rounded-lg text-[12px] font-black uppercase tracking-widest focus:border-white transition-colors outline-none cursor-pointer"
                             value={uploadCategory}
                             onChange={(e) => setUploadCategory(e.target.value)}
                           >
@@ -988,14 +1027,14 @@ export function Admin() {
                         </div>
                         <div>
                           <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-widest">ACCESS_TOKEN</label>
-                          <div className="bg-white/5 border border-white/10 p-4 text-[12px] font-mono opacity-20 italic">
+                          <div className="bg-white/5 border border-white/10 p-4 rounded-lg text-[12px] font-mono opacity-20 italic">
                             AUTOGENERATED_BY_SYSTEM
                           </div>
                         </div>
                       </div>
                       
                       <div 
-                        className="border-2 border-dashed border-white/10 p-16 text-center hover:border-white/40 hover:bg-white/[0.02] transition-all cursor-pointer relative group"
+                        className="border-2 border-dashed border-white/10 rounded-2xl p-8 sm:p-16 text-center hover:border-white/40 hover:bg-white/[0.02] transition-all cursor-pointer relative group"
                         onClick={() => document.getElementById('file-input')?.click()}
                       >
                         <input 
@@ -1007,15 +1046,15 @@ export function Admin() {
                         />
                         {uploadFile ? (
                           <div className="flex flex-col items-center gap-4">
-                            <div className="w-20 h-20 border border-white/10 p-2">
+                            <div className="w-20 h-20 border border-white/10 rounded-lg p-2">
                                 <ImageIcon size={64} className="text-white opacity-100" />
                             </div>
-                            <p className="text-sm font-black uppercase tracking-[0.2em] text-white">{uploadFile.name}</p>
+                            <p className="text-sm font-black uppercase tracking-[0.2em] text-white break-all">{uploadFile.name}</p>
                             <p className="text-[9px] font-mono opacity-30">{(uploadFile.size / 1024 / 1024).toFixed(2)} MB // READY_FOR_DISPATCH</p>
                           </div>
                         ) : (
                           <div className="flex flex-col items-center gap-6">
-                            <div className="p-6 border border-white/5 group-hover:border-white/20 transition-colors">
+                            <div className="p-6 border border-white/5 group-hover:border-white/20 transition-colors rounded-xl">
                                 <Upload size={48} className="opacity-10 group-hover:opacity-100 transition-opacity" />
                             </div>
                             <p className="text-[10px] font-mono opacity-40 group-hover:opacity-100 tracking-widest transition-opacity uppercase">
@@ -1028,7 +1067,7 @@ export function Admin() {
 
                       <button 
                         disabled={!uploadFile || isUploading}
-                        className={`w-full py-6 text-[11px] font-black tracking-[0.4em] uppercase transition-all border
+                        className={`w-full py-6 text-[11px] font-black tracking-[0.4em] uppercase transition-all border rounded-xl
                           ${!uploadFile || isUploading 
                             ? 'bg-transparent border-white/5 text-white/10 cursor-not-allowed' 
                             : 'bg-white text-black border-white hover:bg-transparent hover:text-white active:scale-[0.99]'}`}
@@ -1042,24 +1081,24 @@ export function Admin() {
 
               {activeTab === 'settings' && (
                 <div className="max-w-2xl space-y-8">
-                   <div className="bg-white/5 border border-white/10 p-10 space-y-10">
+                   <div className="bg-white/5 border border-white/10 p-6 sm:p-10 rounded-2xl space-y-10">
                       <h3 className="text-[11px] font-black uppercase tracking-widest border-b border-white/10 pb-4 flex items-center gap-3">
                         <Shield size={14} /> // AUTHENTICATION_PROFILE
                       </h3>
 
                       <div className="space-y-6">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                           <div className="bg-black/30 p-4 border border-white/5">
+                           <div className="bg-black/30 p-4 border border-white/5 rounded-xl">
                               <p className="text-[8px] opacity-30 uppercase mb-2">ACTIVE_USER</p>
                               <p className="text-sm font-black uppercase text-white truncate">{currentUser?.email}</p>
                            </div>
-                           <div className="bg-black/30 p-4 border border-white/5">
+                           <div className="bg-black/30 p-4 border border-white/5 rounded-xl">
                               <p className="text-[8px] opacity-30 uppercase mb-2">ACCESS_LEVEL</p>
                               <p className="text-sm font-black uppercase text-green-500">ROOT_ADMIN</p>
                            </div>
                         </div>
 
-                        <div className="bg-red-500/5 border border-red-500/10 p-8 space-y-6">
+                        <div className="bg-red-500/5 border border-red-500/10 p-6 sm:p-8 rounded-2xl space-y-6">
                            <div>
                               <h4 className="text-[10px] font-black uppercase text-red-500 mb-2">DANGER_ZONE</h4>
                               <p className="text-[9px] opacity-40 uppercase tracking-widest">TERMINATE_ALL_ACTIVE_SESSIONS_AND_LOGOUT_FROM_THIS_TERMINAL</p>
@@ -1067,7 +1106,7 @@ export function Admin() {
                            
                            <button 
                             onClick={handleLogout}
-                            className="w-full py-4 bg-red-500 text-white text-[10px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-red-500 border border-red-500 transition-all flex items-center justify-center gap-4"
+                            className="w-full py-4 bg-red-500 text-white text-[10px] font-black uppercase tracking-[0.3em] hover:bg-transparent hover:text-red-500 border border-red-500 transition-all flex items-center justify-center gap-4 rounded-xl"
                           >
                             <LogOut size={16} />
                             [ TERMINATE_SESSION ]
@@ -1089,7 +1128,7 @@ function SidebarLink({ active, onClick, Icon, label }: { active: boolean, onClic
   return (
     <button 
       onClick={onClick}
-      className={`relative w-full flex items-center gap-4 px-6 py-4 text-[10px] font-black tracking-[0.2em] transition-all group overflow-hidden
+      className={`relative w-full flex items-center gap-4 px-6 py-4 text-[10px] font-black tracking-[0.2em] transition-all group overflow-hidden rounded-xl
         ${active ? 'text-black' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
     >
       {active && (
@@ -1113,9 +1152,9 @@ function SidebarLink({ active, onClick, Icon, label }: { active: boolean, onClic
 function StatCard({ title, value, icon, change, colorClass = "text-white" }: { title: string, value: string | number, icon: React.ReactNode, change: string, colorClass?: string }) {
   const isPositive = change.startsWith('+') || change === 'LIVE' || change === 'AUTO';
   return (
-    <div className="bg-white/[0.03] border border-white/10 p-6 relative group hover:bg-white/[0.05] transition-all">
+    <div className="bg-white/[0.03] border border-white/10 p-6 rounded-2xl relative group hover:bg-white/[0.05] transition-all overflow-hidden">
       <div className="flex justify-between items-start mb-4">
-        <div className={`p-2 bg-white/5 border border-white/5 rounded-sm ${colorClass}`}>
+        <div className={`p-2 bg-white/5 border border-white/5 rounded-lg ${colorClass}`}>
           {icon}
         </div>
         <div className={`text-[10px] font-black font-mono px-2 py-0.5 rounded-full ${isPositive ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'}`}>
@@ -1124,7 +1163,7 @@ function StatCard({ title, value, icon, change, colorClass = "text-white" }: { t
       </div>
       <div className="space-y-1">
         <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{title}</p>
-        <p className="text-3xl font-black italic tracking-tighter text-white uppercase">{value}</p>
+        <p className="text-2xl sm:text-3xl font-black italic tracking-tighter text-white uppercase truncate">{value}</p>
       </div>
       <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
     </div>

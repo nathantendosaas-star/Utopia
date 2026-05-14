@@ -101,25 +101,25 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
         animate={{ scale: 1, y: 0, opacity: 1 }}
         exit={{ scale: 0.95, y: 20, opacity: 0 }}
         transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
-        className="bg-black border border-white/10 w-full max-w-5xl max-h-[90vh] overflow-y-auto custom-scrollbar relative"
+        className="bg-black border border-white/10 w-full max-w-5xl max-h-[90vh] overflow-y-auto custom-scrollbar relative rounded-2xl"
       >
         {/* Decorative Grid Background */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
         
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 z-10 p-3 hover:bg-white text-white/40 hover:text-black transition-all border border-white/5"
+          className="absolute top-4 sm:top-6 right-4 sm:right-6 z-10 p-2 sm:p-3 hover:bg-white text-white/40 hover:text-black transition-all border border-white/5 rounded-lg"
         >
           <X size={20} />
         </button>
 
-        <form onSubmit={handleSubmit} className="p-8 sm:p-12 space-y-12 relative z-0">
+        <form onSubmit={handleSubmit} className="p-6 sm:p-12 space-y-12 relative z-0">
           <div className="border-b border-white/10 pb-8">
             <div className="flex items-center gap-3 mb-4">
                 <Database size={16} className="text-white/40" />
                 <span className="text-technical text-[9px] opacity-40 uppercase tracking-[0.3em]">ASSET_MANAGEMENT_PROTOCOL</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black italic tracking-tighter uppercase text-white">
+            <h2 className="text-2xl sm:text-5xl font-black italic tracking-tighter uppercase text-white truncate">
               {product ? 'MODIFY_ASSET' : 'REGISTER_NEW_DATA'}
             </h2>
             <p className="text-technical text-[10px] opacity-30 uppercase tracking-widest mt-2 font-mono">
@@ -127,7 +127,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-20">
             {/* Column 1: Core Identification */}
             <div className="lg:col-span-7 space-y-10">
               <section className="space-y-6">
@@ -141,7 +141,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                         <input 
                             type="text" 
                             required
-                            className="w-full bg-white/5 border border-white/10 p-4 text-sm font-black uppercase tracking-widest focus:border-white outline-none transition-all placeholder:opacity-20"
+                            className="w-full bg-white/5 border border-white/10 p-4 text-sm font-black uppercase tracking-widest focus:border-white outline-none transition-all placeholder:opacity-20 rounded-lg"
                             value={formData.name}
                             onChange={e => setFormData({...formData, name: e.target.value})}
                             placeholder="e.g. UTOPIA_CORE_TEE"
@@ -154,7 +154,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                             <input 
                                 type="number" 
                                 required
-                                className="w-full bg-white/5 border border-white/10 p-4 text-sm font-black tracking-widest focus:border-white outline-none transition-all"
+                                className="w-full bg-white/5 border border-white/10 p-4 text-sm font-black tracking-widest focus:border-white outline-none transition-all rounded-lg"
                                 value={formData.price}
                                 onChange={e => setFormData({...formData, price: parseInt(e.target.value)})}
                             />
@@ -162,7 +162,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                         <div>
                             <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-widest">CLASSIFICATION_LAYER</label>
                             <select 
-                                className="w-full bg-black border border-white/10 p-4 text-sm font-black uppercase tracking-widest focus:border-white outline-none transition-all cursor-pointer"
+                                className="w-full bg-black border border-white/10 p-4 text-sm font-black uppercase tracking-widest focus:border-white outline-none transition-all cursor-pointer rounded-lg"
                                 value={formData.category}
                                 onChange={e => setFormData({...formData, category: e.target.value})}
                             >
@@ -178,7 +178,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                         <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-widest">DESCRIPTION_METADATA</label>
                         <textarea 
                             rows={6}
-                            className="w-full bg-white/5 border border-white/10 p-4 text-sm font-bold tracking-tight focus:border-white outline-none transition-all resize-none placeholder:opacity-20"
+                            className="w-full bg-white/5 border border-white/10 p-4 text-sm font-bold tracking-tight focus:border-white outline-none transition-all resize-none placeholder:opacity-20 rounded-lg"
                             value={formData.description}
                             onChange={e => setFormData({...formData, description: e.target.value})}
                             placeholder="INPUT_DETAILED_ASSET_DESCRIPTION..."
@@ -200,7 +200,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                                 type="text" 
                                 required
                                 readOnly
-                                className="flex-grow bg-white/5 border border-white/10 p-4 text-sm font-mono opacity-80 focus:border-white outline-none transition-all"
+                                className="flex-grow bg-white/5 border border-white/10 p-4 text-sm font-mono opacity-80 focus:border-white outline-none transition-all rounded-lg truncate"
                                 value={formData.image}
                                 placeholder="UPLOAD_OR_INPUT_URI..."
                             />
@@ -215,7 +215,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                                 type="button" 
                                 onClick={() => document.getElementById('product-image-upload')?.click()}
                                 disabled={isUploading}
-                                className="bg-white text-black px-6 hover:bg-black hover:text-white transition-all border border-white disabled:opacity-50"
+                                className="bg-white text-black px-6 rounded-lg hover:bg-black hover:text-white transition-all border border-white disabled:opacity-50"
                             >
                                 <Upload size={18} />
                             </button>
@@ -227,7 +227,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                             <input 
                                 type="text" 
                                 readOnly
-                                className="flex-grow bg-white/5 border border-white/10 p-4 text-sm font-mono opacity-80 focus:border-white outline-none transition-all"
+                                className="flex-grow bg-white/5 border border-white/10 p-4 text-sm font-mono opacity-80 focus:border-white outline-none transition-all rounded-lg truncate"
                                 value={formData.secondaryImage}
                                 placeholder="UPLOAD_OR_INPUT_URI..."
                             />
@@ -242,7 +242,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                                 type="button" 
                                 onClick={() => document.getElementById('secondary-image-upload')?.click()}
                                 disabled={isUploading}
-                                className="bg-white text-black px-6 hover:bg-black hover:text-white transition-all border border-white disabled:opacity-50"
+                                className="bg-white text-black px-6 rounded-lg hover:bg-black hover:text-white transition-all border border-white disabled:opacity-50"
                             >
                                 <Upload size={18} />
                             </button>
@@ -259,7 +259,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                     <button 
                         type="button"
                         onClick={() => document.getElementById('gallery-upload')?.click()}
-                        className="text-[9px] font-bold border border-white/20 px-4 py-2 hover:bg-white hover:text-black transition-all flex items-center gap-2"
+                        className="text-[9px] font-bold border border-white/20 px-4 py-2 hover:bg-white hover:text-black transition-all flex items-center gap-2 rounded-lg"
                     >
                         <Plus size={12} /> [ ADD_TO_GALLERY ]
                     </button>
@@ -279,12 +279,12 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {formData.images?.map((img, idx) => (
-                        <div key={idx} className="relative aspect-square bg-white/5 border border-white/10 group">
+                        <div key={idx} className="relative aspect-square bg-white/5 border border-white/10 group rounded-lg overflow-hidden">
                             <img src={img} alt="" className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all" />
                             <button 
                                 type="button"
                                 onClick={() => removeGalleryImage(idx)}
-                                className="absolute top-2 right-2 p-1.5 bg-black/80 text-white/40 hover:text-red-500 transition-colors"
+                                className="absolute top-2 right-2 p-1.5 bg-black/80 text-white/40 hover:text-red-500 transition-colors rounded-md"
                             >
                                 <X size={12} />
                             </button>
@@ -294,7 +294,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                         </div>
                     ))}
                     {(!formData.images || formData.images.length === 0) && (
-                        <div className="col-span-full py-12 border border-dashed border-white/5 text-center">
+                        <div className="col-span-full py-12 border border-dashed border-white/5 text-center rounded-lg">
                             <p className="text-technical text-[9px] opacity-20 uppercase tracking-widest">GALLERY_IS_EMPTY</p>
                         </div>
                     )}
@@ -304,7 +304,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
 
             {/* Column 2: Technical Specifications */}
             <div className="lg:col-span-5 space-y-10">
-              <section className="space-y-6 bg-white/[0.02] border border-white/5 p-8">
+              <section className="space-y-6 bg-white/[0.02] border border-white/5 p-6 sm:p-8 rounded-2xl">
                 <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 border-l-2 border-white/20 pl-4 mb-10 flex items-center gap-2">
                   <Layers size={14} /> 04_TECH_SPECS
                 </h3>
@@ -315,7 +315,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                             <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-widest">GRAM_WEIGHT (GSM)</label>
                             <input 
                                 type="text" 
-                                className="w-full bg-black border border-white/10 p-4 text-sm font-black focus:border-white outline-none transition-all"
+                                className="w-full bg-black border border-white/10 p-4 text-sm font-black focus:border-white outline-none transition-all rounded-lg"
                                 value={formData.specs?.gsm}
                                 onChange={e => handleSpecChange('gsm', e.target.value)}
                                 placeholder="e.g. 220GSM"
@@ -325,7 +325,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                             <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-widest">SILHOUETTE_FIT</label>
                             <input 
                                 type="text" 
-                                className="w-full bg-black border border-white/10 p-4 text-sm font-black uppercase focus:border-white outline-none transition-all"
+                                className="w-full bg-black border border-white/10 p-4 text-sm font-black uppercase focus:border-white outline-none transition-all rounded-lg"
                                 value={formData.specs?.fit}
                                 onChange={e => handleSpecChange('fit', e.target.value)}
                                 placeholder="e.g. OVERSIZED"
@@ -337,7 +337,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                         <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-widest">FABRIC_COMPOSITION</label>
                         <input 
                             type="text" 
-                            className="w-full bg-black border border-white/10 p-4 text-sm font-black uppercase focus:border-white outline-none transition-all"
+                            className="w-full bg-black border border-white/10 p-4 text-sm font-black uppercase focus:border-white outline-none transition-all rounded-lg"
                             value={formData.specs?.composition}
                             onChange={e => handleSpecChange('composition', e.target.value)}
                             placeholder="e.g. 100% ORGANIC COTTON"
@@ -348,7 +348,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                         <label className="block text-[9px] font-mono mb-3 opacity-30 uppercase tracking-widest">BADGE_IDENTIFIER</label>
                         <input 
                             type="text" 
-                            className="w-full bg-black border border-white/10 p-4 text-sm font-black uppercase focus:border-white outline-none transition-all"
+                            className="w-full bg-black border border-white/10 p-4 text-sm font-black uppercase focus:border-white outline-none transition-all rounded-lg"
                             value={formData.badge}
                             onChange={e => setFormData({...formData, badge: e.target.value})}
                             placeholder="e.g. NEW_SEASON"
@@ -357,7 +357,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                 </div>
               </section>
               
-              <div className="p-8 border border-white/5 bg-white/[0.01]">
+              <div className="p-8 border border-white/5 bg-white/[0.01] rounded-2xl">
                 <p className="text-[9px] font-mono opacity-20 uppercase leading-relaxed italic">
                   // NOTICE: ALL_ASSETS_MUST_COMPLY_WITH_UTOPIA_QUALITY_STANDARDS. 
                   FAILURE_TO_PROVIDE_ACCURATE_METADATA_MAY_RESULT_IN_SYSTEM_DELISTING.
@@ -370,14 +370,14 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
             <button 
               type="button"
               onClick={onClose}
-              className="btn-ghost-white group flex items-center justify-center gap-3 min-w-[200px] border-white/10 hover:border-red-500/50 hover:text-red-500"
+              className="btn-ghost-white group flex items-center justify-center gap-3 min-w-[200px] border-white/10 hover:border-red-500/50 hover:text-red-500 rounded-xl"
             >
               [ ABORT_PROCESS ]
             </button>
             <button 
               type="submit"
               disabled={isUploading}
-              className="btn-primary group flex items-center justify-center gap-3 min-w-[280px] !bg-white !text-black hover:!bg-transparent hover:!text-white border-white transition-all disabled:opacity-50"
+              className="btn-primary group flex items-center justify-center gap-3 min-w-[280px] !bg-white !text-black hover:!bg-transparent hover:!text-white border-white transition-all disabled:opacity-50 rounded-xl"
             >
               {isUploading ? <Activity size={16} className="animate-spin" /> : <Plus size={16} />}
               {isUploading ? '[ DISPATCHING_DATA... ]' : '[ COMMIT_DATA_PACK ]'}
