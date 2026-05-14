@@ -23,7 +23,18 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo);
-    // Here we would report to a service like Sentry
+    
+    // Auto-reboot logic for Admin page to automate troubleshooting
+    const isAdminPage = window.location.pathname.includes('admin');
+    const lastAutoReboot = sessionStorage.getItem('last_auto_reboot');
+    const now = Date.now();
+    
+    // If on admin page and haven't auto-reloaded in the last 10 seconds, do it now
+    if (isAdminPage && (!lastAutoReboot || now - parseInt(lastAutoReboot) > 10000)) {
+      sessionStorage.setItem('last_auto_reboot', now.toString());
+      console.log('AUTO_REBOOT_INITIATED // RESOLVING_TRANSIENT_LAYER_FAILURE');
+      window.location.reload();
+    }
   }
 
   private handleRetry = () => {

@@ -204,13 +204,14 @@ export function Admin() {
         ...doc.data()
       })) as Order[];
       setOrders(ordersData);
-      
-      const totalRevenue = ordersData.reduce((acc, order) => acc + order.total, 0);
+
+      const totalRevenue = ordersData.reduce((acc, order) => acc + (order.total || 0), 0);
       setAnalyticsData(prev => ({
         ...prev,
         totalOrders: ordersData.length,
         revenue: totalRevenue
       }));
+
     }, (error) => {
       console.error('Error listening to orders:', error);
     });
@@ -895,9 +896,9 @@ export function Admin() {
                             )}
                             
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              {order.items.map((item, idx) => (
-                                <div key={idx} className="flex items-center gap-4 bg-white/2 p-3 border border-white/5">
-                                  <div className="w-12 h-12 flex-shrink-0 bg-black overflow-hidden border border-white/5">
+                              {order.items?.map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-4 bg-white/2 p-3 border border-white/5 rounded-xl">
+                                  <div className="w-12 h-12 flex-shrink-0 bg-black overflow-hidden rounded-lg border border-white/5">
                                     <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover grayscale opacity-50" />
                                   </div>
                                   <div className="min-w-0">
@@ -1149,17 +1150,19 @@ function SidebarLink({ active, onClick, Icon, label }: { active: boolean, onClic
   );
 }
 
-function StatCard({ title, value, icon, change, colorClass = "text-white" }: { title: string, value: string | number, icon: React.ReactNode, change: string, colorClass?: string }) {
-  const isPositive = change.startsWith('+') || change === 'LIVE' || change === 'AUTO';
+function StatCard({ title, value, icon, change, colorClass = "text-white" }: { title: string, value: string | number, icon: React.ReactNode, change?: string, colorClass?: string }) {
+  const isPositive = change ? (change.startsWith('+') || change === 'LIVE' || change === 'AUTO') : true;
   return (
     <div className="bg-white/[0.03] border border-white/10 p-6 rounded-2xl relative group hover:bg-white/[0.05] transition-all overflow-hidden">
       <div className="flex justify-between items-start mb-4">
         <div className={`p-2 bg-white/5 border border-white/5 rounded-lg ${colorClass}`}>
           {icon}
         </div>
-        <div className={`text-[10px] font-black font-mono px-2 py-0.5 rounded-full ${isPositive ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'}`}>
-          {change}
-        </div>
+        {change && (
+          <div className={`text-[10px] font-black font-mono px-2 py-0.5 rounded-full ${isPositive ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'}`}>
+            {change}
+          </div>
+        )}
       </div>
       <div className="space-y-1">
         <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{title}</p>
