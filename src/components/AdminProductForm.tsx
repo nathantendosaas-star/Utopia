@@ -209,7 +209,7 @@ export function AdminProductForm({ product, onClose, onSave }: AdminProductFormP
                                 id="product-image-upload" 
                                 className="hidden" 
                                 accept="image/*"
-                                onChange={e => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                                onChange={e => e.target.files?.[0] && handleImageUpload(e.target.files[0], 'primary')}
                             />
                             <button 
                                 type="button" 

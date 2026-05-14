@@ -29,7 +29,9 @@ import {
   Clock,
   Send,
   Phone,
-  Settings
+  Settings,
+  Menu,
+  X
 } from 'lucide-react';
 import { db, auth, googleProvider } from '../lib/firebase';
 import { signInWithPopup, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
@@ -77,6 +79,7 @@ export function Admin() {
     revenue: 0
   });
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
@@ -804,9 +807,10 @@ export function Admin() {
                             <h4 className="text-lg font-black uppercase tracking-tighter">{product.name}</h4>
                             <span className="text-[8px] px-1.5 py-0.5 border border-white/20 opacity-40 font-mono">{product.id}</span>
                           </div>
-                          <p className="text-[10px] font-mono opacity-50 uppercase tracking-widest">
-                            {product.category} <span className="mx-2 text-white/10">|</span> <span className="text-white/80">UGX {product.price.toLocaleString()}</span>
+                          <p className="text-[10px] font-mono opacity-50 uppercase tracking-widest truncate">
+                            {product.category} <span className="mx-2 text-white/10">|</span> <span className="text-white/80">UGX {product.price?.toLocaleString() || '0'}</span>
                           </p>
+
                         </div>
                         <div className="flex gap-2">
                           <button 
