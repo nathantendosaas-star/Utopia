@@ -1,7 +1,7 @@
 import { Order } from '../types/schema';
 import { formatPrice } from './currency';
 
-export const WHATSAPP_PHONE = '256788185518';
+export const WHATSAPP_PHONE = import.meta.env.VITE_WHATSAPP_PHONE || '256788185518';
 
 export function buildOrderMessage(order: Order): string {
   const lines = [

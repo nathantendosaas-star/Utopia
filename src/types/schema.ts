@@ -40,6 +40,7 @@ export const ReviewSchema = z.object({
 export const OrderItemSchema = z.object({
   product: ProductSchema,
   quantity: z.number().int().positive(),
+  size: z.preprocess(sanitizeString, z.string()).optional(),
 });
 
 export const OrderStatusSchema = z.enum(['whatsapp_pending', 'confirmed', 'fulfilled', 'cancelled']);

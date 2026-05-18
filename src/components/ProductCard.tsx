@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 import { useProduct } from '../context/ProductContext';
 import { formatPrice } from '../lib/currency';
 import { Link, useNavigate } from 'react-router-dom';
+import { VaultImage } from './VaultImage';
 
 export function ProductCard({ product, index }: { product: Product, index: number }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -38,7 +39,7 @@ export function ProductCard({ product, index }: { product: Product, index: numbe
         )}
 
         {/* Primary Image */}
-        <img
+        <VaultImage
           src={product.image}
           alt={product.name}
           loading={isPriorityImage ? 'eager' : 'lazy'}
@@ -50,7 +51,7 @@ export function ProductCard({ product, index }: { product: Product, index: numbe
 
         {/* Secondary Image (Hover) */}
         {product.secondaryImage && (
-          <img
+          <VaultImage
             src={product.secondaryImage}
             alt={`${product.name} detail`}
             loading="lazy"

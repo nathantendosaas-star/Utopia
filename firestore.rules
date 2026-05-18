@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is an admin
+    function isAdmin() {
+      return request.auth != null && 
+        (request.auth.token.email in get(/databases/$(database)/documents/config/admins).data.emails);
+    }
+
+    // Products: Public read, Admin write
+    match /products/{product} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Media Vault: Public read, Admin write
+    match /media/{mediaId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Orders: Anyone can create, only Admin can read/manage
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+    
+    // Reviews: Public read, Anyone can create (MUST be pending), Admin manage
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if request.resource.data.status == 'pending' && 
+                      request.resource.data.keys().hasAll(['productId', 'userName', 'rating', 'comment', 'status']);
+      allow update, delete: if isAdmin();
+    }
+
+    // Analytics: Anyone can increment counters (specific fields only), Admin read
+    match /analytics/counters {
+       allow read: if isAdmin();
+       allow write: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['uniqueVisitors', 'productViews']) &&
+                      (request.resource.data.uniqueVisitors >= resource.data.uniqueVisitors) &&
+                      (request.resource.data.productViews >= resource.data.productViews);
+    }
+    
+    // Product Hits: Anyone can increment (limited), Admin read
+    match /product_hits/{hitId} {
+       allow read: if true;
+       allow write: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hits', 'lastViewed', 'name']) &&
+                      (request.resource.data.hits >= resource.data.hits);
+    }
+
+    // Config: Only Admin can manage the admin list
+    match /config/admins {
+      allow read: if true; 
+      allow write: if isAdmin();
+    }
+  }
+}

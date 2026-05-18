@@ -1,3 +1,6 @@
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from './firebase';
+
 const MAX_IMAGE_DIMENSION = 1400;
 const MAX_DATA_URL_BYTES = 850_000;
 const INITIAL_QUALITY = 0.82;
@@ -23,7 +26,7 @@ const getDataUrlSize = (dataUrl: string) => Math.ceil((dataUrl.length * 3) / 4);
 
 export async function fileToFirestoreImage(file: File): Promise<string> {
   if (!file.type.startsWith('image/')) {
-    throw new Error('ONLY_IMAGE_UPLOADS_ARE_SUPPORTED_WITH_FIRESTORE_ONLY_MODE');
+    throw new Error('ONLY_IMAGE_UPLOADS_ARE_SUPPORTED');
   }
 
   const image = await readImage(file);
@@ -41,13 +44,30 @@ export async function fileToFirestoreImage(file: File): Promise<string> {
   canvas.height = height;
   context.drawImage(image, 0, 0, width, height);
 
+  let finalDataUrl = '';
   for (let quality = INITIAL_QUALITY; quality >= MIN_QUALITY; quality -= 0.08) {
     const dataUrl = canvas.toDataURL('image/jpeg', quality);
 
     if (getDataUrlSize(dataUrl) <= MAX_DATA_URL_BYTES) {
-      return dataUrl;
+      finalDataUrl = dataUrl;
+      break;
     }
   }
 
-  throw new Error('IMAGE_TOO_LARGE_FOR_FIRESTORE_DOCUMENT');
+  if (!finalDataUrl) {
+    throw new Error('IMAGE_TOO_LARGE_FOR_VAULT');
+  }
+
+  // Upload to Media Vault
+  try {
+    const docRef = await addDoc(collection(db, 'media'), {
+      data: finalDataUrl,
+      type: 'image/jpeg',
+      createdAt: serverTimestamp()
+    });
+    return `media://${docRef.id}`;
+  } catch (error) {
+    console.error('MEDIA_VAULT_COMMIT_FAILED:', error);
+    throw new Error('MEDIA_STORAGE_PROTOCOL_FAILURE');
+  }
 }

@@ -32,7 +32,7 @@ export class ErrorBoundary extends Component<Props, State> {
     // If on admin page and haven't auto-reloaded in the last 10 seconds, do it now
     if (isAdminPage && (!lastAutoReboot || now - parseInt(lastAutoReboot) > 10000)) {
       sessionStorage.setItem('last_auto_reboot', now.toString());
-      console.log('AUTO_REBOOT_INITIATED // RESOLVING_TRANSIENT_LAYER_FAILURE');
+      
       window.location.reload();
     }
   }

@@ -56,37 +56,39 @@ interface AnalyticsData {
   revenue: number;
 }
 
+import { getDoc } from 'firebase/firestore';
+
 export function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'analytics' | 'products' | 'orders' | 'reviews' | 'uploads' | 'settings'>('analytics');
-  const [products, setProducts] = useState<Product[]>([]);
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [uploadCategory, setUploadCategory] = useState('shop');
-  const [isUploading, setIsUploading] = useState(false);
-  
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [authError, setAuthError] = useState('');
-  const [loginMode, setLoginMode] = useState<'google' | 'credentials'>('google');
-  
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
-    uniqueVisitors: 0,
-    productViews: 0,
-    topProducts: [],
-    totalOrders: 0,
-    revenue: 0
-  });
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  // ...
+  const [authorizedEmails, setAuthorizedEmails] = useState<string[]>([
+    'nathantendo.saas@gmail.com',
+    'joshuamusiime20@gmail.com',
+    'goawayulc1@gmail.com',
+    ...(import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [])
+  ]);
+
+  useEffect(() => {
+    const fetchAdmins = async () => {
+      try {
+        const docRef = doc(db, 'config', 'admins');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const emails = docSnap.data().emails || [];
+          // Merge env emails with firestore emails
+          const envEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
+          setAuthorizedEmails([...new Set([...envEmails, ...emails])]);
+        }
+      } catch (err) {
+        console.warn('FAILED_TO_FETCH_REMOTE_ADMIN_CONFIG // USING_LOCAL_FALLBACK');
+      }
+    };
+    fetchAdmins();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && AUTHORIZED_EMAILS.includes(user.email || '')) {
+      if (user && authorizedEmails.includes(user.email || '')) {
         setCurrentUser(user);
         setIsAuthenticated(true);
       } else {
@@ -96,13 +98,13 @@ export function Admin() {
       setIsAuthLoading(false);
     });
     return () => unsubscribe();
-  }, []);
+  }, [authorizedEmails]);
 
   const handleGoogleLogin = async () => {
     setAuthError('');
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      if (!AUTHORIZED_EMAILS.includes(result.user.email || '')) {
+      if (!authorizedEmails.includes(result.user.email || '')) {
         await signOut(auth);
         setAuthError('ACCESS_DENIED // UNAUTHORIZED_USER_LOG');
       }
@@ -135,7 +137,7 @@ export function Admin() {
 
     try {
       const result = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-      if (!AUTHORIZED_EMAILS.includes(result.user.email || '')) {
+      if (!authorizedEmails.includes(result.user.email || '')) {
         await signOut(auth);
         setAuthError('ACCESS_DENIED // UNAUTHORIZED_USER_LOG');
       }

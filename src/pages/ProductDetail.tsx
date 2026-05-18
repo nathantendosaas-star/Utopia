@@ -11,14 +11,35 @@ import { collection, query, where, onSnapshot, orderBy, doc, increment, setDoc, 
 import { productService, reviewService } from '../services/dataService';
 import { products as staticProducts } from '../data/products';
 
+import { useAuth } from '../context/AuthContext';
+import { buildWhatsAppAppUrl } from '../lib/whatsapp';
+
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  // Find initial product from static data for instant render
-  const initialProduct = staticProducts.find(p => p.id === id) as Product | null;
-  const [product, setProduct] = useState<Product | null>(initialProduct);
-  const [selectedSize, setSelectedSize] = useState<string>('');
-  const [scrolledPastCta, setScrolledPastCta] = useState(false);
-  const { addToCart, currency } = useStore();
+  // ... (rest of imports and component setup)
+  const { user } = useAuth();
+
+  // Check if user has already ordered this product
+  const hasOrdered = useMemo(() => {
+    if (!user || !user.orders) return false;
+    return user.orders.some(order => 
+      order.items.some(item => item.product.id === id)
+    );
+  }, [user, id]);
+
+  const existingOrder = useMemo(() => {
+    if (!hasOrdered || !user) return null;
+    return user.orders.find(order => 
+      order.items.some(item => item.product.id === id)
+    );
+  }, [hasOrdered, user, id]);
+
+  const handleContinueToWhatsApp = () => {
+    if (existingOrder) {
+      window.location.href = buildWhatsAppAppUrl(existingOrder);
+    }
+  };
+
 
   // Review states
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -48,38 +69,8 @@ export function ProductDetail() {
             price: p.price
           });
 
-          // Update Live Analytics in Firestore (Non-blocking)
-          const trackAnalytics = async () => {
-            try {
-              const analyticsRef = doc(db, 'analytics', 'counters');
-              await setDoc(analyticsRef, { 
-                productViews: increment(1) 
-              }, { merge: true });
-
-              // Track unique visitors (simple implementation using localStorage)
-              const visitorKey = 'utp_visitor_tracked';
-              if (!localStorage.getItem(visitorKey)) {
-                await setDoc(analyticsRef, { 
-                  uniqueVisitors: increment(1) 
-                }, { merge: true });
-                localStorage.setItem(visitorKey, 'true');
-              }
-
-              // Track individual product hits
-              const hitsRef = doc(db, 'product_hits', p.id);
-              await setDoc(hitsRef, {
-                name: p.name,
-                hits: increment(1),
-                lastViewed: serverTimestamp()
-              }, { merge: true });
-              
-              console.log(`ANALYTICS_DISPATCH_SUCCESS // ASSET: ${p.id}`);
-            } catch (err) {
-              console.warn('ANALYTICS_DISPATCH_FAILED // PERMISSION_DENIED or NETWORK_ERROR', err);
-            }
-          };
-
-          trackAnalytics();
+          // Firestore-based analytics tracking removed to stay within daily write quotas.
+          // Traffic is still tracked via Google Analytics (logAnalyticsEvent).
         }
       } catch (error) {
         console.error('FAILED_TO_LOAD_PRODUCT:', error);
@@ -268,18 +259,29 @@ export function ProductDetail() {
                 )}
             </div>
 
-            {/* Add to Bag */}
+            {/* Add to Bag / Continue to WhatsApp */}
             <div className="space-y-4">
-                <button 
-                    id="main-cta-btn"
-                    onClick={() => addToCart(product)}
-                    className="btn-primary w-full py-8 flex items-center justify-center gap-4 text-sm !bg-white !text-black border-white"
-                >
-                    [ ADD_TO_WARDROBE ] <Zap size={18} className="fill-black" />
-                </button>
+                {hasOrdered ? (
+                    <button 
+                        onClick={handleContinueToWhatsApp}
+                        className="btn-primary w-full py-8 flex items-center justify-center gap-4 text-sm !bg-[#25D366] !text-white border-[#25D366]"
+                    >
+                        [ CONTINUE_IN_WHATSAPP ] <Zap size={18} className="fill-white" />
+                    </button>
+                ) : (
+                    <button 
+                        id="main-cta-btn"
+                        onClick={() => addToCart(product, selectedSize)}
+                        className="btn-primary w-full py-8 flex items-center justify-center gap-4 text-sm !bg-white !text-black border-white"
+                    >
+                        [ ADD_TO_WARDROBE ] <Zap size={18} className="fill-black" />
+                    </button>
+                )}
                 <div className="flex items-center justify-center gap-3 text-white/60 py-4 border border-white/10 bg-white/2">
                     <Star size={14} className="fill-white/40" />
-                    <span className="text-technical text-[9px] font-black uppercase tracking-widest">Earn {Math.floor(product.price * 1.5)} Prestige Points</span>
+                    <span className="text-technical text-[9px] font-black uppercase tracking-widest">
+                        {hasOrdered ? 'ORDER_LOGGED_IN_ARCHIVE' : `Earn ${Math.floor(product.price * 1.5)} Prestige Points`}
+                    </span>
                 </div>
             </div>
 
@@ -442,10 +444,10 @@ export function ProductDetail() {
                         ))}
                     </div>
                     <button 
-                        onClick={() => addToCart(product)}
-                        className="btn-primary py-4 px-8 flex items-center gap-3 text-[10px] !bg-white !text-black border-white"
+                        onClick={hasOrdered ? handleContinueToWhatsApp : () => addToCart(product, selectedSize)}
+                        className={`btn-primary py-4 px-8 flex items-center gap-3 text-[10px] border-white ${hasOrdered ? '!bg-[#25D366] !text-white !border-[#25D366]' : '!bg-white !text-black'}`}
                     >
-                        [ QUICK_ADD ] <Zap size={12} className="fill-black" />
+                        {hasOrdered ? '[ VIEW_ORDER ]' : '[ QUICK_ADD ]'} <Zap size={12} className={hasOrdered ? "fill-white" : "fill-black"} />
                     </button>
                 </div>
             </motion.div>
