@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Users, 
@@ -35,18 +35,15 @@ import {
 } from 'lucide-react';
 import { db, auth, googleProvider } from '../lib/firebase';
 import { signInWithPopup, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
-import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { collection, query, onSnapshot, doc, getDoc, updateDoc, deleteDoc, orderBy, addDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { products as initialProducts } from '../data/products';
 import { AdminProductForm } from '../components/AdminProductForm';
 import { productService, reviewService, orderService } from '../services/dataService';
-import { isAuthorized } from '../lib/security';
+import { getAuthorizedEmails, isAuthorized, normalizeEmail } from '../lib/security';
 import { Product, Review, Order, OrderStatus } from '../types/schema';
 import { formatPrice } from '../lib/currency';
 import { fileToFirestoreImage } from '../lib/localAsset';
 import { buildWhatsAppAppUrl } from '../lib/whatsapp';
-
-// LIST OF AUTHORIZED EMAILS (FROM ENV)
-const AUTHORIZED_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
 
 interface AnalyticsData {
   uniqueVisitors: number;
@@ -56,17 +53,34 @@ interface AnalyticsData {
   revenue: number;
 }
 
-import { getDoc } from 'firebase/firestore';
+type AdminTab = 'analytics' | 'products' | 'orders' | 'reviews' | 'uploads' | 'settings';
 
 export function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // ...
-  const [authorizedEmails, setAuthorizedEmails] = useState<string[]>([
-    'nathantendo.saas@gmail.com',
-    'joshuamusiime20@gmail.com',
-    'goawayulc1@gmail.com',
-    ...(import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [])
-  ]);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authError, setAuthError] = useState('');
+  const [loginMode, setLoginMode] = useState<'google' | 'credentials'>('google');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
+    uniqueVisitors: 0,
+    productViews: 0,
+    topProducts: [],
+    totalOrders: 0,
+    revenue: 0
+  });
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadCategory, setUploadCategory] = useState('shop');
+  const [isUploading, setIsUploading] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | undefined>();
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<AdminTab>('analytics');
+  const [authorizedEmails, setAuthorizedEmails] = useState<string[]>(getAuthorizedEmails);
 
   useEffect(() => {
     const fetchAdmins = async () => {
@@ -74,10 +88,10 @@ export function Admin() {
         const docRef = doc(db, 'config', 'admins');
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          const emails = docSnap.data().emails || [];
-          // Merge env emails with firestore emails
-          const envEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
-          setAuthorizedEmails([...new Set([...envEmails, ...emails])]);
+          const emails = Array.isArray(docSnap.data().emails) ? docSnap.data().emails : [];
+          setAuthorizedEmails([
+            ...new Set([...getAuthorizedEmails(), ...emails.map(normalizeEmail).filter(Boolean)])
+          ]);
         }
       } catch (err) {
         console.warn('FAILED_TO_FETCH_REMOTE_ADMIN_CONFIG // USING_LOCAL_FALLBACK');
@@ -88,7 +102,7 @@ export function Admin() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && authorizedEmails.includes(user.email || '')) {
+      if (user && authorizedEmails.includes(normalizeEmail(user.email))) {
         setCurrentUser(user);
         setIsAuthenticated(true);
       } else {
@@ -104,7 +118,7 @@ export function Admin() {
     setAuthError('');
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      if (!authorizedEmails.includes(result.user.email || '')) {
+      if (!authorizedEmails.includes(normalizeEmail(result.user.email))) {
         await signOut(auth);
         setAuthError('ACCESS_DENIED // UNAUTHORIZED_USER_LOG');
       }
@@ -125,7 +139,7 @@ export function Admin() {
     return rules;
   };
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: FormEvent) => {
     e.preventDefault();
     setAuthError('');
     
@@ -137,7 +151,7 @@ export function Admin() {
 
     try {
       const result = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-      if (!authorizedEmails.includes(result.user.email || '')) {
+      if (!authorizedEmails.includes(normalizeEmail(result.user.email))) {
         await signOut(auth);
         setAuthError('ACCESS_DENIED // UNAUTHORIZED_USER_LOG');
       }
@@ -256,7 +270,7 @@ export function Admin() {
     };
   }, [isAuthenticated]);
 
-  const handleFileUpload = async (e: React.FormEvent) => {
+  const handleFileUpload = async (e: FormEvent) => {
     e.preventDefault();
     if (!uploadFile) return;
     
@@ -1156,7 +1170,7 @@ function SidebarLink({ active, onClick, Icon, label }: { active: boolean, onClic
   );
 }
 
-function StatCard({ title, value, icon, change, colorClass = "text-white" }: { title: string, value: string | number, icon: React.ReactNode, change?: string, colorClass?: string }) {
+function StatCard({ title, value, icon, change, colorClass = "text-white" }: { title: string, value: string | number, icon: ReactNode, change?: string, colorClass?: string }) {
   const isPositive = change ? (change.startsWith('+') || change === 'LIVE' || change === 'AUTO') : true;
   return (
     <div className="bg-white/[0.03] border border-white/10 p-6 rounded-2xl relative group hover:bg-white/[0.05] transition-all overflow-hidden">

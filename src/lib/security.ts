@@ -22,8 +22,23 @@ export const sanitizeString = (str: unknown): string => {
 /**
  * Validates if an email is in the authorized list.
  */
+export const DEFAULT_ADMIN_EMAILS = [
+  'nathantendo.saas@gmail.com',
+  'joshuamusiime20@gmail.com',
+  'goawayulc1@gmail.com'
+];
+
+export const normalizeEmail = (email: string | null | undefined): string => {
+  return (email || '').trim().toLowerCase();
+};
+
+export const getAuthorizedEmails = (): string[] => {
+  const envEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
+  return [...new Set([...DEFAULT_ADMIN_EMAILS, ...envEmails].map(normalizeEmail).filter(Boolean))];
+};
+
 export const isAuthorized = (email: string | null): boolean => {
-  if (!email) return false;
-  const authorizedEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
-  return authorizedEmails.includes(email);
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail) return false;
+  return getAuthorizedEmails().includes(normalizedEmail);
 };
