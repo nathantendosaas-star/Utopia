@@ -34,6 +34,13 @@ export class ErrorBoundary extends Component<Props, State> {
       sessionStorage.setItem('last_auto_reboot', now.toString());
       
       window.location.reload();
+      return;
+    }
+
+    if (!isAdminPage) {
+      window.setTimeout(() => {
+        window.location.assign('/shop');
+      }, 3500);
     }
   }
 
@@ -45,6 +52,36 @@ export class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
+
+      const isAdminPage = typeof window !== 'undefined' && window.location.pathname.includes('admin');
+
+      if (!isAdminPage) {
+        return (
+          <div className="min-h-screen flex items-center justify-center bg-black p-6 text-center text-white">
+            <div className="max-w-md w-full space-y-7 border border-white/10 bg-white/[0.03] p-10">
+              <div className="flex flex-col items-center gap-5">
+                <div className="p-4 border border-white/10">
+                  <AlertTriangle size={36} className="text-white/70" />
+                </div>
+                <div className="space-y-3">
+                  <h1 className="text-2xl font-black uppercase tracking-tighter">Sorry, something went wrong</h1>
+                  <p className="text-xs font-mono text-white/50 uppercase tracking-widest leading-relaxed">
+                    We could not load that page correctly. You are being redirected back to the shop.
+                  </p>
+                </div>
+              </div>
+
+              <a
+                href="/shop"
+                className="w-full py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-transparent hover:text-white border border-white transition-all flex items-center justify-center gap-3"
+              >
+                <Home size={14} />
+                [ RETURN_TO_SHOP ]
+              </a>
+            </div>
+          </div>
+        );
+      }
 
       return (
         <div className="min-h-screen flex items-center justify-center bg-black p-6 text-center">

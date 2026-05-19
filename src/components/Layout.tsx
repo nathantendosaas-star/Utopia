@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Search, ShoppingBag, User, Menu } from 'lucide-react';
 import { useUI } from '../context/UIContext';
 import { useCart } from '../context/CartContext';
+import { useProduct } from '../context/ProductContext';
 import { Footer } from './Footer';
 import { NavigationDrawer } from './NavigationDrawer';
 
@@ -17,9 +18,10 @@ export function Layout() {
   const [scrolled, setScrolled] = useState(false);
   const { 
     setCartOpen, setSearchOpen, setUserOpen, setNavOpen,
-    isCartOpen, isSearchOpen, isUserOpen, isQuickViewOpen 
+    isCartOpen, isSearchOpen, isUserOpen
   } = useUI();
   const { cartCount } = useCart();
+  const { quickViewProduct } = useProduct();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -159,7 +161,7 @@ export function Layout() {
         {isCartOpen && <CartDrawer />}
         {isSearchOpen && <SearchModal />}
         {isUserOpen && <UserProfile />}
-        {isQuickViewOpen && <QuickViewModal />}
+        {quickViewProduct && <QuickViewModal />}
       </Suspense>
     </div>
   );

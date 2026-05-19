@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, ShieldCheck, Truck, Zap, Info, Plus, Minus, Ruler } from 'lucide-react';
@@ -7,7 +7,7 @@ import { formatPrice } from '../lib/currency';
 import { Product, Review } from '../types/schema';
 import { Accordion } from '../components/Accordion';
 import { db, logAnalyticsEvent } from '../lib/firebase';
-import { collection, query, where, onSnapshot, orderBy, doc, increment, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 import { productService, reviewService } from '../services/dataService';
 import { products as staticProducts } from '../data/products';
 
@@ -16,8 +16,15 @@ import { buildWhatsAppAppUrl } from '../lib/whatsapp';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  // ... (rest of imports and component setup)
+  const { addToCart, currency } = useStore();
   const { user } = useAuth();
+  const initialProduct = useMemo(
+    () => staticProducts.find(product => product.id === id) as Product | undefined,
+    [id]
+  );
+  const [product, setProduct] = useState<Product | undefined>(initialProduct);
+  const [selectedSize, setSelectedSize] = useState<string | undefined>(initialProduct?.sizes?.[0]);
+  const [scrolledPastCta, setScrolledPastCta] = useState(false);
 
   // Check if user has already ordered this product
   const hasOrdered = useMemo(() => {
@@ -59,7 +66,7 @@ export function ProductDetail() {
         const p = await productService.getProductById(id);
         if (mounted && p) {
           setProduct(p);
-          if (p.sizes && p.sizes.length > 0 && !selectedSize) setSelectedSize(p.sizes[0]);
+          setSelectedSize(currentSize => currentSize || p.sizes?.[0]);
           
           // Log Event
           logAnalyticsEvent('view_item', {
@@ -119,7 +126,7 @@ export function ProductDetail() {
       if (unsubscribeReviews) unsubscribeReviews();
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [id]);
+  }, [id, initialProduct]);
 
   const submitReview = async (e: React.FormEvent) => {
     e.preventDefault();
